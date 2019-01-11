@@ -1,0 +1,16 @@
+{
+	"name": "pixnet",
+	"version": "1.0.0",
+	"api_version": "1.0.0",
+	"keywords": [ "Recorders", "Recording" ],
+	"manufacturer": "Sound/Video Devices",
+	"product": "PIXNET",
+	"shortname": "pixnet",
+	"description": "Module to control Video Devices PIX250i/260i/270i and Sound Devices 970 via Companion",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Keith Rocheck <keith.rocheck@gmail.com>",
+	"license": "MIT"
+}
