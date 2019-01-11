@@ -19,9 +19,8 @@ function instance(system, id, config) {
 	self.pollingActive   = 0;
 	self.errorCount      = 0;
 	self.testInterval    = 5000;
-	self.pollUrl         = encodeURI('http://' + self.config.host + '/sounddevices/update');
-	/* Test URL cannot be changed without also updating processResult() to account for different test response */
-	self.testUrl         = encodeURI('http://' + self.config.host + '/sounddevices/devtbl');
+	self.pollUrl         = "";
+	self.testUrl         = "";
 
 	self.CONFIG_MODEL = {
 		250: { id: 250, label: 'Video Devices PIX 250i', type: 'video', ports: ['TC', 'SYNC', 'LINE', 'AES', 'SDI', 'HDMI'] },
@@ -92,7 +91,7 @@ function instance(system, id, config) {
 	};
 
 	// super-constructor
-	super(system, id, config);
+	instance_skel.apply(this, arguments);
 	self.actions(); // export actions
 	//return self;
 }
@@ -398,7 +397,7 @@ instance.prototype.feedback = function(feedback, bank) {
  * @public
  * @since 1.0.0
  */
-instance.prototype.init() = function {
+instance.prototype.init = function() {
 	var self = this;
 	set.processConfig();
 
@@ -511,6 +510,10 @@ instance.prototype.initVariables = function() {
  */
 instance.prototype.processConfig = function() {
 	var self = this;
+
+	self.pollUrl         = encodeURI('http://' + self.config.host + '/sounddevices/update');
+	/* Test URL cannot be changed without also updating processResult() to account for different test response */
+	self.testUrl         = encodeURI('http://' + self.config.host + '/sounddevices/devtbl');
 
 	self.status(self.STATUS_UNKNOWN);
 
