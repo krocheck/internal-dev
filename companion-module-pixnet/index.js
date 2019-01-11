@@ -18,7 +18,7 @@ function instance(system, id, config) {
 	self.states          = {};
 	self.pollingActive   = 0;
 	self.errorCount      = 0;
-	self.testInterval    = 5000;
+	self.testInterval    = 10000;
 	self.pollUrl         = "";
 	self.testUrl         = "";
 
@@ -29,23 +29,23 @@ function instance(system, id, config) {
 		970: { id: 970, label: 'Sound Devices 970',      type: 'audio', ports: ['TC', 'SYNC', 'LINE', 'AES', 'DANTE', 'MADI'] }
 	};
 
-	self.CONFIG_FEEDBACK = [
-		{ id: '0', label: 'No' },
-		{ id: '1', label: 'Yes' }
-	];
-
 	self.CHOICES_ACTION = [
 		{ id: 'Accept', label: 'Accept' },
 		{ id: 'Reject', label: 'Reject' }
 	];
 
-	self.CHOICES_DRIVELIST = {};
+	self.CHOICES_DRIVELIST = [];
 
 	self.CHOICES_DRIVEMODE = [
 		{ id: 'Off',                         label: 'Off' },
 		{ id: 'Record',                      label: 'Record' },
 		{ id: 'Ethernet File Transfer',      label: 'Ethernet File Transfer' },
 		{ id: 'Switch to Network upon Full', label: 'Switch to Network upon Full' }
+	];
+
+	self.CHOICES_FEEDBACK = [
+		{ id: '0', label: 'No' },
+		{ id: '1', label: 'Yes' }
 	];
 
 	self.CHOICES_KEYCODE = [
@@ -65,6 +65,13 @@ function instance(system, id, config) {
 		{ id: 'KeyPressAndRelease', label: 'Press &amp; Release' },
 		{ id: 'KeyPress',           label: 'Press' },
 		{ id: 'KeyRelease',         label: 'Release' }
+	];
+
+	self.CHOICES_MODEL = [
+		{ id: 250, label: 'Video Devices PIX 250i' },
+		{ id: 260, label: 'Video Devices PIX 260i' },
+		{ id: 270, label: 'Video Devices PIX 270i' },
+		{ id: 970, label: 'Sound Devices 970' }
 	];
 
 	self.CHOICES_PLAYBACKSPEED = [
@@ -93,7 +100,7 @@ function instance(system, id, config) {
 	// super-constructor
 	instance_skel.apply(this, arguments);
 	self.actions(); // export actions
-	//return self;
+	return self;
 }
 
 /**
@@ -320,7 +327,7 @@ instance.prototype.config_fields = function() {
 			id:      'model',
 			label:   'Model',
 			tooltip: 'The make/model of the device',
-			choices: self.CONFIG_MODEL,
+			choices: self.CHOICES_MODEL,
 			default: 270
 		},
 		{
@@ -335,7 +342,7 @@ instance.prototype.config_fields = function() {
 			id:      'feedback',
 			label:   'Enable Feedback?',
 			tooltip: 'Determines if Companion will regularly request status from the device',
-			choices: self.CONFIG_FEEDBACK,
+			choices: self.CHOICES_FEEDBACK,
 			default: '1'
 		},
 		{
