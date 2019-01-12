@@ -84,7 +84,7 @@ instance.prototype.action = function(action) {
 		self.system.emit('rest', action.options.url, {}, function (err, result) {
 
 				if (err !== null) {
-					self.log('error', 'HTTP POST Request failed');
+					self.log('error', 'HTTP POST Request failed (' + result.error.code + ')');
 					self.status(self.STATUS_ERROR, result.error.code);
 				}
 				else {
@@ -97,7 +97,7 @@ instance.prototype.action = function(action) {
 		self.system.emit('rest_get', action.options.url, function (err, result) {
 
 				if (err !== null) {
-					self.log('error', 'HTTP GET Request failed');
+					self.log('error', 'HTTP GET Request failed (' + result.error.code + ')');
 					self.status(self.STATUS_ERROR, result.error.code);
 				}
 				else {
