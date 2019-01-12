@@ -20,17 +20,24 @@ function instance(system, id, config) {
 }
 
 instance.prototype.CONFIG_MODEL = {
-	0: { id: 0, label: 'Default',    inputs: 8,  auxes: 3, MEs: 1, USKs: 1, DSKs: 2 },
-	1: { id: 1, label: 'TVS',        inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2 },
-	2: { id: 2, label: 'OneME',      inputs: 8,  auxes: 3, MEs: 1, USKs: 4, DSKs: 2 },
-	3: { id: 3, label: 'TwoME',      inputs: 16, auxes: 6, MEs: 2, USKs: 4, DSKs: 2 },
-	4: { id: 4, label: 'PS4K',       inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2 },
-	5: { id: 5, label: 'OneMEPS4K',  inputs: 10, auxes: 3, MEs: 1, USKs: 4, DSKs: 2 },
-	6: { id: 6, label: 'TwoMEPS4K',  inputs: 20, auxes: 6, MEs: 2, USKs: 2, DSKs: 2 },
-	7: { id: 7, label: 'FourMEBS4K', inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2 },
-	8: { id: 8, label: 'TVSHD',      inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2 },
-	9: { id: 9, label: '4ME?',       inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2 },
+	0: { id: 0, label: 'Auto Detect',          inputs: 8,  auxes: 3, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
+	1: { id: 1, label: 'TV Studio',            inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
+	2: { id: 2, label: '1 ME Production',      inputs: 8,  auxes: 3, MEs: 1, USKs: 4, DSKs: 2, macros: 100 },
+	3: { id: 3, label: '2 ME Production',      inputs: 16, auxes: 6, MEs: 2, USKs: 4, DSKs: 2, macros: 100 },
+	4: { id: 4, label: 'Production Studio 4K', inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
+	5: { id: 5, label: '1 ME Production 4K',   inputs: 10, auxes: 3, MEs: 1, USKs: 4, DSKs: 2, macros: 100 },
+	6: { id: 6, label: '2 ME Production 4K',   inputs: 20, auxes: 6, MEs: 2, USKs: 2, DSKs: 2, macros: 100 },
+	7: { id: 7, label: '4 ME Broadcast 4K',    inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, macros: 100 },
+	8: { id: 8, label: 'TV Studio HD',         inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
+	//9: { id: 9, label: '4ME?',                 inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2 }
 };
+
+instance.prototype.CHOICES_MACROSTATE = [
+	{ id: 'isRunning', label: 'Is Running' },
+	{ id: 'isWaiting', label: 'Is Waiting' }
+];
+
+instance.prototype.CHOICES_MODEL = Object.values(instance.prototype.CONFIG_MODEL);
 
 instance.prototype.init = function() {
 	var self = this;
@@ -38,9 +45,15 @@ instance.prototype.init = function() {
 	debug = self.debug;
 	log = self.log;
 
-	self.model = self.CONFIG_MODEL[0];
+	self.model = self.CONFIG_MODEL[self.config.modelID];
 
 	self.status(self.STATE_UNKNOWN);
+
+	// Unfortunately this is redundant if the switcher goes
+	// online right away, but necessary for offline programming
+	self.init_variables();
+	self.init_feedbacks();
+	self.init_presets();
 
 	self.atem = new Atem({ externalLog: self.debug.bind(self) });
 	self.atem.on('connected', function () {
@@ -111,13 +124,28 @@ instance.prototype.init = function() {
 				break;
 
 			case 'ProductIdentifierCommand':
-				if (state.properties.model > 0) {
-					self.model = self.CONFIG_MODEL[state.properties.model];
+				// Testing we have a valid model and that instance is set for auto-detect OR is set for the same model as connected
+				if (state.properties.model > 0 && (self.config.modelID == 0 || (self.config.modelID > 0 && self.config.modelID == state.properties.model))) {
+					if ( self.config.modelID == 0) {
+						self.model = self.CONFIG_MODEL[state.properties.model];
+					}
+
 					debug('ATEM Model: ' + self.model.id);
 					self.deviceName = state.properties.deviceName;
 				}
+				else if (state.properties.model > 0) {
+					self.log('error', 'Connected to a ' + state.properties.deviceName + ', but instance is configured for ' + this.model.label + '.  Change instance to \'Auto Detect\' or the appropriate model to ensure stability.');
+					debug('ATEM Model: ' + state.properties.model);
+				}
 				else {
 					debug('ATEM Model: ' + state.properties.model + 'NOT FOUND');
+				}
+				break;
+
+			case 'MacroRunStatusCommand':
+				if (state.properties.macroIndex >= 0 && self.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
+					self.states['macro_'+(self.properties.macroIndex+1)] = state.properties;
+					self.checkFeedbacks('macro');
 				}
 				break;
 		}
@@ -147,11 +175,11 @@ instance.prototype.init_feedbacks = function() {
 				default: self.rgb(0,255,0)
 			},
 			{
-				 type: 'dropdown',
-				 label: 'Input',
-				 id: 'input',
-				 default: 1,
-				 choices: self.CHOICES_INPUTS
+				type: 'dropdown',
+				label: 'Input',
+				id: 'input',
+				default: 1,
+				choices: self.CHOICES_INPUTS
 			},
 			{
 				type: 'dropdown',
@@ -179,11 +207,11 @@ instance.prototype.init_feedbacks = function() {
 				default: self.rgb(255,0,0)
 			},
 			{
-				 type: 'dropdown',
-				 label: 'Input',
-				 id: 'input',
-				 default: 1,
-				 choices: self.CHOICES_INPUTS
+				type: 'dropdown',
+				label: 'Input',
+				id: 'input',
+				default: 1,
+				choices: self.CHOICES_INPUTS
 			},
 			{
 				type: 'dropdown',
@@ -211,11 +239,11 @@ instance.prototype.init_feedbacks = function() {
 				default: self.rgb(255,255,0)
 			},
 			{
-				 type: 'dropdown',
-				 label: 'Input',
-				 id: 'input',
-				 default: 1,
-				 choices: self.CHOICES_INPUTS
+				type: 'dropdown',
+				label: 'Input',
+				id: 'input',
+				default: 1,
+				choices: self.CHOICES_INPUTS
 			},
 			{
 				type: 'dropdown',
@@ -283,6 +311,38 @@ instance.prototype.init_feedbacks = function() {
 			}
 		]
 	};
+	feedbacks['macro'] = {
+		label: 'Change background from macro state',
+		description: 'If the specified macro is running or waiting, change color of the bank',
+		options: [
+			{
+				type:   'colorpicker',
+				label:  'Color',
+				id:     'fg',
+				default: self.rgb(255,255,255)
+			},
+			{
+				type:   'colorpicker',
+				label:  'Background color',
+				id:     'bg',
+				default: self.rgb(238,238,0)
+			},
+			{
+				type:    'textinput',
+				label:   'Macro Number (1-100)',
+				id:      'macroIndex',
+				default: '1',
+				regex:   '/^([1-9]|[1-9][0-9]|100)$/'
+			},
+			{
+				type:    'dropdown',
+				label:   'State',
+				id:      'state',
+				default: 'isWaiting',
+				choices: self.CHOICES_MACROSTATE
+			}
+		]
+	};
 	self.setFeedbackDefinitions(feedbacks);
 };
 
@@ -291,6 +351,12 @@ instance.prototype.init_variables = function() {
 
 	// variable_set
 	var variables = [];
+
+	// Initialize macro states (not the best spot for it, but it works)
+	// Eventually will include macro name variables
+	for (var i = 0; i < self.model.macros; ++i) {
+		self.states['macro_'+(i+1)] = { isRunning: 0, isWaiting: 0, loop: 0, macroIndex: i };
+	}
 
 	for (var i = 0; i < self.model.MEs; ++i) {
 		variables.push({
@@ -505,6 +571,49 @@ instance.prototype.init_presets = function () {
 			]
 		});
 	}
+
+	// Macros
+	for (var i = 0; i < self.model.macros; ++i) {
+		presets.push({
+			category: 'MACROS',
+			label: 'Macro ' + (i+1),
+			bank: {
+				style:   'text',
+				text:    'Macro ' + (i+1),
+				size:    '18',
+				color:   self.rgb(255,255,255),
+				bgcolor: self.rgb(0,0,0)
+			},
+			feedbacks: [
+				{
+					type: 'macro',
+					options: {
+						bg:         self.rgb(238,238,0),
+						fg:         self.rgb(255,255,255),
+						macroIndex: (i+1),
+						state:      'isWaiting'
+					}
+				},
+				{
+					type: 'macro',
+					options: {
+						bg:         self.rgb(0,238,0),
+						fg:         self.rgb(255,255,255),
+						macroIndex: (i+1),
+						state:      'isRunning'
+					}
+				}
+			],
+			actions: [
+				{
+					action: 'macrorun',
+					options: {
+						macro: (i+1)
+					}
+				}
+			]
+		});
+	}
 	self.setPresetDefinitions(presets);
 }
 
@@ -516,28 +625,34 @@ instance.prototype.feedback = function(feedback, bank) {
 			return { color: feedback.options.fg, bgcolor: feedback.options.bg };
 		}
 	}
-
 	else if (feedback.type == 'program_bg') {
 		if (self.states['program' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
 			return { color: feedback.options.fg, bgcolor: feedback.options.bg };
 		}
 	}
-
 	else if (feedback.type == 'aux_bg') {
 		if (self.states['aux' + feedback.options.aux] == parseInt(feedback.options.input)) {
 			return { color: feedback.options.fg, bgcolor: feedback.options.bg };
 		}
 	}
-
 	else if (feedback.type == 'usk_bg') {
 		if (self.states['usk' + feedback.options.mixeffect + '-' + feedback.options.key]) {
 			return { color: feedback.options.fg, bgcolor: feedback.options.bg };
 		}
 	}
-
 	else if (feedback.type == 'dsk_bg') {
 		if (self.states['dsk' + feedback.options.key]) {
 			return { color: feedback.options.fg, bgcolor: feedback.options.bg };
+		}
+	}
+	else if (feedback.type == 'macro') {
+		var state = self.states['macro_' + feedback.options.macroIndex];
+
+		if (state.macroIndex == (parseInt(feedback.options.macroIndex)-1)) {
+			if (( feedback.options.state == 'isRunning' && state.isRunning == 1 ) ||
+			    ( feedback.options.state == 'isWaiting' && state.isWaiting == 1 )) {
+				return { color: feedback.options.fg, bgcolor: feedback.options.bg };
+			}
 		}
 	}
 	return {};
@@ -575,7 +690,14 @@ instance.prototype.config_fields = function () {
 			label:   'Target IP',
 			width:   6,
 			regex:   self.REGEX_IP
-		}
+		},
+		{
+			type:    'dropdown',
+			id:      'modelID',
+			label:   'Model',
+			choices: self.CHOICES_MODEL,
+			default: 0
+}
 	]
 };
 
@@ -803,7 +925,7 @@ instance.prototype.actions = function(system) {
 					id: 'macro',
 					label: 'Macro number',
 					default: 1,
-					regex: self.REGEX_NUMBER
+					regex: '/^([1-9]|[1-9][0-9]|100)$/'
 				}
 			]
 		}
