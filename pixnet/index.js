@@ -68,10 +68,10 @@ function instance(system, id, config) {
 	];
 
 	self.CHOICES_MODEL = [
-		{ id: 250, label: 'Video Devices PIX 250i' },
-		{ id: 260, label: 'Video Devices PIX 260i' },
-		{ id: 270, label: 'Video Devices PIX 270i' },
-		{ id: 970, label: 'Sound Devices 970' }
+		{ id: '250', label: 'Video Devices PIX 250i' },
+		{ id: '260', label: 'Video Devices PIX 260i' },
+		{ id: '270', label: 'Video Devices PIX 270i' },
+		{ id: '970', label: 'Sound Devices 970' }
 	];
 
 	self.CHOICES_PLAYBACKSPEED = [
@@ -178,7 +178,7 @@ instance.prototype.actions = function(system) {
 			options: [
 				{
 					type:    'textinput',
-					label:   'Button Text to Push (exactly as it appears on the LCD`)',
+					label:   'Button Text to Push (exactly as it appears on the LCD)',
 					id:      'buttonText',
 					regex:   '/^[a-zA-Z0-9_\- ]*$/',
 					default: 'OK'
@@ -212,7 +212,7 @@ instance.prototype.actions = function(system) {
 					label:   'Label',
 					id:      'label',
 					regex:   '/^[a-zA-Z0-9_\-]*$/',
-					default: 'OK'
+					default: 'PIX'
 				}
 			]
 		},
@@ -299,7 +299,7 @@ instance.prototype.action = function(action) {
 	if (cmd != undefined) {
 		cmd = encodeURI('http://' + self.config.host + '/sounddevices/' + cmd);
 
-		self.system.emit('rest', cmd, {}, self.processResult);
+		self.system.emit('rest', cmd, {}, self.processResult.bind(self));
 	}
 };
 
@@ -335,7 +335,7 @@ instance.prototype.config_fields = function() {
 			id:      'info',
 			width:   12,
 			label:   'Information',
-			value:   'Enabling feedback can disrupt other PIXNET sessions.  Do not enable if you plan to also control the device via a web browser.<br />The recommended polling interval from Sound Devices is 200ms.  Companion default is 500ms to reduce overhead.  Shorter polling intervals could cause delays in other actions and feedbacks being processed.'
+			value:   'Enabling feedback can disrupt other PIXNET sessions.  Do not enable if you plan to also control the device via a web browser.  The recommended polling interval from Sound Devices is 200ms.  Companion default is 500ms to reduce overhead.  Shorter polling intervals could cause delays in other actions and feedbacks being processed.'
 		},
 		{
 			type:    'dropdown',
@@ -343,7 +343,7 @@ instance.prototype.config_fields = function() {
 			label:   'Enable Feedback?',
 			tooltip: 'Determines if Companion will regularly request status from the device',
 			choices: self.CHOICES_FEEDBACK,
-			default: '1'
+			default: '0'
 		},
 		{
 			type:    'textinput',
@@ -406,7 +406,7 @@ instance.prototype.feedback = function(feedback, bank) {
  */
 instance.prototype.init = function() {
 	var self = this;
-	set.processConfig();
+	self.processConfig();
 
 	debug = self.debug;
 	log   = self.log;
@@ -517,6 +517,7 @@ instance.prototype.initVariables = function() {
  */
 instance.prototype.processConfig = function() {
 	var self = this;
+	self.system.emit('rest_poll_destroy', self.id);
 
 	self.pollUrl         = encodeURI('http://' + self.config.host + '/sounddevices/update');
 	/* Test URL cannot be changed without also updating processResult() to account for different test response */
@@ -628,7 +629,7 @@ instance.prototype.setupConnectivtyTester = function() {
 				self.log('error', 'Failed to create connectivity interval timer');
 			}
 		},
-		self.processResult
+		self.processResult.bind(self)
 	);
 }
 
@@ -662,7 +663,7 @@ instance.prototype.setupPolling = function() {
 				self.log('error', 'Failed to create polling interval timer');
 			}
 		},
-		self.processResult
+		self.processResult.bind(self)
 	);
 }
 
@@ -683,7 +684,7 @@ instance.prototype.syncState = function() {
 	for (var key in queries) {
 		var cmd = encodeURI('http://' + self.config.host + '/sounddevices/' + queries[key]);
 
-		self.system.emit('rest', cmd, {}, self.processResult);
+		self.system.emit('rest', cmd, {}, self.processResult.bind(self));
 	}
 }
 
