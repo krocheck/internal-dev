@@ -561,7 +561,7 @@ class instance extends instance_skel {
 			self.setupConnectivtyTester();
 		}
 		else {
-			self.status(self.STATUS_OK, 'Feedback Disabled');
+			self.status(self.STATUS_OK);
 		}
 	}
 
@@ -577,7 +577,14 @@ class instance extends instance_skel {
 		var self = this;
 
 		if (err !== null) {
-			self.log('error', 'Poll result failure');
+			if ( result.error.code instanceof String ) {
+				self.log('error', result.error.code);
+			}
+			else {
+				self.log('error', "general HTTP failure");
+			}
+
+			self.status(self.STATUS_ERROR, 'NOT CONNECTED');
 
 			if (self.pollingActive === 1) {
 				self.errorCount++;
@@ -588,11 +595,12 @@ class instance extends instance_skel {
 			}
 		}
 		else {
+			self.status(self.STATUS_OK);
+
 			if ( Array.isArray(result) ) {
 				for (var key in result) {
 					switch(key) {
 						case 'DevTable':
-							self.status(self.STATUS_OK);
 							self.setupPolling();
 							break;
 						case 'Transpoprt':
