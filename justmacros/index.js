@@ -95,7 +95,11 @@ class instance extends instance_skel {
 		if (cmd.length > 0) {
 			self.system.emit('rest_get', cmd, function (err, result) {
 				if (err !== null) {
-					self.log('error', 'LUA Request failed');
+					self.log('error', 'LUA GET failed (' + result.error.code + ')');
+					self.status(self.STATUS_ERROR, result.error.code);
+				}
+				else {
+					self.status(self.STATUS_OK);
 				}
 			});
 		}
