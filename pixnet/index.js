@@ -16,7 +16,7 @@ class instance extends instance_skel {
 	 *
 	 * @param {EventEmitter} system - the brains of the operation
 	 * @param {string} id - the instance ID
-	 * @param {array} config - saved user configuration parameters
+	 * @param {Object} config - saved user configuration parameters
 	 * @since 1.0.0
 	 */
 	constructor(system, id, config) {
@@ -252,7 +252,7 @@ class instance extends instance_skel {
 	/**
 	 * Executes the provided action.
 	 *
-	 * @param {Array} action - the action to be executed
+	 * @param {Object} action - the action to be executed
 	 * @public
 	 * @since 1.0.0
 	 */
@@ -383,9 +383,9 @@ class instance extends instance_skel {
 	/**
 	 * Processes a feedback state.
 	 *
-	 * @param {Array} feedback - the feedback type to process
-	 * @param {Array} bank - the bank this feedback is associated with
-	 * @returns {Array} feedback information for the bank
+	 * @param {Object} feedback - the feedback type to process
+	 * @param {Object} bank - the bank this feedback is associated with
+	 * @returns {Object} feedback information for the bank
 	 * @public
 	 * @since 1.0.0
 	 */
@@ -569,7 +569,7 @@ class instance extends instance_skel {
 	 * INTERNAL: Callback for REST calls to process the return
 	 *
 	 * @param {?boolean} err - null if a normal result, true if there was an error
-	 * @param {Array} result - data: & response: if normal; error: if error
+	 * @param {Object} result - data: & response: if normal; error: if error
 	 * @private
 	 * @since 1.0.0
 	 */
@@ -577,7 +577,7 @@ class instance extends instance_skel {
 		var self = this;
 
 		if (err !== null) {
-			if ( result.error.code instanceof String ) {
+			if ( result.error.code !== undefined ) {
 				self.log('error', result.error.code);
 			}
 			else {
@@ -638,7 +638,7 @@ class instance extends instance_skel {
 			self.testUrl,
 			{},
 			function (err, pollInstance) {
-				if (Array.isArray(pollInstance) && pollInstance.length > 0) {
+				if (pollInstance.id !== undefined) {
 					self.currentInterval = pollInstance;
 				}
 				else {
@@ -671,7 +671,7 @@ class instance extends instance_skel {
 			self.pollUrl,
 			{},
 			function (err, pollInstance) {
-				if (Array.isArray(pollInstance) && pollInstance.length > 0) {
+				if (pollInstance.id !== undefined) {
 					self.currentInterval = pollInstance;
 					self.pollingActive = 1;
 				}
@@ -709,7 +709,7 @@ class instance extends instance_skel {
 	/**
 	 * Process an updated configuration array
 	 *
-	 * @param {Array} config - the new configuration
+	 * @param {Object} config - the new configuration
 	 * @public
 	 * @since 1.0.0
 	 */
