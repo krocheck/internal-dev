@@ -117,7 +117,7 @@ class instance extends instance_skel {
 	 * Setup the actions.
 	 *
 	 * @param {EventEmitter} system - the brains of the operation
-	 * @public
+	 * @access public
 	 * @since 1.0.0
 	 */
 	actions(system) {
@@ -253,7 +253,7 @@ class instance extends instance_skel {
 	 * Executes the provided action.
 	 *
 	 * @param {Object} action - the action to be executed
-	 * @public
+	 * @access public
 	 * @since 1.0.0
 	 */
 	action(action) {
@@ -317,7 +317,7 @@ class instance extends instance_skel {
 	 * Creates the configuration fields for web config.
 	 *
 	 * @returns {Array} the config fields
-	 * @public
+	 * @access public
 	 * @since 1.0.0
 	 */
 	config_fields() {
@@ -370,7 +370,7 @@ class instance extends instance_skel {
 	/**
 	 * Clean up the instance before it is destroyed.
 	 *
-	 * @public
+	 * @access public
 	 * @since 1.0.0
 	 */
 	destroy() {
@@ -386,7 +386,7 @@ class instance extends instance_skel {
 	 * @param {Object} feedback - the feedback type to process
 	 * @param {Object} bank - the bank this feedback is associated with
 	 * @returns {Object} feedback information for the bank
-	 * @public
+	 * @access public
 	 * @since 1.0.0
 	 */
 	feedback(feedback, bank) {
@@ -411,7 +411,7 @@ class instance extends instance_skel {
 	 * Main initialization function called once the module
 	 * is OK to start doing things.
 	 *
-	 * @public
+	 * @access public
 	 * @since 1.0.0
 	 */
 	init() {
@@ -425,7 +425,7 @@ class instance extends instance_skel {
 	/**
 	 * INTERNAL: initialize feedbacks
 	 *
-	 * @private
+	 * @access protected
 	 * @since 1.0.0
 	 */
 	initFeedbacks() {
@@ -497,7 +497,7 @@ class instance extends instance_skel {
 	/**
 	 * INTERNAL: initialize presets
 	 *
-	 * @private
+	 * @access protected
 	 * @since 1.0.0
 	 */
 	initPresets() {
@@ -510,7 +510,7 @@ class instance extends instance_skel {
 	/**
 	 * INTERNAL: initialize variables
 	 *
-	 * @private
+	 * @access protected
 	 * @since 1.0.0
 	 */
 	initVariables() {
@@ -522,7 +522,7 @@ class instance extends instance_skel {
 	 * INTERNAL: process the configuration data and setup the module.
 	 * Abstracted due to different call points needed within the class.
 	 *
-	 * @private
+	 * @access protected
 	 * @since 1.0.0
 	 */
 	processConfig() {
@@ -570,7 +570,7 @@ class instance extends instance_skel {
 	 *
 	 * @param {?boolean} err - null if a normal result, true if there was an error
 	 * @param {Object} result - data: & response: if normal; error: if error
-	 * @private
+	 * @access protected
 	 * @since 1.0.0
 	 */
 	processResult(err, result) {
@@ -621,7 +621,7 @@ class instance extends instance_skel {
 	 * the device to see if its there.  This uses a longer interval so we're
 	 * not firing a ton of poll calls to a non-responsive device.
 	 *
-	 * @private
+	 * @access protected
 	 * @since 1.0.0
 	 */
 	setupConnectivtyTester() {
@@ -654,7 +654,7 @@ class instance extends instance_skel {
 	/**
 	 * INTERNAL: uses rest_poll to create an interval to run the active polling.
 	 *
-	 * @private
+	 * @access protected
 	 * @since 1.0.0
 	 */
 	setupPolling() {
@@ -689,7 +689,7 @@ class instance extends instance_skel {
 	 * INTERNAL: prior to starting active polling this will fire a bunch of rest
 	 * calls to get the feedback up to date.
 	 *
-	 * @private
+	 * @access protected
 	 * @since 1.0.0
 	 */
 	syncState() {
@@ -710,7 +710,7 @@ class instance extends instance_skel {
 	 * Process an updated configuration array
 	 *
 	 * @param {Object} config - the new configuration
-	 * @public
+	 * @access public
 	 * @since 1.0.0
 	 */
 	updateConfig(config) {
@@ -721,6 +721,6 @@ class instance extends instance_skel {
 	}
 }
 
-instance_skel.extendedBy(instance);
+//instance_skel.extendedBy(instance);
 
 exports = module.exports = instance;

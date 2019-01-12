@@ -20,16 +20,16 @@ function instance(system, id, config) {
 }
 
 instance.prototype.CONFIG_MODEL = {
-	0: { id: 0, label: 'Auto Detect',          inputs: 8,  auxes: 3, MEs: 1, USKs: 1, DSKs: 2 },
-	1: { id: 1, label: 'TV Studio',            inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2 },
-	2: { id: 2, label: '1 ME Production',      inputs: 8,  auxes: 3, MEs: 1, USKs: 4, DSKs: 2 },
-	3: { id: 3, label: '2 ME Production',      inputs: 16, auxes: 6, MEs: 2, USKs: 4, DSKs: 2 },
-	4: { id: 4, label: 'Production Studio 4K', inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2 },
-	5: { id: 5, label: '1 ME Production 4K',   inputs: 10, auxes: 3, MEs: 1, USKs: 4, DSKs: 2 },
-	6: { id: 6, label: '2 ME Production 4K',   inputs: 20, auxes: 6, MEs: 2, USKs: 2, DSKs: 2 },
-	7: { id: 7, label: '4 ME Broadcast 4K',    inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2 },
-	8: { id: 8, label: 'TV Studio HD',         inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2 },
-	//9: { id: 9, label: '4ME?',                 inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2 }
+	0: { id: 0, label: 'Default',    inputs: 8,  auxes: 3, MEs: 1, USKs: 1, DSKs: 2 },
+	1: { id: 1, label: 'TVS',        inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2 },
+	2: { id: 2, label: 'OneME',      inputs: 8,  auxes: 3, MEs: 1, USKs: 4, DSKs: 2 },
+	3: { id: 3, label: 'TwoME',      inputs: 16, auxes: 6, MEs: 2, USKs: 4, DSKs: 2 },
+	4: { id: 4, label: 'PS4K',       inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2 },
+	5: { id: 5, label: 'OneMEPS4K',  inputs: 10, auxes: 3, MEs: 1, USKs: 4, DSKs: 2 },
+	6: { id: 6, label: 'TwoMEPS4K',  inputs: 20, auxes: 6, MEs: 2, USKs: 2, DSKs: 2 },
+	7: { id: 7, label: 'FourMEBS4K', inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2 },
+	8: { id: 8, label: 'TVSHD',      inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2 },
+	9: { id: 9, label: '4ME?',       inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2 },
 };
 
 instance.prototype.init = function() {
@@ -575,13 +575,6 @@ instance.prototype.config_fields = function () {
 			label:   'Target IP',
 			width:   6,
 			regex:   self.REGEX_IP
-		},
-		{
-			type:    'dropdown',
-			id:      'model',
-			label:   'Model',
-			choices: self.CONFIG_MODEL,
-			default: 0
 		}
 	]
 };

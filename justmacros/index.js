@@ -33,7 +33,7 @@ class instance extends instance_skel {
 	 * Setup the actions.
 	 *
 	 * @param {EventEmitter} system - the brains of the operation
-	 * @public
+	 * @access public
 	 * @since 1.0.0
 	 */
 	actions(system) {
@@ -73,7 +73,7 @@ class instance extends instance_skel {
 	 * Executes the provided action.
 	 *
 	 * @param {Object} action - the action to be executed
-	 * @public
+	 * @access public
 	 * @since 1.0.0
 	 */
 	action(action) {
@@ -112,7 +112,7 @@ class instance extends instance_skel {
 	 * Creates the configuration fields for web config.
 	 *
 	 * @returns {Array} the config fields
-	 * @public
+	 * @access public
 	 * @since 1.0.0
 	 */
 	config_fields () {
@@ -132,7 +132,7 @@ class instance extends instance_skel {
 	/**
 	 * Clean up the instance before it is destroyed.
 	 *
-	 * @public
+	 * @access public
 	 * @since 1.0.0
 	 */
 	destroy() {
@@ -144,7 +144,7 @@ class instance extends instance_skel {
 	 * Main initialization function called once the module
 	 * is OK to start doing things.
 	 *
-	 * @public
+	 * @access public
 	 * @since 1.0.0
 	 */
 	init() {
@@ -160,7 +160,7 @@ class instance extends instance_skel {
 	 * Process an updated configuration array
 	 *
 	 * @param {Object} config - the new configuration
-	 * @public
+	 * @access public
 	 * @since 1.0.0
 	 */
 	updateConfig(config) {
@@ -170,6 +170,6 @@ class instance extends instance_skel {
 	}
 }
 
-instance_skel.extendedBy(instance);
+//instance_skel.extendedBy(instance);
 
 exports = module.exports = instance;
