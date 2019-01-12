@@ -77,12 +77,7 @@ class instance extends instance_skel {
 			{ id: 'KeyRelease',         label: 'Release' }
 		];
 
-		self.CHOICES_MODEL = [
-			{ id: '250', label: 'Video Devices PIX 250i' },
-			{ id: '260', label: 'Video Devices PIX 260i' },
-			{ id: '270', label: 'Video Devices PIX 270i' },
-			{ id: '970', label: 'Sound Devices 970' }
-		];
+		self.CHOICES_MODEL = Object.values(self.CONFIG_MODEL);
 
 		self.CHOICES_PLAYBACKSPEED = [
 			{ id: 'PlayX2',  label: 'x2' },
@@ -128,7 +123,14 @@ class instance extends instance_skel {
 			self.log('error', 'No model selected.  Setting as PIX 270i temporarily.');
 		}
 
-		self.system.emit('instance_actions', self.id, {
+		self.CHOICES_DRIVELIST = [{ id: '1', label: 'D1' },{ id: '2', label: 'D2' }];
+
+		if ( self.currentModel.id > 250 ) {
+			self.CHOICES_DRIVELIST.push( { id: '3', label: 'D3' } );
+			self.CHOICES_DRIVELIST.push( { id: '4', label: 'D4' } );
+		}
+
+		var actions = {
 			'play':              { label:   'Play' },
 			'stop':              { label:   'Stop' },
 			'rec':               { label:   'Record' },
@@ -246,7 +248,9 @@ class instance extends instance_skel {
 					}
 				]
 			}
-		});
+		};
+
+		self.system.emit('instance_actions', self.id, actions);
 	}
 
 	/**
@@ -323,7 +327,7 @@ class instance extends instance_skel {
 	config_fields() {
 		var self = this;
 
-		return [
+		var fields = [
 			{
 				type:    'textinput',
 				id:      'host',
@@ -364,7 +368,9 @@ class instance extends instance_skel {
 				regex:   '/^([1-8][0-9]{2}|9[0-8][0-9]|99[0-9]|[1-4][0-9]{3}|5000)$/',
 				default: '500'
 			}
-		]
+		];
+
+		return fields;
 	};
 
 	/**
@@ -529,9 +535,9 @@ class instance extends instance_skel {
 		var self = this;
 		self.system.emit('rest_poll_destroy', self.id);
 
-		self.pollUrl         = encodeURI('http://' + self.config.host + '/sounddevices/update');
+		self.pollUrl = encodeURI('http://' + self.config.host + '/sounddevices/update');
 		/* Test URL cannot be changed without also updating processResult() to account for different test response */
-		self.testUrl         = encodeURI('http://' + self.config.host + '/sounddevices/devtbl');
+		self.testUrl = encodeURI('http://' + self.config.host + '/sounddevices/devtbl');
 
 		self.status(self.STATUS_UNKNOWN);
 
@@ -543,13 +549,6 @@ class instance extends instance_skel {
 		else {
 			self.currentModel = self.CONFIG_MODEL[270];
 			self.log('error', 'No model selected.  Setting as PIX 270i temporarily.');
-		}
-
-		self.CHOICES_DRIVELIST = [{ id: '1', label: 'D1' },{ id: '2', label: 'D2' }];
-
-		if ( self.currentModel.id > 250 ) {
-			self.CHOICES_DRIVELIST.push( { id: '3', label: 'D3' } );
-			self.CHOICES_DRIVELIST.push( { id: '4', label: 'D4' } );
 		}
 
 		self.initPresets();
