@@ -45,7 +45,12 @@ instance.prototype.init = function() {
 	debug = self.debug;
 	log = self.log;
 
-	self.model = self.CONFIG_MODEL[self.config.modelID];
+	if (self.config.modelID !== undefined){
+		self.model = self.CONFIG_MODEL[self.config.modelID];
+	}
+	else {
+		self.model = self.CONFIG_MODEL[0];
+	}
 
 	self.status(self.STATE_UNKNOWN);
 
