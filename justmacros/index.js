@@ -82,18 +82,18 @@ class instance extends instance_skel {
 		var base = 'http://' + self.config.host + ':' + self.port + '/EXECUTELUA:';
 
 		if (action.action == 'luaFunc') {
-			if ( action.options.func !== undefined && action.options.func.length > 0 ) {
+			if ( action.options.func != '' ) {
 				cmd = base + action.options.func + '(' + action.options.params + ');';
 			}
 		}
 		else if (action.action == 'luaScript') {
-			if ( action.options.script !== undefined && action.options.script.length > 0 ) {
+			if ( action.options.script != '' ) {
 				cmd = base + 'ScriptExecute(' + action.options.script + ');';
 			}
 		}
 
 		if (cmd.length > 0) {
-			self.system.emit('rest_get', action.options.url, function (err, result) {
+			self.system.emit('rest_get', cmd, function (err, result) {
 				if (err !== null) {
 					self.log('error', 'LUA Request failed');
 				}
