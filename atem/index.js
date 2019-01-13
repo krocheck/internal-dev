@@ -313,14 +313,14 @@ class instance extends instance_skel {
 						type:    'dropdown',
 						id:      'mvId',
 						label:   'MV',
-						default: 1,
+						default: 0,
 						choices: self.CHOICES_MV.slice(0, self.model.MVs)
 					},
 					{
 						type:    'dropdown',
 						id:      'layout',
 						label:   'Layout',
-						default: 'top',
+						default: 0,
 						choices: self.CHOICES_MVLAYOUT
 					}
 				]
@@ -332,21 +332,21 @@ class instance extends instance_skel {
 						type:    'dropdown',
 						id:      'mvId',
 						label:   'MV',
-						default: 1,
+						default: 0,
 						choices: self.CHOICES_MV.slice(0, self.model.MVs)
 					},
 					{
 						type:    'dropdown',
 						id:      'windowIndex',
 						label:   'Window #',
-						default: 'top',
+						default: 3,
 						choices: self.CHOICES_MVWINDOW
 					},
 					{
 						type:    'dropdown',
 						id:      'source',
 						label:   'Source',
-						default: 'top',
+						default: 0,
 						choices: self.CHOICES_INPUTS
 					}
 				]
@@ -455,12 +455,12 @@ class instance extends instance_skel {
 				id:      'info',
 				width:   12,
 				label:   'Information',
-				value:   'Companion is able to re-route the Program and Preview multi Vvewer windows via the ATEM API.  By default this is disabled since there is no way through the ATEM software to change them back to their defaults.  These windows can be unlocked below, <b>but do so with caution!</b>'
+				value:   'Companion is able to re-route the Program and Preview multi viewer windows via the ATEM API.  By default this is disabled since there is no way through the ATEM software to change them back to their defaults.  These windows can be unlocked below, <b>but do so with caution!</b>'
 			},
 			{
 				type:    'dropdown',
 				id:      'mvUnlock',
-				label:   'Unlock PGM/PV Multi Viewer Windows?',
+				label:   'Unlock PGM / PV Multi Viewer Windows?',
 				choices: self.CHOICES_YESNO_BOOLEAN,
 				default: false
 			}
@@ -973,7 +973,7 @@ class instance extends instance_skel {
 				bank: {
 					style:   'text',
 					text:    'Macro ' + i,
-					size:    '18',
+					size:    'auto',
 					color:   self.rgb(255,255,255),
 					bgcolor: self.rgb(0,0,0)
 				},
@@ -1232,7 +1232,7 @@ class instance extends instance_skel {
 			debug('ATEM Model: ' + self.model.id);
 
 			// This is a funky test, but necessary
-			if ((!live && self.deviceModel > 0 && modelID > 0 && modelID <> self.deviceModel) || (live && self.config.modelID > 0 && self.deviceModel <> self.config.modelID) {
+			if ((!live && self.deviceModel > 0 && modelID > 0 && modelID != self.deviceModel) || (live && self.config.modelID > 0 && self.deviceModel != self.config.modelID)) {
 				self.log('error', 'Connected to a ' + self.deviceName + ', but instance is configured for ' + self.model.label + '.  Change instance to \'Auto Detect\' or the appropriate model to ensure stability.');
 			}
 
