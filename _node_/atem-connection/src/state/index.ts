@@ -8,9 +8,6 @@ import { SettingsState } from './settings'
 
 export class AtemState {
 	info = new DeviceInfo()
-	settings = {
-		videoMode: 0
-	}
 	video: AtemVideoState = new AtemVideoState()
 	channels: Array<{
 		name: string
