@@ -25,7 +25,7 @@ export class MacroActionCommand extends AbstractCommand {
 			case MacroAction.Stop :
 			case MacroAction.StopRecord :
 			case MacroAction.InsertUserWait :
-			case MacroAction.Delete :
+			case MacroAction.Continue :
 				buffer[4] = 0xff
 				buffer[5] = 0xff
 				break
