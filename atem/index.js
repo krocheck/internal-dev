@@ -402,7 +402,7 @@ class instance extends instance_skel {
 		else if (feedback.type == 'macro') {
 			var state = self.states['macro_' + feedback.options.macroIndex];
 
-			if (state.macroIndex == (parseInt(feedback.options.macroIndex)-1)) {
+			if (state.macroIndex == (parseInt(feedback.options.macroIndex))) {
 				if (( feedback.options.state == 'isRunning' && state.isRunning == 1 ) ||
 					( feedback.options.state == 'isWaiting' && state.isWaiting == 1 )) {
 					return { color: feedback.options.fg, bgcolor: feedback.options.bg };
@@ -439,8 +439,10 @@ class instance extends instance_skel {
 		};
 
 		self.CHOICES_MACROSTATE = [
-			{ id: 'isRunning', label: 'Is Running' },
-			{ id: 'isWaiting', label: 'Is Waiting' }
+			{ id: 'isRunning',   label: 'Is Running' },
+			{ id: 'isWaiting',   label: 'Is Waiting' },
+			{ id: 'isRecording', label: 'Is Recording' },
+			{ id: 'isUsed'   ,   label: 'Is Used' }
 		];
 
 		self.CHOICES_MODEL = Object.values(self.CONFIG_MODEL);
@@ -849,13 +851,13 @@ class instance extends instance_skel {
 		}
 
 		// Macros
-		for (var i = 0; i < self.model.macros; ++i) {
+		for (var i = 1; i <= self.model.macros; i++) {
 			presets.push({
 				category: 'MACROS',
-				label: 'Macro ' + (i+1),
+				label: 'Macro ' + i,
 				bank: {
 					style:   'text',
-					text:    'Macro ' + (i+1),
+					text:    'Macro ' + i,
 					size:    '18',
 					color:   self.rgb(255,255,255),
 					bgcolor: self.rgb(0,0,0)
@@ -866,7 +868,7 @@ class instance extends instance_skel {
 						options: {
 							bg:         self.rgb(238,238,0),
 							fg:         self.rgb(255,255,255),
-							macroIndex: (i+1),
+							macroIndex: i,
 							state:      'isWaiting'
 						}
 					},
@@ -875,7 +877,7 @@ class instance extends instance_skel {
 						options: {
 							bg:         self.rgb(0,238,0),
 							fg:         self.rgb(255,255,255),
-							macroIndex: (i+1),
+							macroIndex: i,
 							state:      'isRunning'
 						}
 					}
@@ -884,7 +886,7 @@ class instance extends instance_skel {
 					{
 						action: 'macrorun',
 						options: {
-							macro: (i+1)
+							macro: i
 						}
 					}
 				]
@@ -907,8 +909,17 @@ class instance extends instance_skel {
 
 		// Initialize macro states (not the best spot for it, but it works)
 		// Eventually will include macro name variables
-		for (var i = 0; i < self.model.macros; ++i) {
-			self.states['macro_'+(i+1)] = { isRunning: 0, isWaiting: 0, loop: 0, macroIndex: i };
+		for (var i = 1; i <= self.model.macros; i++) {
+			self.states['macro_' + i] = {
+				macroIndex:  i,
+				isRunning:   0,
+				isWaiting:   0,
+				isUsed:      0,
+				isRecording: 0,
+				loop:        0,
+				name:        '',
+				description: ''
+			};
 		}
 
 		for (var i = 0; i < self.model.MEs; ++i) {
@@ -1029,7 +1040,11 @@ class instance extends instance_skel {
 
 			case 'MacroRunStatusCommand':
 				if (state.properties.macroIndex >= 0 && self.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
-					self.states['macro_'+(self.properties.macroIndex+1)] = state.properties;
+					var macroIndex = self.properties.macroIndex+1;
+					self.states['macro_'+index].macroIndex = macroIndex;
+					self.states['macro_'+index].isRunning  = state.properties.isRunning;
+					self.states['macro_'+index].isWaiting  = state.properties.isWaiting;
+					self.states['macro_'+index].loop       = state.properties.loop;
 					self.checkFeedbacks('macro');
 				}
 				break;

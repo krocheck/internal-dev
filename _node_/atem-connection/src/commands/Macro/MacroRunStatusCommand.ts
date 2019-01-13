@@ -1,15 +1,11 @@
 import AbstractCommand from '../AbstractCommand'
 import { AtemState } from '../../state'
+import { MacroPlayerState } from '../../state/macro'
 
 export class MacroRunStatusCommand extends AbstractCommand {
 	rawName = 'MRPr'
 
-	properties: {
-		isRunning: boolean
-		isWaiting: boolean
-		loop: boolean
-		macroIndex: number
-	}
+	properties: MacroPlayerState
 
 	deserialize (rawCommand: Buffer) {
 		this.properties = {

@@ -15,10 +15,12 @@ import * as AudioState from './state/audio'
 import * as MediaState from './state/media'
 import * as InfoState from './state/info'
 import * as InputState from './state/input'
+import * as MacroState from './state/macro'
 export {
 	VideoState,
 	AudioState,
 	MediaState,
 	InfoState,
-	InputState
+	InputState,
+	MacroState
 }
