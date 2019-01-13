@@ -34,7 +34,7 @@ export class MultiViewerSourceCommand extends AbstractCommand {
 
 	applyToState (state: AtemState) {
 		state.settings.multiViewerSource[this.index] = {
-			...state.settings.multiViewerProperties[this.index],
+			...state.settings.multiViewerSource[this.index],
 			...this.properties
 		}
 	}
