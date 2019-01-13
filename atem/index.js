@@ -13,7 +13,7 @@ var log;
 class instance extends instance_skel {
 
 	/**
-	 * Create an instance of a PIXNET module.
+	 * Create an instance of an ATEM module.
 	 *
 	 * @param {EventEmitter} system - the brains of the operation
 	 * @param {string} id - the instance ID
@@ -24,9 +24,74 @@ class instance extends instance_skel {
 		super(system, id, config);
 		var self = this;
 
-		self.model  = {};
-		self.states = {};
-		self.inputs = {};
+		self.model       = {};
+		self.states      = {};
+		self.inputs      = {};
+		self.deviceName  = '';
+		self.deviceModel = 0;
+
+		self.CONFIG_MODEL = {
+			0: { id: 0, label: 'Auto Detect',          inputs: 8,  auxes: 3, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
+			1: { id: 1, label: 'TV Studio',            inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
+			2: { id: 2, label: '1 ME Production',      inputs: 8,  auxes: 3, MEs: 1, USKs: 4, DSKs: 2, macros: 100 },
+			3: { id: 3, label: '2 ME Production',      inputs: 16, auxes: 6, MEs: 2, USKs: 4, DSKs: 2, macros: 100 },
+			4: { id: 4, label: 'Production Studio 4K', inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
+			5: { id: 5, label: '1 ME Production 4K',   inputs: 10, auxes: 3, MEs: 1, USKs: 4, DSKs: 2, macros: 100 },
+			6: { id: 6, label: '2 ME Production 4K',   inputs: 20, auxes: 6, MEs: 2, USKs: 2, DSKs: 2, macros: 100 },
+			7: { id: 7, label: '4 ME Broadcast 4K',    inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, macros: 100 },
+			8: { id: 8, label: 'TV Studio HD',         inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
+			//9: { id: 9, label: '4ME?',                 inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, macros: 100 }
+		};
+
+		self.CHOICES_AUXES = [
+			{ id: 0, label: '1' },
+			{ id: 1, label: '2' },
+			{ id: 2, label: '3' },
+			{ id: 3, label: '4' },
+			{ id: 4, label: '5' },
+			{ id: 5, label: '6' }
+		];
+
+		self.CHOICES_DSKS = [
+			{ id: 0, label: '1' },
+			{ id: 1, label: '2' }
+		];
+
+		self.CHOICES_KEYTRANS = [
+			{ id: 'true',   label: 'On Air', },
+			{ id: 'false',  label: 'Off', },
+			{ id: 'toggle', label: 'Toggle', }
+		];
+
+		self.CHOICES_MACROSTATE = [
+			{ id: 'isRunning',   label: 'Is Running' },
+			{ id: 'isWaiting',   label: 'Is Waiting' },
+			{ id: 'isRecording', label: 'Is Recording' },
+			{ id: 'isUsed'   ,   label: 'Is Used' }
+		];
+
+		self.CHOICES_ME = [
+			{ id: 0, label: 'M/E 1' },
+			{ id: 1, label: 'M/E 2' },
+			{ id: 2, label: 'M/E 3' },
+			{ id: 3, label: 'M/E 4' }
+		];
+
+		self.CHOICES_MODEL = Object.values(self.CONFIG_MODEL);
+
+		self.CHOICES_USKS = [
+			{ id: 0, label: '1' },
+			{ id: 1, label: '2' },
+			{ id: 2, label: '3' },
+			{ id: 3, label: '4' }
+		];
+
+		if (self.config.modelID !== undefined){
+			self.setAtemModel(self.config.modelID);
+		}
+		else {
+			self.setAtemModel(0);
+		}
 
 		// super-constructor
 		//instance_skel.apply(this, arguments);
@@ -43,7 +108,7 @@ class instance extends instance_skel {
 	 */
 	actions(system) {
 		var self = this;
-
+//CHOICES_INPUTS.sort(function(a, b){return a.id - b.id}); 
 		self.CHOICES_INPUTS = [
 			{ label: 'Black', id: 0 }
 		];
@@ -90,34 +155,6 @@ class instance extends instance_skel {
 			self.CHOICES_INPUTS.push({ label: 'ME 4 Program', id: 10040 });
 			self.CHOICES_INPUTS.push({ label: 'ME 4 Preview', id: 10041 });
 		}
-
-		self.CHOICES_AUXES = [
-			{ label: '1', id: 0 },
-			{ label: '2', id: 1 },
-			{ label: '3', id: 2 },
-			{ label: '4', id: 3 },
-			{ label: '5', id: 4 },
-			{ label: '6', id: 5 },
-		];
-
-		self.CHOICES_USKS = [
-			{ label: '1', id: 0 },
-			{ label: '2', id: 1 },
-			{ label: '3', id: 2 },
-			{ label: '4', id: 3 },
-		];
-
-		self.CHOICES_DSKS = [
-			{ label: '1', id: 0 },
-			{ label: '2', id: 1 },
-		];
-
-		self.CHOICES_ME = [
-			{ label: 'M/E 1', id: 0 },
-			{ label: 'M/E 2', id: 1 },
-			{ label: 'M/E 3', id: 2 },
-			{ label: 'M/E 4', id: 3 }
-		];
 
 		self.system.emit('instance_actions', self.id, {
 			'program': {
@@ -185,7 +222,7 @@ class instance extends instance_skel {
 						type: 'dropdown',
 						label: 'On Air',
 						default: 'true',
-						choices: [ { label: 'On Air', id: 'true' }, { label: 'Off', id: 'false' }, { label: 'Toggle', id: 'toggle' }]
+						choices: self.CHOICES_KEYTRANS
 					},
 					{
 						type: 'dropdown',
@@ -211,7 +248,7 @@ class instance extends instance_skel {
 						type: 'dropdown',
 						label: 'On Air',
 						default: 'true',
-						choices: [ { label: 'On Air', id: 'true' }, { label: 'Off', id: 'false' }, { label: 'Toggle', id: 'toggle' }]
+						choices: self.CHOICES_KEYTRANS
 					},
 					{
 						type: 'dropdown',
@@ -404,7 +441,9 @@ class instance extends instance_skel {
 
 			if (state.macroIndex == (parseInt(feedback.options.macroIndex))) {
 				if (( feedback.options.state == 'isRunning' && state.isRunning == 1 ) ||
-					( feedback.options.state == 'isWaiting' && state.isWaiting == 1 )) {
+					( feedback.options.state == 'isWaiting' && state.isWaiting == 1 ) ||
+					( feedback.options.state == 'isRecording' && state.isRecording == 1 ) ||
+					( feedback.options.state == 'isUsed' && state.isUsed == 1 )) {
 					return { color: feedback.options.fg, bgcolor: feedback.options.bg };
 				}
 			}
@@ -424,35 +463,6 @@ class instance extends instance_skel {
 
 		debug = self.debug;
 		log = self.log;
-
-		self.CONFIG_MODEL = {
-			0: { id: 0, label: 'Auto Detect',          inputs: 8,  auxes: 3, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
-			1: { id: 1, label: 'TV Studio',            inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
-			2: { id: 2, label: '1 ME Production',      inputs: 8,  auxes: 3, MEs: 1, USKs: 4, DSKs: 2, macros: 100 },
-			3: { id: 3, label: '2 ME Production',      inputs: 16, auxes: 6, MEs: 2, USKs: 4, DSKs: 2, macros: 100 },
-			4: { id: 4, label: 'Production Studio 4K', inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
-			5: { id: 5, label: '1 ME Production 4K',   inputs: 10, auxes: 3, MEs: 1, USKs: 4, DSKs: 2, macros: 100 },
-			6: { id: 6, label: '2 ME Production 4K',   inputs: 20, auxes: 6, MEs: 2, USKs: 2, DSKs: 2, macros: 100 },
-			7: { id: 7, label: '4 ME Broadcast 4K',    inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, macros: 100 },
-			8: { id: 8, label: 'TV Studio HD',         inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
-			//9: { id: 9, label: '4ME?',                 inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2 }
-		};
-
-		self.CHOICES_MACROSTATE = [
-			{ id: 'isRunning',   label: 'Is Running' },
-			{ id: 'isWaiting',   label: 'Is Waiting' },
-			{ id: 'isRecording', label: 'Is Recording' },
-			{ id: 'isUsed'   ,   label: 'Is Used' }
-		];
-
-		self.CHOICES_MODEL = Object.values(self.CONFIG_MODEL);
-
-		if (self.config.modelID !== undefined){
-			self.model = self.CONFIG_MODEL[self.config.modelID];
-		}
-		else {
-			self.model = self.CONFIG_MODEL[0];
-		}
 
 		self.status(self.STATE_UNKNOWN);
 
@@ -1020,34 +1030,79 @@ class instance extends instance_skel {
 				break;
 
 			case 'ProductIdentifierCommand':
-				// Testing we have a valid model and that instance is set for auto-detect OR is set for the same model as connected
-				if (state.properties.model > 0 && (self.config.modelID == 0 || (self.config.modelID > 0 && self.config.modelID == state.properties.model))) {
-					if ( self.config.modelID == 0) {
-						self.model = self.CONFIG_MODEL[state.properties.model];
-					}
+				self.deviceModel = sate.properties.model;
+				self.deviceName = state.properties.deviceName;
+				self.setAtemModel(self.deviceModel);
+				break;
 
-					debug('ATEM Model: ' + self.model.id);
-					self.deviceName = state.properties.deviceName;
-				}
-				else if (state.properties.model > 0) {
-					self.log('error', 'Connected to a ' + state.properties.deviceName + ', but instance is configured for ' + this.model.label + '.  Change instance to \'Auto Detect\' or the appropriate model to ensure stability.');
-					debug('ATEM Model: ' + state.properties.model);
-				}
-				else {
-					debug('ATEM Model: ' + state.properties.model + 'NOT FOUND');
+			case 'MacroPropertiesCommand':
+				if (state.properties.macroIndex >= 0 && self.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
+					var macroIndex = self.properties.macroIndex+1;
+					//self.states['macro_'+macroIndex].macroIndex  = macroIndex;
+					self.states['macro_'+macroIndex].description = state.properties.description;
+					self.states['macro_'+macroIndex].isUsed      = state.properties.isUsed;
+					self.states['macro_'+macroIndex].name        = state.properties.name;
+					self.checkFeedbacks('macro');
 				}
 				break;
 
 			case 'MacroRunStatusCommand':
 				if (state.properties.macroIndex >= 0 && self.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
 					var macroIndex = self.properties.macroIndex+1;
-					self.states['macro_'+index].macroIndex = macroIndex;
-					self.states['macro_'+index].isRunning  = state.properties.isRunning;
-					self.states['macro_'+index].isWaiting  = state.properties.isWaiting;
-					self.states['macro_'+index].loop       = state.properties.loop;
+					//self.states['macro_'+macroIndex].macroIndex = macroIndex;
+					self.states['macro_'+macroIndex].isRunning  = state.properties.isRunning;
+					self.states['macro_'+macroIndex].isWaiting  = state.properties.isWaiting;
+					self.states['macro_'+macroIndex].loop       = state.properties.loop;
 					self.checkFeedbacks('macro');
 				}
 				break;
+
+			case 'MacroRecordStatusCommand':
+				if (state.properties.macroIndex >= 0 && self.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
+					var macroIndex = self.properties.macroIndex+1;
+					//self.states['macro_'+macroIndex].macroIndex  = macroIndex;
+					self.states['macro_'+macroIndex].isRecording = state.properties.isRecording;
+					self.checkFeedbacks('macro');
+				}
+				break;
+		}
+	}
+
+	/**
+	 * INTERNAL: Does a bunch of setup and cleanup then we switch models
+	 *
+	 * @param {number} modelID - the new model
+	 * @access protected
+	 * @since 1.1.0
+	 */
+	setAtemModel(modelID) {
+		var self = this;
+
+		// This is a little ugly.  May be able to find a better logic tree in the future
+		if (self.CONFIG_MODEL[modelID] !== undefined) {
+
+			if (modelID == 0) {
+				self.model = self.CONFIG_MODEL[modelID];
+				debug('ATEM Model: ' + self.model.id);
+			}
+			else if (self.config.modelID == 0 && modelID > 0) {
+				self.model = self.CONFIG_MODEL[modelID];
+				debug('ATEM Model: ' + self.model.id);
+			}
+			else if (self.config.modelID > 0 && self.config.modelID == modelID)) {
+				self.model = self.CONFIG_MODEL[modelID];
+				debug('ATEM Model: ' + self.model.id);
+			}
+			else if (modelID > 0) {
+				self.log('error', 'Connected to a ' + self.deviceName + ', but instance is configured for ' + self.model.label + '.  Change instance to \'Auto Detect\' or the appropriate model to ensure stability.');
+				debug('ATEM Model: ' + modelID);
+			}
+			else {
+				debug('ATEM Model: ' + modelID + 'NOT FOUND');
+			}
+		}
+		else {
+			debug('ATEM Model: ' + modelID + 'NOT FOUND');
 		}
 	}
 
@@ -1062,7 +1117,7 @@ class instance extends instance_skel {
 		if (self.config.host !== undefined) {
 
 			self.atem = new Atem({ externalLog: self.debug.bind(self) });
-			
+
 			self.atem.on('connected', function () {
 				self.status(self.STATE_OK);
 			});
@@ -1088,6 +1143,10 @@ class instance extends instance_skel {
 	updateConfig(config) {
 		var self = this;
 		self.config = config;
+
+		if (self.config.model <> self.model.id) {
+			self.setAtemModel(self.config.model);
+		}
 
 		if (self.config.host !== undefined) {
 			if (self.atem !== undefined && self.atem.socket !== undefined && self.atem.socket._socket !== undefined) {
