@@ -6,7 +6,7 @@ export interface MultiViewerPropertiesState {
 export interface MultiViewerSourceState {
 	mvID: number
 	source: number
-	window: number
+	windowIndex: number
 }
 
 export class SettingsState {

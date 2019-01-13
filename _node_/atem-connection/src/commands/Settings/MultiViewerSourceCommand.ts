@@ -1,22 +1,22 @@
 import AbstractCommand from '../AbstractCommand'
 import { AtemState } from '../../state'
-import { MultiViewerSource } from '../../state/settings'
+import { MultiViewerSourceState } from '../../state/settings'
 
 export class MultiViewerSourceCommand extends AbstractCommand {
 	rawName = 'MvIn'
-	mvID: number
+	mvId: number
 	index: number
 
-	properties: MultiViewerSource
+	properties: MultiViewerSourceState
 
-	updateProps (newProps: Partial<MultiViewerSource>) {
+	updateProps (newProps: Partial<MultiViewerSourceState>) {
 		this._updateProps(newProps)
 	}
 
 	deserialize (rawCommand: Buffer) {
 		// Storing MV1 as 0-9 and MV2 as 100-109 (just in case future MVs do >10 windows)
 		this.index = rawCommand.readUInt8(0)*100 + rawCommand.readUInt8(1)
-		this.mvID = rawCommand.readUInt8(0)
+		this.mvId = rawCommand.readUInt8(0)
 
 		this.properties = {
 			source: rawCommand.readUInt16BE(2),

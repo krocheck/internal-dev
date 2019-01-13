@@ -1,6 +1,6 @@
 import AbstractCommand from '../AbstractCommand'
 import { AtemState } from '../../state'
-import { MultiViewerProperties } from '../../state/settings'
+import { MultiViewerPropertiesState } from '../../state/settings'
 import { MultiViewerLayout } from '../../enums'
 
 export class MultiViewerPropertiesCommand extends AbstractCommand {
@@ -11,9 +11,9 @@ export class MultiViewerPropertiesCommand extends AbstractCommand {
 	rawName = 'MvPr'
 	mvId: number
 
-	properties: MultiViewerProperties
+	properties: MultiViewerPropertiesState
 
-	updateProps (newProps: Partial<MultiViewerProperties>) {
+	updateProps (newProps: Partial<MultiViewerPropertiesState>) {
 		this._updateProps(newProps)
 	}
 
