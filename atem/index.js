@@ -8,7 +8,8 @@ var log;
  *
  * @extends instance_skel
  * @since 1.0.0
- * @author Håkon Nessjøen <haakon@bitfocus.io>, Keith Rocheck <keith.rocheck@gmail.com>
+ * @author Håkon Nessjøen <haakon@bitfocus.io>
+ * @author Keith Rocheck <keith.rocheck@gmail.com>
  */
 class instance extends instance_skel {
 
@@ -31,15 +32,15 @@ class instance extends instance_skel {
 		self.deviceModel = 0;
 
 		self.CONFIG_MODEL = {
-			0: { id: 0, label: 'Auto Detect',          inputs: 8,  auxes: 3, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
-			1: { id: 1, label: 'TV Studio',            inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
-			2: { id: 2, label: '1 ME Production',      inputs: 8,  auxes: 3, MEs: 1, USKs: 4, DSKs: 2, macros: 100 },
-			3: { id: 3, label: '2 ME Production',      inputs: 16, auxes: 6, MEs: 2, USKs: 4, DSKs: 2, macros: 100 },
-			4: { id: 4, label: 'Production Studio 4K', inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
-			5: { id: 5, label: '1 ME Production 4K',   inputs: 10, auxes: 3, MEs: 1, USKs: 4, DSKs: 2, macros: 100 },
-			6: { id: 6, label: '2 ME Production 4K',   inputs: 20, auxes: 6, MEs: 2, USKs: 2, DSKs: 2, macros: 100 },
-			7: { id: 7, label: '4 ME Broadcast 4K',    inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, macros: 100 },
-			8: { id: 8, label: 'TV Studio HD',         inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, macros: 100 },
+			0: { id: 0, label: 'Auto Detect',          inputs: 8,  auxes: 3, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, macros: 100 },
+			1: { id: 1, label: 'TV Studio',            inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, macros: 100 },
+			2: { id: 2, label: '1 ME Production',      inputs: 8,  auxes: 3, MEs: 1, USKs: 4, DSKs: 2, MPs: 2, macros: 100 },
+			3: { id: 3, label: '2 ME Production',      inputs: 16, auxes: 6, MEs: 2, USKs: 4, DSKs: 2, MPs: 2, macros: 100 },
+			4: { id: 4, label: 'Production Studio 4K', inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, macros: 100 },
+			5: { id: 5, label: '1 ME Production 4K',   inputs: 10, auxes: 3, MEs: 1, USKs: 4, DSKs: 2, MPs: 2, macros: 100 },
+			6: { id: 6, label: '2 ME Production 4K',   inputs: 20, auxes: 6, MEs: 2, USKs: 2, DSKs: 2, MPs: 2, macros: 100 },
+			7: { id: 7, label: '4 ME Broadcast 4K',    inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, MPs: 4, macros: 100 },
+			8: { id: 8, label: 'TV Studio HD',         inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, macros: 100 },
 			//9: { id: 9, label: '4ME?',                 inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, macros: 100 }
 		};
 
@@ -112,48 +113,30 @@ class instance extends instance_skel {
 		self.CHOICES_INPUTS = [
 			{ label: 'Black', id: 0 }
 		];
+
 		for (var i = 1; i <= self.model.inputs; ++i) {
 			self.CHOICES_INPUTS.push({
 				label: 'Input ' + i,
 				id: i
 			});
 		}
+
 		self.CHOICES_INPUTS.push({ label: 'Bars', id: 1000 });
 		self.CHOICES_INPUTS.push({ label: 'Color 1', id: 2001 });
 		self.CHOICES_INPUTS.push({ label: 'Color 2', id: 2002 });
 
-		self.CHOICES_INPUTS.push({ label: 'Mediaplayer 1', id: 3010 });
-		self.CHOICES_INPUTS.push({ label: 'Mediaplayer 1 Key', id: 3011 });
-		self.CHOICES_INPUTS.push({ label: 'Mediaplayer 2', id: 3020 });
-		self.CHOICES_INPUTS.push({ label: 'Mediaplayer 2 Key', id: 3021 });
-
-		if (self.model.MEs >= 4) {
-			self.CHOICES_INPUTS.push({ label: 'Mediaplayer 3', id: 3030 });
-			self.CHOICES_INPUTS.push({ label: 'Mediaplayer 3 Key', id: 3031 });
-			self.CHOICES_INPUTS.push({ label: 'Mediaplayer 4', id: 3040 });
-			self.CHOICES_INPUTS.push({ label: 'Mediaplayer 4 Key', id: 3041 });
+		for(var i = 1; i <= self.model.MPs; i++) {
+			self.CHOICES_INPUTS.push({ label: 'Mediaplayer  '+ i,          id: (3000+i*10) });
+			self.CHOICES_INPUTS.push({ label: 'Mediaplayer  '+ i + ' Key', id: (3000+i*10+1) });
 		}
 
 		self.CHOICES_INPUTS.push({ label: 'Super Source', id: 6000 });
 		self.CHOICES_INPUTS.push({ label: 'Clean Feed 1', id: 7001 });
 		self.CHOICES_INPUTS.push({ label: 'Clean Feed 2', id: 7002 });
 
-		self.CHOICES_INPUTS.push({ label: 'ME 1 Program', id: 10010 });
-		self.CHOICES_INPUTS.push({ label: 'ME 1 Preview', id: 10011 });
-
-		if (self.model.MEs >= 2) {
-			self.CHOICES_INPUTS.push({ label: 'ME 2 Program', id: 10020 });
-			self.CHOICES_INPUTS.push({ label: 'ME 2 Preview', id: 10021 });
-		}
-
-		if (self.model.MEs >= 3) {
-			self.CHOICES_INPUTS.push({ label: 'ME 3 Program', id: 10030 });
-			self.CHOICES_INPUTS.push({ label: 'ME 3 Preview', id: 10031 });
-		}
-
-		if (self.model.MEs >= 4) {
-			self.CHOICES_INPUTS.push({ label: 'ME 4 Program', id: 10040 });
-			self.CHOICES_INPUTS.push({ label: 'ME 4 Preview', id: 10041 });
+		for(var i = 1; i <= self.model.MEs; i++) {
+			self.CHOICES_INPUTS.push({ label: 'ME '+ i + ' Program', id: (10000+i*10) });
+			self.CHOICES_INPUTS.push({ label: 'ME '+ i + ' Preview', id: (10000+i*10+1) });
 		}
 
 		self.system.emit('instance_actions', self.id, {
@@ -1142,11 +1125,16 @@ class instance extends instance_skel {
 	 */
 	updateConfig(config) {
 		var self = this;
-		self.config = config;
 
-		if (self.config.model <> self.model.id) {
-			self.setAtemModel(self.config.model);
+		// Basically we want to be careful about changing the model to 'Auto Detect'
+		// when the switcher is already connected and having initialized a proper model,
+		// but still need to honor manually selecting a different model than connected to.
+		if ((self.config.modelID <> config.modelID && this.deviceModel == 0) ||
+			(config.modelID > 0 && config.modelID <> this.deviceModel)) {
+			self.setAtemModel(config.modelID);
 		}
+
+		self.config = config;
 
 		if (self.config.host !== undefined) {
 			if (self.atem !== undefined && self.atem.socket !== undefined && self.atem.socket._socket !== undefined) {
