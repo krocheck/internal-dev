@@ -32,15 +32,15 @@ class instance extends instance_skel {
 		self.deviceModel = 0;
 
 		self.CONFIG_MODEL = {
-			0: { id: 0, label: 'Auto Detect',          inputs: 8,  auxes: 3, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, macros: 100 },
-			1: { id: 1, label: 'TV Studio',            inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, macros: 100 },
-			2: { id: 2, label: '1 ME Production',      inputs: 8,  auxes: 3, MEs: 1, USKs: 4, DSKs: 2, MPs: 2, macros: 100 },
-			3: { id: 3, label: '2 ME Production',      inputs: 16, auxes: 6, MEs: 2, USKs: 4, DSKs: 2, MPs: 2, macros: 100 },
-			4: { id: 4, label: 'Production Studio 4K', inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, macros: 100 },
-			5: { id: 5, label: '1 ME Production 4K',   inputs: 10, auxes: 3, MEs: 1, USKs: 4, DSKs: 2, MPs: 2, macros: 100 },
-			6: { id: 6, label: '2 ME Production 4K',   inputs: 20, auxes: 6, MEs: 2, USKs: 2, DSKs: 2, MPs: 2, macros: 100 },
-			7: { id: 7, label: '4 ME Broadcast 4K',    inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, MPs: 4, macros: 100 },
-			8: { id: 8, label: 'TV Studio HD',         inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, macros: 100 },
+			0: { id: 0, label: 'Auto Detect',          inputs: 8,  auxes: 3, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, macros: 100 },
+			1: { id: 1, label: 'TV Studio',            inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, macros: 100 },
+			2: { id: 2, label: '1 ME Production',      inputs: 8,  auxes: 3, MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, macros: 100 },
+			3: { id: 3, label: '2 ME Production',      inputs: 16, auxes: 6, MEs: 2, USKs: 4, DSKs: 2, MPs: 2, MVs: 2, macros: 100 },
+			4: { id: 4, label: 'Production Studio 4K', inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, macros: 100 },
+			5: { id: 5, label: '1 ME Production 4K',   inputs: 10, auxes: 3, MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, macros: 100 },
+			6: { id: 6, label: '2 ME Production 4K',   inputs: 20, auxes: 6, MEs: 2, USKs: 2, DSKs: 2, MPs: 2, MVs: 2, macros: 100 },
+			7: { id: 7, label: '4 ME Broadcast 4K',    inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, MPs: 4, MVs: 2, macros: 100 },
+			8: { id: 8, label: 'TV Studio HD',         inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, macros: 100 },
 			//9: { id: 9, label: '4ME?',                 inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, macros: 100 }
 		};
 
@@ -64,6 +64,11 @@ class instance extends instance_skel {
 			{ id: 'toggle', label: 'Toggle', }
 		];
 
+		self.CHOICES_MACRORUN = [
+			{ id: 'run',         label: 'Run' },
+			{ id: 'runContinue', label: 'Run/Continue' }
+		];
+
 		self.CHOICES_MACROSTATE = [
 			{ id: 'isRunning',   label: 'Is Running' },
 			{ id: 'isWaiting',   label: 'Is Waiting' },
@@ -79,6 +84,20 @@ class instance extends instance_skel {
 		];
 
 		self.CHOICES_MODEL = Object.values(self.CONFIG_MODEL);
+
+		self.CHOICES_MV = [
+			{ id: 0, label: 'MV 1' },
+			{ id: 1, label: 'MV 2' }
+		];
+
+		self.CHOICES_MVLAYOUT = [
+			{ id: 0, label: 'Top' },
+			{ id: 1, label: 'Bottom' },
+			{ id: 2, label: 'Left' },
+			{ id: 3, label: 'Right' }
+		];
+
+		self.setupMvWindowChoices();
 
 		self.CHOICES_USKS = [
 			{ id: 0, label: '1' },
@@ -270,11 +289,65 @@ class instance extends instance_skel {
 				label: 'Run MACRO',
 				options: [
 					{
-						type: 'textinput',
-						id: 'macro',
-						label: 'Macro number',
+						type:    'textinput',
+						id:      'macro',
+						label:   'Macro number',
 						default: 1,
-						regex: '/^([1-9]|[1-9][0-9]|100)$/'
+						regex:   '/^([1-9]|[1-9][0-9]|100)$/'
+					},
+					{
+						type:    'dropdown',
+						id:      'action',
+						label:   'Action',
+						default: 'run',
+						choices: self.CHOICES_MACRORUN
+					}
+				]
+			},
+			'macrocontinue': { label: 'Continue MACRO' },
+			'macrostop':     { label: 'Stop MACROS' },
+			'setMvLayout': {
+				label: 'Change MV Layout',
+				options: [
+					{
+						type:    'dropdown',
+						id:      'mvId',
+						label:   'MV',
+						default: 1,
+						choices: self.CHOICES_MV.slice(0, self.model.MVs)
+					},
+					{
+						type:    'dropdown',
+						id:      'layout',
+						label:   'Layout',
+						default: 'top',
+						choices: self.CHOICES_MVLAYOUT
+					}
+				]
+			},
+			'setMvWindow': {
+				label: 'Change MV Window Source',
+				options: [
+					{
+						type:    'dropdown',
+						id:      'mvId',
+						label:   'MV',
+						default: 1,
+						choices: self.CHOICES_MV.slice(0, self.model.MVs)
+					},
+					{
+						type:    'dropdown',
+						id:      'windowIndex',
+						label:   'Window #',
+						default: 'top',
+						choices: self.CHOICES_MVWINDOW
+					},
+					{
+						type:    'dropdown',
+						id:      'source',
+						label:   'Source',
+						default: 'top',
+						choices: self.CHOICES_INPUTS
 					}
 				]
 			}
@@ -325,7 +398,21 @@ class instance extends instance_skel {
 				self.atem.autoTransition(parseInt(opt.mixeffect));
 				break;
 			case 'macrorun':
-				self.atem.macroRun(parseInt(opt.macro) - 1);
+				if (opt.action == 'runContinue' && self.states['macro_' + opt.macro].isWaiting == 1) {
+					self.atem.macroContinue();
+				}
+				else if (self.states['macro_' + opt.macro].isRecording == 1) {
+					self.atem.macroStopRecord()
+				}
+				else {
+					self.atem.macroRun(parseInt(opt.macro) - 1);
+				}
+				break;
+			case 'macrocontinue':
+				self.atem.macroContinue();
+				break;
+			case 'macrostop':
+				self.atem.macroStop();
 				break;
 			default:
 				debug('Unknown action: ' + action.action);
@@ -362,7 +449,21 @@ class instance extends instance_skel {
 				label:   'Model',
 				choices: self.CHOICES_MODEL,
 				default: 0
-	}
+			},
+			{
+				type:    'text',
+				id:      'info',
+				width:   12,
+				label:   'Information',
+				value:   'Companion is able to re-route the Program and Preview multi Vvewer windows via the ATEM API.  By default this is disabled since there is no way through the ATEM software to change them back to their defaults.  These windows can be unlocked below, <b>but do so with caution!</b>'
+			},
+			{
+				type:    'dropdown',
+				id:      'mvUnlock',
+				label:   'Unlock PGM/PV Multi Viewer Windows?',
+				choices: self.CHOICES_YESNO_BOOLEAN,
+				default: false
+			}
 		]
 	};
 
@@ -393,30 +494,31 @@ class instance extends instance_skel {
 	 */
 	feedback(feedback, bank) {
 		var self = this;
+		var out  = {};
 
 		if (feedback.type == 'preview_bg') {
 			if (self.states['preview' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
-				return { color: feedback.options.fg, bgcolor: feedback.options.bg };
+				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
 			}
 		}
 		else if (feedback.type == 'program_bg') {
 			if (self.states['program' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
-				return { color: feedback.options.fg, bgcolor: feedback.options.bg };
+				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
 			}
 		}
 		else if (feedback.type == 'aux_bg') {
 			if (self.states['aux' + feedback.options.aux] == parseInt(feedback.options.input)) {
-				return { color: feedback.options.fg, bgcolor: feedback.options.bg };
+				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
 			}
 		}
 		else if (feedback.type == 'usk_bg') {
 			if (self.states['usk' + feedback.options.mixeffect + '-' + feedback.options.key]) {
-				return { color: feedback.options.fg, bgcolor: feedback.options.bg };
+				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
 			}
 		}
 		else if (feedback.type == 'dsk_bg') {
 			if (self.states['dsk' + feedback.options.key]) {
-				return { color: feedback.options.fg, bgcolor: feedback.options.bg };
+				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
 			}
 		}
 		else if (feedback.type == 'macro') {
@@ -427,11 +529,29 @@ class instance extends instance_skel {
 					( feedback.options.state == 'isWaiting' && state.isWaiting == 1 ) ||
 					( feedback.options.state == 'isRecording' && state.isRecording == 1 ) ||
 					( feedback.options.state == 'isUsed' && state.isUsed == 1 )) {
-					return { color: feedback.options.fg, bgcolor: feedback.options.bg };
+					out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
 				}
 			}
 		}
-		return {};
+		else if (feedback.type == 'mv_layout') {
+			var state = self.states['mv_layout_' + feedback.mvId];
+
+			if (state.mvId == (parseInt(feedback.mvId)) && state.layout == (parseInt(feedback.layout))) {
+				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
+			}
+		}
+		else if (feedback.type == 'mv_source') {
+			var index = (parseInt(feedback.options.mvId)) & (parseInt(feedback.options.windowIndex));
+			var state = self.states['mv_source_' + index];
+
+			if (state.mvId == (parseInt(feedback.options.mvId)) && 
+				state.windowIndex == (parseInt(feedback.options.windowIndex)) &&
+				state.source == (parseInt(feedback.options.source))) {
+					out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
+			}
+		}
+
+		return out;
 	};
 
 	/**
@@ -451,20 +571,20 @@ class instance extends instance_skel {
 
 		// Unfortunately this is redundant if the switcher goes
 		// online right away, but necessary for offline programming
-		self.init_variables();
-		self.init_feedbacks();
-		self.init_presets();
+		self.initVariables();
+		self.initFeedbacks();
+		self.initPresets();
 
 		self.setupAtemConnection();
 	};
 
 	/**
-	 * INTERNAL: initialize feedbacks
+	 * INTERNAL: initialize feedbacks.
 	 *
 	 * @access protected
 	 * @since 1.0.0
 	 */
-	init_feedbacks() {
+	initFeedbacks() {
 		var self = this;
 
 		// feedbacks
@@ -655,16 +775,18 @@ class instance extends instance_skel {
 				}
 			]
 		};
+
+
 		self.setFeedbackDefinitions(feedbacks);
 	};
 
 	/**
-	 * INTERNAL: initialize presets
+	 * INTERNAL: initialize presets.
 	 *
 	 * @access protected
 	 * @since 1.0.0
 	 */
-	init_presets () {
+	initPresets () {
 		var self = this;
 		var presets = [];
 
@@ -859,10 +981,10 @@ class instance extends instance_skel {
 					{
 						type: 'macro',
 						options: {
-							bg:         self.rgb(238,238,0),
+							bg:         self.rgb(0,0,238),
 							fg:         self.rgb(255,255,255),
 							macroIndex: i,
-							state:      'isWaiting'
+							state:      'isUsed'
 						}
 					},
 					{
@@ -873,13 +995,32 @@ class instance extends instance_skel {
 							macroIndex: i,
 							state:      'isRunning'
 						}
+					},
+					{
+						type: 'macro',
+						options: {
+							bg:         self.rgb(238,238,0),
+							fg:         self.rgb(255,255,255),
+							macroIndex: i,
+							state:      'isWaiting'
+						}
+					},
+					{
+						type: 'macro',
+						options: {
+							bg:         self.rgb(238,0,0),
+							fg:         self.rgb(255,255,255),
+							macroIndex: i,
+							state:      'isRecording'
+						}
 					}
 				],
 				actions: [
 					{
 						action: 'macrorun',
 						options: {
-							macro: i
+							macro:  i,
+							action: 'runContinue'
 						}
 					}
 				]
@@ -889,32 +1030,18 @@ class instance extends instance_skel {
 	}
 
 	/**
-	 * INTERNAL: initialize variables
+	 * INTERNAL: initialize variables.
 	 *
 	 * @access protected
 	 * @since 1.0.0
 	 */
-	init_variables() {
+	initVariables() {
 		var self = this;
 
 		// variable_set
 		var variables = [];
 
-		// Initialize macro states (not the best spot for it, but it works)
-		// Eventually will include macro name variables
-		for (var i = 1; i <= self.model.macros; i++) {
-			self.states['macro_' + i] = {
-				macroIndex:  i,
-				isRunning:   0,
-				isWaiting:   0,
-				isUsed:      0,
-				isRecording: 0,
-				loop:        0,
-				name:        '',
-				description: ''
-			};
-		}
-
+		// PGM/PV busses
 		for (var i = 0; i < self.model.MEs; ++i) {
 			variables.push({
 				label: 'Label of input active on program bus (M/E ' + (i+1) + ')',
@@ -932,6 +1059,7 @@ class instance extends instance_skel {
 			}
 		}
 
+		// Input names
 		for (var key in self.inputs) {
 			variables.push({
 				label: 'Long name of input id ' + key,
@@ -947,11 +1075,36 @@ class instance extends instance_skel {
 				self.setVariable('short_' + key, self.inputs[key].shortName);
 			}
 		}
+
+		// Macros
+		for (var i = 1; i <= self.model.macros; i++) {
+
+			if (self.states['macro_' + i] === undefined) {
+				self.states['macro_' + i] = {
+					macroIndex:  i,
+					isRunning:   0,
+					isWaiting:   0,
+					isUsed:      0,
+					isRecording: 0,
+					loop:        0,
+					name:        'Macro ' + i,
+					description: ''
+				};
+			}
+
+			variables.push({
+				label: 'Name of macro id ' + i,
+				name: 'macro_' + i
+			});
+
+			self.setVariable('macro_' + i, self.states['macro_' + i].name);
+		}
+
 		self.setVariableDefinitions(variables);
 	};
 
 	/**
-	 * INTERNAL: Callback for ATEM connection to state change responses
+	 * INTERNAL: Callback for ATEM connection to state change responses.
 	 *
 	 * @param {?boolean} err - null if a normal result, true if there was an error
 	 * @param {Object} state - state details in object array
@@ -990,7 +1143,7 @@ class instance extends instance_skel {
 				self.inputs[state.inputId] = state.properties;
 
 				// resend everything, since names of routes might have changed
-				self.init_variables();
+				self.initVariables();
 				break;
 
 			case 'InitCompleteCommand':
@@ -1044,13 +1197,19 @@ class instance extends instance_skel {
 					self.checkFeedbacks('macro');
 				}
 				break;
+
+			case 'MultiViewerPropertiesCommand':
+				break;
+
+			case 'MultiViewerSourceCommand':
+				break;
 		}
 	}
 
 	/**
 	 * INTERNAL: Does a bunch of setup and cleanup then we switch models.
 	 * This is a tricky function because both Config and Atem use this.
-	 * Logic has to track who's who and make sure you don't init over a live switcher.
+	 * Logic has to track who's who and make sure we don't init over a live switcher.
 	 *
 	 * @param {number} modelID - the new model
 	 * @param {boolean} [live] - optional, true if this is the live switcher model; defaults to false
@@ -1061,24 +1220,26 @@ class instance extends instance_skel {
 		var self = this;
 
 		if ( !live ) {
-			live  = false;
+			live = false;
 		}
 
-		// This is a little ugly.  May be able to find a better logic tree in the future
 		if (self.CONFIG_MODEL[modelID] !== undefined) {
 
+			// Still need to setup this to deal with overrides
 			self.model = self.CONFIG_MODEL[modelID];
+			// End note
+
 			debug('ATEM Model: ' + self.model.id);
-			
-			if (modelID <> self.deviceModel && self.config.modelID > 0 || model) {
+
+			// This is a funky test, but necessary
+			if ((!live && self.deviceModel > 0 && modelID > 0 && modelID <> self.deviceModel) || (live && self.config.modelID > 0 && self.deviceModel <> self.config.modelID) {
 				self.log('error', 'Connected to a ' + self.deviceName + ', but instance is configured for ' + self.model.label + '.  Change instance to \'Auto Detect\' or the appropriate model to ensure stability.');
-				debug('ATEM Model: ' + modelID);
 			}
 
 			self.actions();
-			self.init_variables();
-			self.init_feedbacks();
-			self.init_presets();
+			self.initVariables();
+			self.initFeedbacks();
+			self.initPresets();
 		}
 		else {
 			debug('ATEM Model: ' + modelID + 'NOT FOUND');
@@ -1086,7 +1247,7 @@ class instance extends instance_skel {
 	}
 
 	/**
-	 * INTERNAL: use setup data to initalize the atem-connection object
+	 * INTERNAL: use setup data to initalize the atem-connection object.
 	 *
 	 * @access protected
 	 * @since 1.1.0
@@ -1113,8 +1274,30 @@ class instance extends instance_skel {
 			self.atem.on('stateChanged', self.processStateChange.bind(self));
 		}
 	}
+
 	/**
-	 * Process an updated configuration array
+	 * INTERNAL: use config data to define the choices for the MV Window dropdowns.
+	 *
+	 * @access protected
+	 * @since 1.1.0
+	 */
+	setupMvWindowChoices() {
+		var self = this;
+
+		self.CHOICES_MVWINDOW = [];
+
+		if (self.config.mvUnlock) {
+			self.CHOICES_MVWINDOW.push({ id: 0, label: 'Window 1' });
+			self.CHOICES_MVWINDOW.push({ id: 1, label: 'Window 2' });
+		}
+
+		for (var i = 2; i < 10; i++) {
+			self.CHOICES_MVWINDOW.push({ id: i, label: 'Window '+ (i+1) });
+		}
+	}
+
+	/**
+	 * Process an updated configuration array.
 	 *
 	 * @param {Object} config - the new configuration
 	 * @access public
