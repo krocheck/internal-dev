@@ -22,6 +22,12 @@ export class MacroActionCommand extends AbstractCommand {
 				buffer[4] = this.index >> 8
 				buffer[5] = this.index & 0xff
 				break
+			case MacroAction.Stop :
+			case MacroAction.StopRecord :
+			case MacroAction.InsertUserWait :
+			case MacroAction.Delete :
+				buffer[4] = 0xff
+				buffer[5] = 0xff
 			default :
 				break
 		}
@@ -32,3 +38,13 @@ export class MacroActionCommand extends AbstractCommand {
 		//
 	}
 }
+/**
+export enum MacroAction {
+	Run = 0,
+	Stop = 1,
+	StopRecord = 2,
+	InsertUserWait = 3,
+	Continue = 4,
+	Delete = 5
+}
+*/
