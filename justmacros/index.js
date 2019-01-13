@@ -23,6 +23,7 @@ class instance extends instance_skel {
 		super(system, id, config);
 		var self = this;
 		self.port = 39812;
+
 		// super-constructor
 		//instance_skel.apply(this, arguments);
 		self.actions(); // export actions
@@ -171,5 +172,4 @@ class instance extends instance_skel {
 }
 
 //instance_skel.extendedBy(instance);
-
 exports = module.exports = instance;

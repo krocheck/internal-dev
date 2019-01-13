@@ -721,5 +721,4 @@ class instance extends instance_skel {
 }
 
 //instance_skel.extendedBy(instance);
-
 exports = module.exports = instance;
