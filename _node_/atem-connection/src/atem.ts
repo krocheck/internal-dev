@@ -277,6 +277,20 @@ export class Atem extends EventEmitter {
 		return this.sendCommand(command)
 	}
 
+	setMultiViewerProperties (newProps: Partial<MultiViewerProperties>, mv = 0) {
+		const command = new Commands.MultiViewerPropertiesCommand()
+		command.mvId = mv
+		command.updateProps(newProps)
+		return this.sendCommand(command)
+	}
+
+	setMultiViewerSource (newProps: Partial<MultiViewerSource>, mv = 0) {
+		const command = new Commands.MultiViewerSourceCommand()
+		command.mvId = mv
+		command.updateProps(newProps)
+		return this.sendCommand(command)
+	}
+
 	setMediaPlayerSettings (newProps: Partial<MediaPlayer>, player = 0) {
 		const command = new Commands.MediaPlayerStatusCommand()
 		command.mediaPlayerId = player

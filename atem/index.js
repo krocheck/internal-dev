@@ -88,10 +88,10 @@ class instance extends instance_skel {
 		];
 
 		if (self.config.modelID !== undefined){
-			self.setAtemModel(self.config.modelID);
+			self.model = self.CONFIG_MODEL[self.config.modelID];
 		}
 		else {
-			self.setAtemModel(0);
+			self.model = self.CONFIG_MODEL[0];
 		}
 
 		// super-constructor
@@ -995,10 +995,7 @@ class instance extends instance_skel {
 
 			case 'InitCompleteCommand':
 				debug('Init done');
-				self.actions();
-				self.init_variables();
-				self.init_feedbacks();
-				self.init_presets();
+				self.setAtemModel(self.deviceModel, true);
 				self.log('info', 'Connected to a ' + self.deviceName);
 				break;
 
@@ -1014,8 +1011,7 @@ class instance extends instance_skel {
 
 			case 'ProductIdentifierCommand':
 				self.deviceModel = sate.properties.model;
-				self.deviceName = state.properties.deviceName;
-				self.setAtemModel(self.deviceModel);
+				self.deviceName  = state.properties.deviceName;
 				break;
 
 			case 'MacroPropertiesCommand':
@@ -1052,37 +1048,37 @@ class instance extends instance_skel {
 	}
 
 	/**
-	 * INTERNAL: Does a bunch of setup and cleanup then we switch models
+	 * INTERNAL: Does a bunch of setup and cleanup then we switch models.
+	 * This is a tricky function because both Config and Atem use this.
+	 * Logic has to track who's who and make sure you don't init over a live switcher.
 	 *
 	 * @param {number} modelID - the new model
+	 * @param {boolean} [live] - optional, true if this is the live switcher model; defaults to false
 	 * @access protected
 	 * @since 1.1.0
 	 */
-	setAtemModel(modelID) {
+	setAtemModel(modelID, live) {
 		var self = this;
+
+		if ( !live ) {
+			live  = false;
+		}
 
 		// This is a little ugly.  May be able to find a better logic tree in the future
 		if (self.CONFIG_MODEL[modelID] !== undefined) {
 
-			if (modelID == 0) {
-				self.model = self.CONFIG_MODEL[modelID];
-				debug('ATEM Model: ' + self.model.id);
-			}
-			else if (self.config.modelID == 0 && modelID > 0) {
-				self.model = self.CONFIG_MODEL[modelID];
-				debug('ATEM Model: ' + self.model.id);
-			}
-			else if (self.config.modelID > 0 && self.config.modelID == modelID)) {
-				self.model = self.CONFIG_MODEL[modelID];
-				debug('ATEM Model: ' + self.model.id);
-			}
-			else if (modelID > 0) {
+			self.model = self.CONFIG_MODEL[modelID];
+			debug('ATEM Model: ' + self.model.id);
+			
+			if (modelID <> self.deviceModel && self.config.modelID > 0 || model) {
 				self.log('error', 'Connected to a ' + self.deviceName + ', but instance is configured for ' + self.model.label + '.  Change instance to \'Auto Detect\' or the appropriate model to ensure stability.');
 				debug('ATEM Model: ' + modelID);
 			}
-			else {
-				debug('ATEM Model: ' + modelID + 'NOT FOUND');
-			}
+
+			self.actions();
+			self.init_variables();
+			self.init_feedbacks();
+			self.init_presets();
 		}
 		else {
 			debug('ATEM Model: ' + modelID + 'NOT FOUND');
@@ -1096,6 +1092,7 @@ class instance extends instance_skel {
 	 * @since 1.1.0
 	 */
 	setupAtemConnection() {
+		var self = this;
 
 		if (self.config.host !== undefined) {
 
@@ -1125,16 +1122,9 @@ class instance extends instance_skel {
 	 */
 	updateConfig(config) {
 		var self = this;
-
-		// Basically we want to be careful about changing the model to 'Auto Detect'
-		// when the switcher is already connected and having initialized a proper model,
-		// but still need to honor manually selecting a different model than connected to.
-		if ((self.config.modelID <> config.modelID && this.deviceModel == 0) ||
-			(config.modelID > 0 && config.modelID <> this.deviceModel)) {
-			self.setAtemModel(config.modelID);
-		}
-
 		self.config = config;
+
+		self.setAtemModel(config.modelID);
 
 		if (self.config.host !== undefined) {
 			if (self.atem !== undefined && self.atem.socket !== undefined && self.atem.socket._socket !== undefined) {

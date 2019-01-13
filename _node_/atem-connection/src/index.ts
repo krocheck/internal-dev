@@ -16,11 +16,13 @@ import * as MediaState from './state/media'
 import * as InfoState from './state/info'
 import * as InputState from './state/input'
 import * as MacroState from './state/macro'
+import * as MacroState from './state/settings'
 export {
 	VideoState,
 	AudioState,
 	MediaState,
 	InfoState,
 	InputState,
-	MacroState
+	MacroState,
+	SettingsState
 }
