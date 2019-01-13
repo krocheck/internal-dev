@@ -235,10 +235,45 @@ export class Atem extends EventEmitter {
 		return this.sendCommand(command)
 	}
 
+	macroContinue () {
+		const command = new Commands.MacroActionCommand()
+		command.index = 0
+		command.updateProps({action: MacroAction.Continue})
+		return this.sendCommand(command)
+	}
+
+	macroDelete (index = 0) {
+		const command = new Commands.MacroActionCommand()
+		command.index = index
+		command.updateProps({action: MacroAction.Delete})
+		return this.sendCommand(command)
+	}
+
+	macroInsertUserWait () {
+		const command = new Commands.MacroActionCommand()
+		command.index = 0
+		command.updateProps({action: MacroAction.InsertUserWait})
+		return this.sendCommand(command)
+	}
+
 	macroRun (index = 0) {
 		const command = new Commands.MacroActionCommand()
 		command.index = index
 		command.updateProps({action: MacroAction.Run})
+		return this.sendCommand(command)
+	}
+
+	macroStop () {
+		const command = new Commands.MacroActionCommand()
+		command.index = 0
+		command.updateProps({action: MacroAction.Stop})
+		return this.sendCommand(command)
+	}
+
+	macroStopRecord () {
+		const command = new Commands.MacroActionCommand()
+		command.index = 0
+		command.updateProps({action: MacroAction.StopRecord})
 		return this.sendCommand(command)
 	}
 
