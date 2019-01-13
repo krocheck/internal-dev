@@ -16,3 +16,9 @@ export interface MacroPropertiesState {
 	macroIndex: number
 	name: string
 }
+
+export class MacroState {
+	macroPlayer: Array<MacroPlayerState> = []
+	macroRecorder: Array<MacroRecorderState> = []
+	macroProperties: Array<MacroPropertiesState> = []
+}

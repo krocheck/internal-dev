@@ -28,6 +28,7 @@ export class MacroActionCommand extends AbstractCommand {
 			case MacroAction.Delete :
 				buffer[4] = 0xff
 				buffer[5] = 0xff
+				break
 			default :
 				break
 		}
