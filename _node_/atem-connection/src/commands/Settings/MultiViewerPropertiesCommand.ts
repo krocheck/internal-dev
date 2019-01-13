@@ -1,7 +1,7 @@
 import AbstractCommand from '../AbstractCommand'
 import { AtemState } from '../../state'
 import { MultiViewerPropertiesState } from '../../state/settings'
-import { MultiViewerLayout } from '../../enums'
+//import { MultiViewerLayout } from '../../enums'
 
 export class MultiViewerPropertiesCommand extends AbstractCommand {
 	static MaskFlags = {

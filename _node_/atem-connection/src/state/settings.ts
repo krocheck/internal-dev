@@ -1,10 +1,8 @@
 export interface MultiViewerPropertiesState {
 	layout: number
-	mvID: number
 }
 
 export interface MultiViewerSourceState {
-	mvID: number
 	source: number
 	windowIndex: number
 }

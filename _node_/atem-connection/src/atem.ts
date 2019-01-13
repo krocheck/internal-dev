@@ -6,7 +6,7 @@ import AbstractCommand from './commands/AbstractCommand'
 import * as Commands from './commands'
 import * as DataTransferCommands from './commands/DataTransfer'
 import { MediaPlayer } from './state/media'
-import { MultiViewerProperties, MultiViewerSource } from './state/settings'
+import { MultiViewerPropertiesState, MultiViewerSourceState } from './state/settings'
 import {
 	DipTransitionSettings,
 	DVETransitionSettings,
