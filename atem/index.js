@@ -85,6 +85,13 @@ class instance extends instance_skel {
 		];
 
 		self.CHOICES_MODEL = Object.values(self.CONFIG_MODEL);
+		self.CHOICES_MODEL.sort(function(a, b){
+			var x = a.label.toLowerCase();
+			var y = b.label.toLowerCase();
+			if (x < y) {return -1;}
+			if (x > y) {return 1;}
+			return 0;
+		});
 
 		self.CHOICES_MV = [
 			{ id: 0, label: 'MV 1' },
