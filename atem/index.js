@@ -434,6 +434,7 @@ class instance extends instance_skel {
 				type:    'dropdown',
 				id:      'modelID',
 				label:   'Model',
+				width:   6,
 				choices: this.CHOICES_MODEL,
 				default: 0
 			},
@@ -441,6 +442,7 @@ class instance extends instance_skel {
 				type:    'dropdown',
 				id:      'presets',
 				label:   'Preset Style',
+				width:   6,
 				choices: this.CHOICES_PRESETSTYLE,
 				default: 0
 			},
@@ -455,6 +457,7 @@ class instance extends instance_skel {
 				type:    'dropdown',
 				id:      'mvUnlock',
 				label:   'Unlock PGM / PV Multi Viewer Windows?',
+				width:   6,
 				choices: this.CHOICES_YESNO_BOOLEAN,
 				default: false
 			}
