@@ -23,16 +23,15 @@ class instance extends instance_skel {
 	 */
 	constructor(system, id, config) {
 		super(system, id, config);
-		var self = this;
 
-		self.model       = {};
-		self.states      = {};
-		self.inputs      = {};
-		self.deviceName  = '';
-		self.deviceModel = 0;
-		self.initDone    = false;
+		this.model       = {};
+		this.states      = {};
+		this.inputs      = {};
+		this.deviceName  = '';
+		this.deviceModel = 0;
+		this.initDone    = false;
 
-		self.CONFIG_MODEL = {
+		this.CONFIG_MODEL = {
 			0: { id: 0, label: 'Auto Detect',          inputs: 8,  auxes: 3, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
 			1: { id: 1, label: 'TV Studio',            inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
 			2: { id: 2, label: '1 ME Production',      inputs: 8,  auxes: 3, MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
@@ -45,7 +44,7 @@ class instance extends instance_skel {
 			//9: { id: 9, label: '4ME?',                 inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, MPs: 4, MVs: 2, macros: 100 }
 		};
 
-		self.CHOICES_AUXES = [
+		this.CHOICES_AUXES = [
 			{ id: 0, label: '1' },
 			{ id: 1, label: '2' },
 			{ id: 2, label: '3' },
@@ -54,38 +53,38 @@ class instance extends instance_skel {
 			{ id: 5, label: '6' }
 		];
 
-		self.CHOICES_DSKS = [
+		this.CHOICES_DSKS = [
 			{ id: 0, label: '1' },
 			{ id: 1, label: '2' }
 		];
 
-		self.CHOICES_KEYTRANS = [
+		this.CHOICES_KEYTRANS = [
 			{ id: 'true',   label: 'On Air', },
 			{ id: 'false',  label: 'Off', },
 			{ id: 'toggle', label: 'Toggle', }
 		];
 
-		self.CHOICES_MACRORUN = [
+		this.CHOICES_MACRORUN = [
 			{ id: 'run',         label: 'Run' },
 			{ id: 'runContinue', label: 'Run/Continue' }
 		];
 
-		self.CHOICES_MACROSTATE = [
+		this.CHOICES_MACROSTATE = [
 			{ id: 'isRunning',   label: 'Is Running' },
 			{ id: 'isWaiting',   label: 'Is Waiting' },
 			{ id: 'isRecording', label: 'Is Recording' },
 			{ id: 'isUsed'   ,   label: 'Is Used' }
 		];
 
-		self.CHOICES_ME = [
+		this.CHOICES_ME = [
 			{ id: 0, label: 'M/E 1' },
 			{ id: 1, label: 'M/E 2' },
 			{ id: 2, label: 'M/E 3' },
 			{ id: 3, label: 'M/E 4' }
 		];
 
-		self.CHOICES_MODEL = Object.values(self.CONFIG_MODEL);
-		self.CHOICES_MODEL.sort(function(a, b){
+		this.CHOICES_MODEL = Object.values(this.CONFIG_MODEL);
+		this.CHOICES_MODEL.sort(function(a, b){
 			var x = a.label.toLowerCase();
 			var y = b.label.toLowerCase();
 			if (a.id == 0) {return -1;}
@@ -95,38 +94,40 @@ class instance extends instance_skel {
 			return 0;
 		});
 
-		self.CHOICES_MV = [
+		this.CHOICES_MV = [
 			{ id: 0, label: 'MV 1' },
 			{ id: 1, label: 'MV 2' }
 		];
 
-		self.CHOICES_MVLAYOUT = [
+		this.CHOICES_MVLAYOUT = [
 			{ id: 0, label: 'Top' },
 			{ id: 1, label: 'Bottom' },
 			{ id: 2, label: 'Left' },
 			{ id: 3, label: 'Right' }
 		];
 
-		self.setupMvWindowChoices();
+		this.setupMvWindowChoices();
 
-		self.CHOICES_USKS = [
+		this.CHOICES_PRESETSTYLE = [
+			{ id: 0, label: 'Short Names' },
+			{ id: 1, label: 'Long Names' }
+		];
+
+		this.CHOICES_USKS = [
 			{ id: 0, label: '1' },
 			{ id: 1, label: '2' },
 			{ id: 2, label: '3' },
 			{ id: 3, label: '4' }
 		];
 
-		if (self.config.modelID !== undefined){
-			self.model = self.CONFIG_MODEL[self.config.modelID];
+		if (this.config.modelID !== undefined){
+			this.model = this.CONFIG_MODEL[this.config.modelID];
 		}
 		else {
-			self.model = self.CONFIG_MODEL[0];
+			this.model = this.CONFIG_MODEL[0];
 		}
 
-		// super-constructor
-		//instance_skel.apply(this, arguments);
-		self.actions(); // export actions
-		//return self;
+		this.actions(); // export actions
 	}
 
 	/**
@@ -137,11 +138,9 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	actions(system) {
-		var self = this;
+		this.setupSourceChoices();
 
-		self.setupSourceChoices();
-
-		self.system.emit('instance_actions', self.id, {
+		this.system.emit('instance_actions', this.id, {
 			'program': {
 				label: 'Set input on Program',
 				options: [
@@ -150,14 +149,14 @@ class instance extends instance_skel {
 						 label: 'Input',
 						 id: 'input',
 						 default: 1,
-						 choices: self.CHOICES_MESOURCES
+						 choices: this.CHOICES_MESOURCES
 					},
 					{
 						type: 'dropdown',
 						id: 'mixeffect',
 						label: 'M/E',
 						default: 0,
-						choices: self.CHOICES_ME.slice(0, self.model.MEs)
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
 					}
 				]
 			},
@@ -169,14 +168,14 @@ class instance extends instance_skel {
 						 label: 'Input',
 						 id: 'input',
 						 default: 1,
-						 choices: self.CHOICES_MESOURCES
+						 choices: this.CHOICES_MESOURCES
 					},
 					{
 						type: 'dropdown',
 						id: 'mixeffect',
 						label: 'M/E',
 						default: 0,
-						choices: self.CHOICES_ME.slice(0, self.model.MEs)
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
 					}
 				]
 			},
@@ -188,14 +187,14 @@ class instance extends instance_skel {
 						id: 'aux',
 						label: 'AUX Output',
 						default: 0,
-						choices: self.CHOICES_AUXES.slice(0, self.model.auxes)
+						choices: this.CHOICES_AUXES.slice(0, this.model.auxes)
 					},
 					{
 						 type: 'dropdown',
 						 label: 'Input',
 						 id: 'input',
 						 default: 1,
-						 choices: self.CHOICES_AUXSOURCES
+						 choices: this.CHOICES_AUXSOURCES
 					}
 				]
 			},
@@ -207,21 +206,21 @@ class instance extends instance_skel {
 						type: 'dropdown',
 						label: 'On Air',
 						default: 'true',
-						choices: self.CHOICES_KEYTRANS
+						choices: this.CHOICES_KEYTRANS
 					},
 					{
 						type: 'dropdown',
 						id: 'mixeffect',
 						label: 'M/E',
 						default: 0,
-						choices: self.CHOICES_ME.slice(0, self.model.MEs)
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
 					},
 					{
 						type: 'dropdown',
 						label: 'Key',
 						id: 'key',
 						default: '0',
-						choices: self.CHOICES_USKS.slice(0, self.model.USKs)
+						choices: this.CHOICES_USKS.slice(0, this.model.USKs)
 					}
 				]
 			},
@@ -233,14 +232,14 @@ class instance extends instance_skel {
 						type: 'dropdown',
 						label: 'On Air',
 						default: 'true',
-						choices: self.CHOICES_KEYTRANS
+						choices: this.CHOICES_KEYTRANS
 					},
 					{
 						type: 'dropdown',
 						label: 'Key',
 						id: 'key',
 						default: '0',
-						choices: self.CHOICES_DSKS.slice(0, self.model.DSKs)
+						choices: this.CHOICES_DSKS.slice(0, this.model.DSKs)
 					}
 				]
 			},
@@ -252,7 +251,7 @@ class instance extends instance_skel {
 						id: 'mixeffect',
 						label: 'M/E',
 						default: 0,
-						choices: self.CHOICES_ME.slice(0, self.model.MEs)
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
 					}
 				]
 			},
@@ -264,7 +263,7 @@ class instance extends instance_skel {
 						id: 'mixeffect',
 						label: 'M/E',
 						default: 0,
-						choices: self.CHOICES_ME.slice(0, self.model.MEs)
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
 					}
 				]
 			},
@@ -283,7 +282,7 @@ class instance extends instance_skel {
 						id:      'action',
 						label:   'Action',
 						default: 'run',
-						choices: self.CHOICES_MACRORUN
+						choices: this.CHOICES_MACRORUN
 					}
 				]
 			},
@@ -297,14 +296,14 @@ class instance extends instance_skel {
 						id:      'mvId',
 						label:   'MV',
 						default: 0,
-						choices: self.CHOICES_MV.slice(0, self.model.MVs)
+						choices: this.CHOICES_MV.slice(0, this.model.MVs)
 					},
 					{
 						type:    'dropdown',
 						id:      'layout',
 						label:   'Layout',
 						default: 0,
-						choices: self.CHOICES_MVLAYOUT
+						choices: this.CHOICES_MVLAYOUT
 					}
 				]
 			},
@@ -316,21 +315,21 @@ class instance extends instance_skel {
 						id:      'mvId',
 						label:   'MV',
 						default: 0,
-						choices: self.CHOICES_MV.slice(0, self.model.MVs)
+						choices: this.CHOICES_MV.slice(0, this.model.MVs)
 					},
 					{
 						type:    'dropdown',
 						id:      'windowIndex',
 						label:   'Window #',
 						default: 2,
-						choices: self.CHOICES_MVWINDOW
+						choices: this.CHOICES_MVWINDOW
 					},
 					{
 						type:    'dropdown',
 						id:      'source',
 						label:   'Source',
 						default: 0,
-						choices: self.CHOICES_MVSOURCES
+						choices: this.CHOICES_MVSOURCES
 					}
 				]
 			}
@@ -345,63 +344,62 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	action(action) {
-		var self = this;
 		var id = action.action;
 		var cmd;
 		var opt = action.options;
 
 		switch (action.action) {
 			case 'program':
-				self.atem.changeProgramInput(parseInt(opt.input), parseInt(opt.mixeffect));
+				this.atem.changeProgramInput(parseInt(opt.input), parseInt(opt.mixeffect));
 				break;
 			case 'preview':
-				self.atem.changePreviewInput(parseInt(opt.input), parseInt(opt.mixeffect));
+				this.atem.changePreviewInput(parseInt(opt.input), parseInt(opt.mixeffect));
 				break;
 			case 'aux':
-				self.atem.setAuxSource(parseInt(opt.input), parseInt(opt.aux));
+				this.atem.setAuxSource(parseInt(opt.input), parseInt(opt.aux));
 				break;
 			case 'cut':
-				self.atem.cut(parseInt(opt.mixeffect));
+				this.atem.cut(parseInt(opt.mixeffect));
 				break;
 			case 'usk':
 				if (opt.onair == 'toggle') {
-					self.atem.setUpstreamKeyerOnAir(!self.states['usk' + opt.mixeffect + '-' + opt.key], parseInt(opt.mixeffect), parseInt(opt.key));
+					this.atem.setUpstreamKeyerOnAir(!this.states['usk' + opt.mixeffect + '-' + opt.key], parseInt(opt.mixeffect), parseInt(opt.key));
 				} else {
-					self.atem.setUpstreamKeyerOnAir(opt.onair == 'true', parseInt(opt.mixeffect), parseInt(opt.key));
+					this.atem.setUpstreamKeyerOnAir(opt.onair == 'true', parseInt(opt.mixeffect), parseInt(opt.key));
 				}
 				break;
 			case 'dsk':
 				if (opt.onair == 'toggle') {
-					self.atem.setDownstreamKeyOnAir(!self.states['dsk' + opt.key], parseInt(opt.key));
+					this.atem.setDownstreamKeyOnAir(!this.states['dsk' + opt.key], parseInt(opt.key));
 				} else {
-					self.atem.setDownstreamKeyOnAir(opt.onair == 'true', parseInt(opt.key));
+					this.atem.setDownstreamKeyOnAir(opt.onair == 'true', parseInt(opt.key));
 				}
 				break;
 			case 'auto':
-				self.atem.autoTransition(parseInt(opt.mixeffect));
+				this.atem.autoTransition(parseInt(opt.mixeffect));
 				break;
 			case 'macrorun':
-				if (opt.action == 'runContinue' && self.states['macro_' + opt.macro].isWaiting == 1) {
-					self.atem.macroContinue();
+				if (opt.action == 'runContinue' && this.states['macro_' + opt.macro].isWaiting == 1) {
+					this.atem.macroContinue();
 				}
-				else if (self.states['macro_' + opt.macro].isRecording == 1) {
-					self.atem.macroStopRecord()
+				else if (this.states['macro_' + opt.macro].isRecording == 1) {
+					this.atem.macroStopRecord()
 				}
 				else {
-					self.atem.macroRun(parseInt(opt.macro) - 1);
+					this.atem.macroRun(parseInt(opt.macro) - 1);
 				}
 				break;
 			case 'macrocontinue':
-				self.atem.macroContinue();
+				this.atem.macroContinue();
 				break;
 			case 'macrostop':
-				self.atem.macroStop();
+				this.atem.macroStop();
 				break;
 			case 'setMvLayout':
-				self.atem.setMultiViewerProperties( { 'layout': opt.layout }, opt.mvId);
+				this.atem.setMultiViewerProperties( { 'layout': opt.layout }, opt.mvId);
 				break;
 			case 'setMvSource':
-				self.atem.setMultiViewerSource( { 'windowIndex': opt.windowIndex, 'source': opt.source }, opt.mvId);
+				this.atem.setMultiViewerSource( { 'windowIndex': opt.windowIndex, 'source': opt.source }, opt.mvId);
 				break;
 			default:
 				debug('Unknown action: ' + action.action);
@@ -416,7 +414,7 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	config_fields () {
-		var self = this;
+
 		return [
 			{
 				type:    'text',
@@ -430,13 +428,20 @@ class instance extends instance_skel {
 				id:      'host',
 				label:   'Target IP',
 				width:   6,
-				regex:   self.REGEX_IP
+				regex:   this.REGEX_IP
 			},
 			{
 				type:    'dropdown',
 				id:      'modelID',
 				label:   'Model',
-				choices: self.CHOICES_MODEL,
+				choices: this.CHOICES_MODEL,
+				default: 0
+			},
+			{
+				type:    'dropdown',
+				id:      'presets',
+				label:   'Preset Style',
+				choices: this.CHOICES_PRESETSTYLE,
 				default: 0
 			},
 			{
@@ -450,7 +455,7 @@ class instance extends instance_skel {
 				type:    'dropdown',
 				id:      'mvUnlock',
 				label:   'Unlock PGM / PV Multi Viewer Windows?',
-				choices: self.CHOICES_YESNO_BOOLEAN,
+				choices: this.CHOICES_YESNO_BOOLEAN,
 				default: false
 			}
 		]
@@ -463,13 +468,12 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	destroy() {
-		var self = this;
 
-		if (self.atem !== undefined) {
-			self.atem.disconnect();
-			delete self.atem;
+		if (this.atem !== undefined) {
+			this.atem.disconnect();
+			delete this.atem;
 		}
-		debug("destroy", self.id);
+		debug("destroy", this.id);
 	};
 
 	/**
@@ -482,36 +486,35 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	feedback(feedback, bank) {
-		var self = this;
 		var out  = {};
 
 		if (feedback.type == 'preview_bg') {
-			if (self.states['preview' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
+			if (this.states['preview' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
 				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
 			}
 		}
 		else if (feedback.type == 'program_bg') {
-			if (self.states['program' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
+			if (this.states['program' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
 				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
 			}
 		}
 		else if (feedback.type == 'aux_bg') {
-			if (self.states['aux' + feedback.options.aux] == parseInt(feedback.options.input)) {
+			if (this.states['aux' + feedback.options.aux] == parseInt(feedback.options.input)) {
 				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
 			}
 		}
 		else if (feedback.type == 'usk_bg') {
-			if (self.states['usk' + feedback.options.mixeffect + '-' + feedback.options.key]) {
+			if (this.states['usk' + feedback.options.mixeffect + '-' + feedback.options.key]) {
 				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
 			}
 		}
 		else if (feedback.type == 'dsk_bg') {
-			if (self.states['dsk' + feedback.options.key]) {
+			if (this.states['dsk' + feedback.options.key]) {
 				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
 			}
 		}
 		else if (feedback.type == 'macro') {
-			var state = self.states['macro_' + feedback.options.macroIndex];
+			var state = this.states['macro_' + feedback.options.macroIndex];
 
 			if (state.macroIndex == (parseInt(feedback.options.macroIndex))) {
 				if (( feedback.options.state == 'isRunning' && state.isRunning == 1 ) ||
@@ -523,7 +526,7 @@ class instance extends instance_skel {
 			}
 		}
 		else if (feedback.type == 'mv_layout') {
-			var state = self.states['mv_layout_' + feedback.mvId];
+			var state = this.states['mv_layout_' + feedback.mvId];
 
 			if (state.mvId == (parseInt(feedback.mvId)) && state.layout == (parseInt(feedback.layout))) {
 				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
@@ -531,7 +534,7 @@ class instance extends instance_skel {
 		}
 		else if (feedback.type == 'mv_source') {
 			var index = (parseInt(feedback.options.mvId)) & (parseInt(feedback.options.windowIndex));
-			var state = self.states['mv_source_' + index];
+			var state = this.states['mv_source_' + index];
 
 			if (state.mvId == (parseInt(feedback.options.mvId)) && 
 				state.windowIndex == (parseInt(feedback.options.windowIndex)) &&
@@ -551,20 +554,18 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	init() {
-		var self = this;
+		debug = this.debug;
+		log = this.log;
 
-		debug = self.debug;
-		log = self.log;
-
-		self.status(self.STATE_UNKNOWN);
+		this.status(this.STATE_UNKNOWN);
 
 		// Unfortunately this is redundant if the switcher goes
 		// online right away, but necessary for offline programming
-		self.initVariables();
-		self.initFeedbacks();
-		self.initPresets();
+		this.initVariables();
+		this.initFeedbacks();
+		this.initPresets();
 
-		self.setupAtemConnection();
+		this.setupAtemConnection();
 	};
 
 	/**
@@ -574,8 +575,6 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	initFeedbacks() {
-		var self = this;
-
 		// feedbacks
 		var feedbacks = {};
 
@@ -587,27 +586,27 @@ class instance extends instance_skel {
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: self.rgb(255,255,255)
+					default: this.rgb(255,255,255)
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: self.rgb(0,255,0)
+					default: this.rgb(0,255,0)
 				},
 				{
 					type: 'dropdown',
 					label: 'Input',
 					id: 'input',
 					default: 1,
-					choices: self.CHOICES_MESOURCES
+					choices: this.CHOICES_MESOURCES
 				},
 				{
 					type: 'dropdown',
 					id: 'mixeffect',
 					label: 'M/E',
 					default: 0,
-					choices: self.CHOICES_ME.slice(0, self.model.MEs)
+					choices: this.CHOICES_ME.slice(0, this.model.MEs)
 				}
 			]
 		};
@@ -619,27 +618,27 @@ class instance extends instance_skel {
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: self.rgb(255,255,255)
+					default: this.rgb(255,255,255)
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: self.rgb(255,0,0)
+					default: this.rgb(255,0,0)
 				},
 				{
 					type: 'dropdown',
 					label: 'Input',
 					id: 'input',
 					default: 1,
-					choices: self.CHOICES_MESOURCES
+					choices: this.CHOICES_MESOURCES
 				},
 				{
 					type: 'dropdown',
 					id: 'mixeffect',
 					label: 'M/E',
 					default: 0,
-					choices: self.CHOICES_ME.slice(0, self.model.MEs)
+					choices: this.CHOICES_ME.slice(0, this.model.MEs)
 				}
 			]
 		};
@@ -651,27 +650,27 @@ class instance extends instance_skel {
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: self.rgb(0,0,0)
+					default: this.rgb(0,0,0)
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: self.rgb(255,255,0)
+					default: this.rgb(255,255,0)
 				},
 				{
 					type: 'dropdown',
 					label: 'Input',
 					id: 'input',
 					default: 1,
-					choices: self.CHOICES_AUXSOURCES
+					choices: this.CHOICES_AUXSOURCES
 				},
 				{
 					type: 'dropdown',
 					id: 'aux',
 					label: 'AUX',
 					default: 0,
-					choices: self.CHOICES_AUXES.slice(0, self.model.auxes)
+					choices: this.CHOICES_AUXES.slice(0, this.model.auxes)
 				}
 			]
 		};
@@ -683,27 +682,27 @@ class instance extends instance_skel {
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: self.rgb(255,255,255)
+					default: this.rgb(255,255,255)
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: self.rgb(255,0,0)
+					default: this.rgb(255,0,0)
 				},
 				{
 					type: 'dropdown',
 					id: 'mixeffect',
 					label: 'M/E',
 					default: 0,
-					choices: self.CHOICES_ME.slice(0, self.model.MEs)
+					choices: this.CHOICES_ME.slice(0, this.model.MEs)
 				},
 				{
 					type: 'dropdown',
 					label: 'Key',
 					id: 'key',
 					default: '0',
-					choices: self.CHOICES_USKS.slice(0, self.model.USKs)
+					choices: this.CHOICES_USKS.slice(0, this.model.USKs)
 				}
 			]
 		};
@@ -715,20 +714,20 @@ class instance extends instance_skel {
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: self.rgb(255,255,255)
+					default: this.rgb(255,255,255)
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: self.rgb(255,0,0)
+					default: this.rgb(255,0,0)
 				},
 				{
 					type: 'dropdown',
 					label: 'Key',
 					id: 'key',
 					default: '0',
-					choices: self.CHOICES_DSKS.slice(0, self.model.DSKs)
+					choices: this.CHOICES_DSKS.slice(0, this.model.DSKs)
 				}
 			]
 		};
@@ -740,13 +739,13 @@ class instance extends instance_skel {
 					type:   'colorpicker',
 					label:  'Foreground color',
 					id:     'fg',
-					default: self.rgb(255,255,255)
+					default: this.rgb(255,255,255)
 				},
 				{
 					type:   'colorpicker',
 					label:  'Background color',
 					id:     'bg',
-					default: self.rgb(238,238,0)
+					default: this.rgb(238,238,0)
 				},
 				{
 					type:    'textinput',
@@ -760,7 +759,7 @@ class instance extends instance_skel {
 					label:   'State',
 					id:      'state',
 					default: 'isWaiting',
-					choices: self.CHOICES_MACROSTATE
+					choices: this.CHOICES_MACROSTATE
 				}
 			]
 		};
@@ -772,27 +771,27 @@ class instance extends instance_skel {
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: self.rgb(0,0,0)
+					default: this.rgb(0,0,0)
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: self.rgb(255,255,0)
+					default: this.rgb(255,255,0)
 				},
 				{
 					type:    'dropdown',
 					id:      'mvId',
 					label:   'MV',
 					default: 0,
-					choices: self.CHOICES_MV.slice(0, self.model.MVs)
+					choices: this.CHOICES_MV.slice(0, this.model.MVs)
 				},
 				{
 					type:    'dropdown',
 					id:      'layout',
 					label:   'Layout',
 					default: 0,
-					choices: self.CHOICES_MVLAYOUT
+					choices: this.CHOICES_MVLAYOUT
 				}
 			]
 		};
@@ -804,40 +803,40 @@ class instance extends instance_skel {
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: self.rgb(0,0,0)
+					default: this.rgb(0,0,0)
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: self.rgb(255,255,0)
+					default: this.rgb(255,255,0)
 				},
 				{
 					type:    'dropdown',
 					id:      'mvId',
 					label:   'MV',
 					default: 0,
-					choices: self.CHOICES_MV.slice(0, self.model.MVs)
+					choices: this.CHOICES_MV.slice(0, this.model.MVs)
 				},
 				{
 					type:    'dropdown',
 					id:      'windowIndex',
 					label:   'Window #',
 					default: 2,
-					choices: self.CHOICES_MVWINDOW
+					choices: this.CHOICES_MVWINDOW
 				},
 				{
 					type:    'dropdown',
 					id:      'source',
 					label:   'Source',
 					default: 0,
-					choices: self.CHOICES_MVSOURCES
+					choices: this.CHOICES_MVSOURCES
 				}
 			]
 		};
 
 
-		self.setFeedbackDefinitions(feedbacks);
+		this.setFeedbackDefinitions(feedbacks);
 	};
 
 	/**
@@ -847,19 +846,19 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	initPresets () {
-		var self = this;
 		var presets = [];
+		var style = (this.config.presets==1 ? 'long_' : 'short_');
 
-		for (var me = 0; me < self.model.MEs; ++me) {
-			for (var input in self.CHOICES_MESOURCES) {
-				var key = self.CHOICES_MESOURCES[input].id;
+		for (var me = 0; me < this.model.MEs; ++me) {
+			for (var input in this.CHOICES_MESOURCES) {
+				var key = this.CHOICES_MESOURCES[input].id;
 
 				presets.push({
 					category: 'Preview (M/E ' + (me+1) + ')',
-					label: 'Preview button for ' + self.inputs[key].shortName,
+					label: 'Preview button for ' + this.inputs[key].shortName,
 					bank: {
 						style: 'text',
-						text: '$(attem:short_' + key + ')',
+						text: '$(attem:' + style + key + ')',
 						size: '18',
 						color: '16777215',
 						bgcolor: 0
@@ -887,10 +886,10 @@ class instance extends instance_skel {
 				});
 				presets.push({
 					category: 'Program (M/E ' + (me+1) + ')',
-					label: 'Program button for ' + self.inputs[key].shortName,
+					label: 'Program button for ' + this.inputs[key].shortName,
 					bank: {
 						style: 'text',
-						text: '$(attem:short_' + key + ')',
+						text: '$(attem:' + style + key + ')',
 						size: '18',
 						color: '16777215',
 						bgcolor: 0
@@ -919,16 +918,16 @@ class instance extends instance_skel {
 			}
 		}
 
-		for (var i = 0; i < self.model.auxes; ++i) {
-			for (var input in self.CHOICES_AUXSOURCES) {
-				var key = self.CHOICES_AUXSOURCES[input].id;
+		for (var i = 0; i < this.model.auxes; ++i) {
+			for (var input in this.CHOICES_AUXSOURCES) {
+				var key = this.CHOICES_AUXSOURCES[input].id;
 
 				presets.push({
 					category: 'AUX ' + (i+1),
-					label: 'AUX' + (i+1) + ' button for ' + self.inputs[key].shortName,
+					label: 'AUX' + (i+1) + ' button for ' + this.inputs[key].shortName,
 					bank: {
 						style: 'text',
-						text: '$(attem:short_' + key + ')',
+						text: '$(attem:' + style + key + ')',
 						size: '18',
 						color: '16777215',
 						bgcolor: 0
@@ -958,8 +957,8 @@ class instance extends instance_skel {
 		}
 
 		// Upstream keyers
-		for (var me = 0; me < self.model.MEs; ++me) {
-			for (var i = 0; i < self.model.USKs; ++i) {
+		for (var me = 0; me < this.model.MEs; ++me) {
+			for (var i = 0; i < this.model.USKs; ++i) {
 				presets.push({
 					category: 'KEYs',
 					label: 'Toggle upstream KEY' + (i+1) + '(M/E ' + (me+1) + ')',
@@ -967,15 +966,15 @@ class instance extends instance_skel {
 						style: 'text',
 						text: 'KEY ' + (i+1),
 						size: '24',
-						color: self.rgb(255,255,255),
+						color: this.rgb(255,255,255),
 						bgcolor: 0
 					},
 					feedbacks: [
 						{
 							type: 'usk_bg',
 							options: {
-								bg: self.rgb(255,0,0),
-								fg: self.rgb(255,255,255),
+								bg: this.rgb(255,0,0),
+								fg: this.rgb(255,255,255),
 								key: i,
 								mixeffect: me
 							}
@@ -996,7 +995,7 @@ class instance extends instance_skel {
 		}
 
 		// Downstream keyers
-		for (var i = 0; i < self.model.DSKs; ++i) {
+		for (var i = 0; i < this.model.DSKs; ++i) {
 			presets.push({
 				category: 'KEYs',
 				label: 'Toggle downstream KEY' + (i+1),
@@ -1004,15 +1003,15 @@ class instance extends instance_skel {
 					style: 'text',
 					text: 'DSK ' + (i+1),
 					size: '24',
-					color: self.rgb(255,255,255),
+					color: this.rgb(255,255,255),
 					bgcolor: 0
 				},
 				feedbacks: [
 					{
 						type: 'dsk_bg',
 						options: {
-							bg: self.rgb(255,0,0),
-							fg: self.rgb(255,255,255),
+							bg: this.rgb(255,0,0),
+							fg: this.rgb(255,255,255),
 							key: i
 						}
 					}
@@ -1030,7 +1029,7 @@ class instance extends instance_skel {
 		}
 
 		// Macros
-		for (var i = 1; i <= self.model.macros; i++) {
+		for (var i = 1; i <= this.model.macros; i++) {
 			presets.push({
 				category: 'MACROS',
 				label: 'Run button for macro ' + i,
@@ -1038,15 +1037,15 @@ class instance extends instance_skel {
 					style:   'text',
 					text:    '$(attem:macro_' + i + ')',
 					size:    'auto',
-					color:   self.rgb(255,255,255),
-					bgcolor: self.rgb(0,0,0)
+					color:   this.rgb(255,255,255),
+					bgcolor: this.rgb(0,0,0)
 				},
 				feedbacks: [
 					{
 						type: 'macro',
 						options: {
-							bg:         self.rgb(0,0,238),
-							fg:         self.rgb(255,255,255),
+							bg:         this.rgb(0,0,238),
+							fg:         this.rgb(255,255,255),
 							macroIndex: i,
 							state:      'isUsed'
 						}
@@ -1054,8 +1053,8 @@ class instance extends instance_skel {
 					{
 						type: 'macro',
 						options: {
-							bg:         self.rgb(0,238,0),
-							fg:         self.rgb(255,255,255),
+							bg:         this.rgb(0,238,0),
+							fg:         this.rgb(255,255,255),
 							macroIndex: i,
 							state:      'isRunning'
 						}
@@ -1063,8 +1062,8 @@ class instance extends instance_skel {
 					{
 						type: 'macro',
 						options: {
-							bg:         self.rgb(238,238,0),
-							fg:         self.rgb(255,255,255),
+							bg:         this.rgb(238,238,0),
+							fg:         this.rgb(255,255,255),
 							macroIndex: i,
 							state:      'isWaiting'
 						}
@@ -1072,8 +1071,8 @@ class instance extends instance_skel {
 					{
 						type: 'macro',
 						options: {
-							bg:         self.rgb(238,0,0),
-							fg:         self.rgb(255,255,255),
+							bg:         this.rgb(238,0,0),
+							fg:         this.rgb(255,255,255),
 							macroIndex: i,
 							state:      'isRecording'
 						}
@@ -1091,28 +1090,28 @@ class instance extends instance_skel {
 			});
 		}
 
-		for (var i = 0; i < self.model.MVs; i++) {
+		for (var i = 0; i < this.model.MVs; i++) {
 
-			for (var x in self.CHOICES_MVLAYOUT) {
+			for (var x in this.CHOICES_MVLAYOUT) {
 
 				presets.push({
 					category: 'MV Layouts',
-					label: 'Set multi viewer '+(i+1)+' to layout '+self.CHOICES_MVLAYOUT[x].label,
+					label: 'Set multi viewer '+(i+1)+' to layout '+this.CHOICES_MVLAYOUT[x].label,
 					bank: {
 						style:   'text',
-						text:    'MV '+(i+1)+' Layout '+self.CHOICES_MVLAYOUT[x].label,
+						text:    'MV '+(i+1)+' Layout '+this.CHOICES_MVLAYOUT[x].label,
 						size:    'auto',
-						color:   self.rgb(255,255,255),
-						bgcolor: self.rgb(0,0,0)
+						color:   this.rgb(255,255,255),
+						bgcolor: this.rgb(0,0,0)
 					},
 					feedbacks: [
 						{
 							type: 'mv_layout',
 							options: {
-								bg:     self.rgb(255,255,0),
-								fg:     self.rgb(0,0,0),
+								bg:     this.rgb(255,255,0),
+								fg:     this.rgb(0,0,0),
 								mvId:   i,
-								layout: self.CHOICES_MVLAYOUT[x].id
+								layout: this.CHOICES_MVLAYOUT[x].id
 							}
 						}
 					],
@@ -1121,7 +1120,7 @@ class instance extends instance_skel {
 							action: 'setMvLayout',
 							options: {
 								mvId:   i,
-								layout: self.CHOICES_MVLAYOUT[x].id
+								layout: this.CHOICES_MVLAYOUT[x].id
 							}
 						}
 					]
@@ -1130,28 +1129,28 @@ class instance extends instance_skel {
 
 			for (var j = 0; j < 10; j++) {
 
-				if (self.config.mvUnlock == 'false' && j<2) {}
+				if (this.config.mvUnlock == 'false' && j<2) {}
 				else {
-					for (var k in self.CHOICES_MVSOURCES) {
+					for (var k in this.CHOICES_MVSOURCES) {
 
 						presets.push({
 							category: 'MV ' + (i+1) + ' Window ' + (j+1),
-							label: 'Set multi viewer '+(i+1)+', window '+(j+1)+' to source '+self.CHOICES_MVSOURCES[k].label,
+							label: 'Set multi viewer '+(i+1)+', window '+(j+1)+' to source '+this.CHOICES_MVSOURCES[k].label,
 							bank: {
 								style:   'text',
-								text:    '$(attem:short_' + self.CHOICES_MVSOURCES[k].id + ')',
+								text:    '$(attem:' + style + this.CHOICES_MVSOURCES[k].id + ')',
 								size:    '18',
-								color:   self.rgb(255,255,255),
-								bgcolor: self.rgb(0,0,0)
+								color:   this.rgb(255,255,255),
+								bgcolor: this.rgb(0,0,0)
 							},
 							feedbacks: [
 								{
 									type: 'mv_source',
 									options: {
-										bg:          self.rgb(255,255,0),
-										fg:          self.rgb(0,0,0),
+										bg:          this.rgb(255,255,0),
+										fg:          this.rgb(0,0,0),
 										mvId:        i,
-										source:      self.CHOICES_MVSOURCES[k].id,
+										source:      this.CHOICES_MVSOURCES[k].id,
 										windowIndex: j
 									}
 								}
@@ -1161,7 +1160,7 @@ class instance extends instance_skel {
 									action: 'setMvSource',
 									options: {
 										mvId:        i,
-										source:      self.CHOICES_MVSOURCES[k].id,
+										source:      this.CHOICES_MVSOURCES[k].id,
 										windowIndex: j
 									}
 								}
@@ -1172,7 +1171,7 @@ class instance extends instance_skel {
 			}
 		}
 
-		self.setPresetDefinitions(presets);
+		this.setPresetDefinitions(presets);
 	}
 
 	/**
@@ -1182,31 +1181,29 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	initVariables() {
-		var self = this;
-
 		// variable_set
 		var variables = [];
 
 		// PGM/PV busses
-		for (var i = 0; i < self.model.MEs; ++i) {
+		for (var i = 0; i < this.model.MEs; ++i) {
 			variables.push({
 				label: 'Label of input active on program bus (M/E ' + (i+1) + ')',
 				name: 'pgm' + (i+1) + '_input'
 			});
-			if (self.inputs[self.states['program' + i]] !== undefined) {
-				self.setVariable('pgm' + (i+1) + '_input', self.inputs[self.states['program' + i]].shortName);
+			if (this.inputs[this.states['program' + i]] !== undefined) {
+				this.setVariable('pgm' + (i+1) + '_input', this.inputs[this.states['program' + i]].shortName);
 			}
 			variables.push({
 				label: 'Label of input active on preview bus (M/E ' + (i+1) + ')',
 				name: 'pvw' + (i+1) + '_input'
 			});
-			if (self.inputs[self.states['preview' + i]] !== undefined) {
-				self.setVariable('pvw' + (i+1) + '_input', self.inputs[self.states['preview' + i]].shortName);
+			if (this.inputs[this.states['preview' + i]] !== undefined) {
+				this.setVariable('pvw' + (i+1) + '_input', this.inputs[this.states['preview' + i]].shortName);
 			}
 		}
 
 		// Input names
-		for (var key in self.sources) {
+		for (var key in this.sources) {
 			variables.push({
 				label: 'Long name of input id ' + key,
 				name: 'long_' + key
@@ -1216,21 +1213,21 @@ class instance extends instance_skel {
 				name: 'short_' + key
 			});
 
-			if (self.inputs[key] !== undefined) {
-				self.setVariable('long_' + key,  self.inputs[key].longName);
-				self.setVariable('short_' + key, self.inputs[key].shortName);
+			if (this.inputs[key] !== undefined) {
+				this.setVariable('long_' + key,  this.inputs[key].longName);
+				this.setVariable('short_' + key, this.inputs[key].shortName);
 			}
 			else {
-				self.setVariable('long_' + key,  self.sources[key].label);
-				self.setVariable('short_' + key, self.sources[key].shortName);
+				this.setVariable('long_' + key,  this.sources[key].label);
+				this.setVariable('short_' + key, this.sources[key].shortName);
 			}
 		}
 
 		// Macros
-		for (var i = 1; i <= self.model.macros; i++) {
+		for (var i = 1; i <= this.model.macros; i++) {
 
-			if (self.states['macro_' + i] === undefined) {
-				self.states['macro_' + i] = {
+			if (this.states['macro_' + i] === undefined) {
+				this.states['macro_' + i] = {
 					macroIndex:  i,
 					isRunning:   0,
 					isWaiting:   0,
@@ -1247,10 +1244,10 @@ class instance extends instance_skel {
 				name: 'macro_' + i
 			});
 
-			self.setVariable('macro_' + i, self.states['macro_' + i].name);
+			this.setVariable('macro_' + i, this.states['macro_' + i].name);
 		}
 
-		self.setVariableDefinitions(variables);
+		this.setVariableDefinitions(variables);
 	};
 
 	/**
@@ -1262,142 +1259,141 @@ class instance extends instance_skel {
 	 * @since 1.1.0
 	 */
 	processStateChange(err, state) {
-		var self = this;
 
 		switch (state.constructor.name) {
 			case 'AuxSourceCommand':
-				self.states['aux' + state.auxBus] = state.properties.source;
+				this.states['aux' + state.auxBus] = state.properties.source;
 
-				if (self.initDone === true) {
-					self.checkFeedbacks('aux_bg');
+				if (this.initDone === true) {
+					this.checkFeedbacks('aux_bg');
 				}
 				break;
 
 			case 'PreviewInputCommand':
-				self.states['preview' + state.mixEffect] = state.properties.source;
+				this.states['preview' + state.mixEffect] = state.properties.source;
 
-				if (self.inputs[state.properties.source] !== undefined) {
-					self.setVariable('pvw' + (state.mixEffect + 1) + '_input', self.inputs[state.properties.source].shortName);
+				if (this.inputs[state.properties.source] !== undefined) {
+					this.setVariable('pvw' + (state.mixEffect + 1) + '_input', this.inputs[state.properties.source].shortName);
 				}
 
-				if (self.initDone === true) {
-					self.checkFeedbacks('preview_bg');
+				if (this.initDone === true) {
+					this.checkFeedbacks('preview_bg');
 				}
 				break;
 
 			case 'ProgramInputCommand':
-				self.states['program' + state.mixEffect] = state.properties.source;
+				this.states['program' + state.mixEffect] = state.properties.source;
 
-				if (self.inputs[state.properties.source] !== undefined) {
-					self.setVariable('pgm' + (state.mixEffect + 1) + '_input', self.inputs[state.properties.source].shortName);
+				if (this.inputs[state.properties.source] !== undefined) {
+					this.setVariable('pgm' + (state.mixEffect + 1) + '_input', this.inputs[state.properties.source].shortName);
 				}
 
-				if (self.initDone === true) {
-					self.checkFeedbacks('program_bg');
+				if (this.initDone === true) {
+					this.checkFeedbacks('program_bg');
 				}
 				break;
 
 			case 'InputPropertiesCommand':
-				self.inputs[state.inputId] = state.properties;
+				this.inputs[state.inputId] = state.properties;
 				// resend everything, since names of routes might have changed
-				if (self.initDone === true) {
-					self.initVariables();
+				if (this.initDone === true) {
+					this.initVariables();
 				}
 				break;
 
 			case 'InitCompleteCommand':
 				debug('Init done');
-				self.initDone = true;
-				self.log('info', 'Connected to a ' + self.deviceName);
+				this.initDone = true;
+				this.log('info', 'Connected to a ' + this.deviceName);
 
-				self.checkFeedbacks('aux_bg');
-				self.checkFeedbacks('preview_bg');
-				self.checkFeedbacks('program_bg');
-				self.checkFeedbacks('dsk_bg');
-				self.checkFeedbacks('usk_bg');
-				self.checkFeedbacks('macro');
-				self.checkFeedbacks('mv_layout');
-				self.checkFeedbacks('mv_source');
+				this.checkFeedbacks('aux_bg');
+				this.checkFeedbacks('preview_bg');
+				this.checkFeedbacks('program_bg');
+				this.checkFeedbacks('dsk_bg');
+				this.checkFeedbacks('usk_bg');
+				this.checkFeedbacks('macro');
+				this.checkFeedbacks('mv_layout');
+				this.checkFeedbacks('mv_source');
 				break;
 
 			case 'DownstreamKeyStateCommand':
-				self.states['dsk' + state.downstreamKeyerId] = state.properties.onAir;
+				this.states['dsk' + state.downstreamKeyerId] = state.properties.onAir;
 
-				if (self.initDone === true) {
-					self.checkFeedbacks('dsk_bg');
+				if (this.initDone === true) {
+					this.checkFeedbacks('dsk_bg');
 				}
 				break;
 
 			case 'MixEffectKeyOnAirCommand':
-				self.states['usk' + state.mixEffect + '-' + state.upstreamKeyerId] = state.properties.onAir;
+				this.states['usk' + state.mixEffect + '-' + state.upstreamKeyerId] = state.properties.onAir;
 
-				if (self.initDone === true) {
-					self.checkFeedbacks('usk_bg');
+				if (this.initDone === true) {
+					this.checkFeedbacks('usk_bg');
 				}
 				break;
 
 			case 'ProductIdentifierCommand':
-				self.deviceModel = sate.properties.model;
-				self.deviceName  = state.properties.deviceName;
-				self.setAtemModel(self.deviceModel, true);
+				this.deviceModel = state.properties.model;
+				this.deviceName  = state.properties.deviceName;
+				this.setAtemModel(this.deviceModel, true);
 				break;
 
 			case 'MacroPropertiesCommand':
-				if (state.properties.macroIndex >= 0 && self.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
-					var macroIndex = self.properties.macroIndex+1;
-					self.states['macro_'+macroIndex].description = state.properties.description;
-					self.states['macro_'+macroIndex].isUsed      = state.properties.isUsed;
-					self.states['macro_'+macroIndex].name        = state.properties.name;
+				if (state.properties.macroIndex >= 0 && this.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
+					var macroIndex = this.properties.macroIndex+1;
+					this.states['macro_'+macroIndex].description = state.properties.description;
+					this.states['macro_'+macroIndex].isUsed      = state.properties.isUsed;
+					this.states['macro_'+macroIndex].name        = state.properties.name;
 
-					if (self.initDone === true) {
-						self.checkFeedbacks('macro');
+					if (this.initDone === true) {
+						this.checkFeedbacks('macro');
 					}
 				}
 				break;
 
 			case 'MacroRunStatusCommand':
-				if (state.properties.macroIndex >= 0 && self.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
-					var macroIndex = self.properties.macroIndex+1;
-					self.states['macro_'+macroIndex].isRunning  = state.properties.isRunning;
-					self.states['macro_'+macroIndex].isWaiting  = state.properties.isWaiting;
-					self.states['macro_'+macroIndex].loop       = state.properties.loop;
+				if (state.properties.macroIndex >= 0 && this.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
+					var macroIndex = this.properties.macroIndex+1;
+					this.states['macro_'+macroIndex].isRunning  = state.properties.isRunning;
+					this.states['macro_'+macroIndex].isWaiting  = state.properties.isWaiting;
+					this.states['macro_'+macroIndex].loop       = state.properties.loop;
 
-					if (self.initDone === true) {
-						self.checkFeedbacks('macro');
+					if (this.initDone === true) {
+						this.checkFeedbacks('macro');
 					}
 				}
 				break;
 
 			case 'MacroRecordStatusCommand':
-				if (state.properties.macroIndex >= 0 && self.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
-					var macroIndex = self.properties.macroIndex+1;
-					self.states['macro_'+macroIndex].isRecording = state.properties.isRecording;
+				if (state.properties.macroIndex >= 0 && this.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
+					var macroIndex = this.properties.macroIndex+1;
+					this.states['macro_'+macroIndex].isRecording = state.properties.isRecording;
 
-					if (self.initDone === true) {
-						self.checkFeedbacks('macro');
+					if (this.initDone === true) {
+						this.checkFeedbacks('macro');
 					}
 				}
 				break;
 
 			case 'MultiViewerPropertiesCommand':
-				if (state.mvId >= 0 && self.states['mv_layout_'+(state.mvId)] !== undefined) {
-					self.states['mv_layout_'+(state.mvId)].layout = state.properties.layout;
-					self.states['mv_layout_'+(state.mvId)].mvId   = state.mvId;
+				if (state.mvId >= 0 && this.states['mv_layout_'+(state.mvId)] !== undefined) {
+					this.states['mv_layout_'+(state.mvId)].layout = state.properties.layout;
+					this.states['mv_layout_'+(state.mvId)].mvId   = state.mvId;
 
-					if (self.initDone === true) {
-						self.checkFeedbacks('mv_layout');
+					if (this.initDone === true) {
+						this.checkFeedbacks('mv_layout');
 					}
 				}
 				break;
 
 			case 'MultiViewerSourceCommand':
-				if (state.mvId >= 0 && self.states['mv_source_'+(state.index)] !== undefined) {
-					self.states['mv_source_'+(state.index)].mvId        = state.mvId;
-					self.states['mv_source_'+(state.index)].source      = state.properties.source;
-					self.states['mv_source_'+(state.index)].windowIndex = state.properties.windowIndex;
+				if (state.mvId >= 0 && this.states['mv_source_'+(state.index)] !== undefined) {
+					this.states['mv_source_'+(state.index)].mvId        = state.mvId;
+					this.states['mv_source_'+(state.index)].source      = state.properties.source;
+					this.states['mv_source_'+(state.index)].windowIndex = state.properties.windowIndex;
 
-					if (self.initDone === true) {
-						self.checkFeedbacks('mv_source');
+					if (this.initDone === true) {
+						this.checkFeedbacks('mv_source');
 					}
 				}
 				break;
@@ -1415,30 +1411,29 @@ class instance extends instance_skel {
 	 * @since 1.1.0
 	 */
 	setAtemModel(modelID, live) {
-		var self = this;
 
 		if ( !live ) {
 			live = false;
 		}
 
-		if (self.CONFIG_MODEL[modelID] !== undefined) {
+		if (this.CONFIG_MODEL[modelID] !== undefined) {
 
 			// Still not sure about this
-			if ((live === true && self.config.modelID == 0) || (live == false && (this.deviceModel == 0 || modelID > 0))) {
-				self.model = self.CONFIG_MODEL[modelID];
-				debug('ATEM Model: ' + self.model.id);
+			if ((live === true && this.config.modelID == 0) || (live == false && (this.deviceModel == 0 || modelID > 0))) {
+				this.model = this.CONFIG_MODEL[modelID];
+				debug('ATEM Model: ' + this.model.id);
 			}
 
 			// This is a funky test, but necessary.  Can it somehow be an else if of the above ... or simply an else?
-			if ((live === false && self.deviceModel > 0 && modelID > 0 && modelID != self.deviceModel) ||
-				(live === true && self.config.modelID > 0 && self.deviceModel != self.config.modelID)) {
-				self.log('error', 'Connected to a ' + self.deviceName + ', but instance is configured for ' + self.model.label + '.  Change instance to \'Auto Detect\' or the appropriate model to ensure stability.');
+			if ((live === false && this.deviceModel > 0 && modelID > 0 && modelID != this.deviceModel) ||
+				(live === true && this.config.modelID > 0 && this.deviceModel != this.config.modelID)) {
+				this.log('error', 'Connected to a ' + this.deviceName + ', but instance is configured for ' + this.model.label + '.  Change instance to \'Auto Detect\' or the appropriate model to ensure stability.');
 			}
 
-			self.actions();
-			self.initVariables();
-			self.initFeedbacks();
-			self.initPresets();
+			this.actions();
+			this.initVariables();
+			this.initFeedbacks();
+			this.initPresets();
 		}
 		else {
 			debug('ATEM Model: ' + modelID + 'NOT FOUND');
@@ -1452,26 +1447,25 @@ class instance extends instance_skel {
 	 * @since 1.1.0
 	 */
 	setupAtemConnection() {
-		var self = this;
 
-		if (self.config.host !== undefined) {
+		if (this.config.host !== undefined) {
 
-			self.atem = new Atem({ externalLog: self.debug.bind(self) });
+			this.atem = new Atem({ externalLog: this.debug.bind(this) });
 
-			self.atem.on('connected', function () {
-				self.status(self.STATE_OK);
+			this.atem.on('connected', () => {
+				this.status(this.STATE_OK);
 			});
-			self.atem.on('error', function (e) {
-				self.status(self.STATUS_ERROR, 'Error');
+			this.atem.on('error', (e) => {
+				this.status(this.STATUS_ERROR, 'Error');
 			});
-			self.atem.on('disconnected', function () {
-				self.status(self.STATUS_UNKNOWN, 'Disconnected');
-				self.initDone = false;
+			this.atem.on('disconnected', () => {
+				this.status(this.STATUS_UNKNOWN, 'Disconnected');
+				this.initDone = false;
 			});
 
-			self.atem.connect(self.config.host);
+			this.atem.connect(this.config.host);
 
-			self.atem.on('stateChanged', self.processStateChange.bind(self));
+			this.atem.on('stateChanged', this.processStateChange.bind(this));
 		}
 	}
 
@@ -1482,25 +1476,23 @@ class instance extends instance_skel {
 	 * @since 1.1.0
 	 */
 	setupMvWindowChoices() {
-		var self = this;
+		this.CHOICES_MVWINDOW = [];
 
-		self.CHOICES_MVWINDOW = [];
-
-		if (self.config.mvUnlock == 'true') {
-			self.CHOICES_MVWINDOW.push({ id: 0, label: 'Window 1' });
-			self.CHOICES_MVWINDOW.push({ id: 1, label: 'Window 2' });
+		if (this.config.mvUnlock == 'true') {
+			this.CHOICES_MVWINDOW.push({ id: 0, label: 'Window 1' });
+			this.CHOICES_MVWINDOW.push({ id: 1, label: 'Window 2' });
 		}
 
 		for (var i = 2; i < 10; i++) {
-			self.CHOICES_MVWINDOW.push({ id: i, label: 'Window '+ (i+1) });
+			this.CHOICES_MVWINDOW.push({ id: i, label: 'Window '+ (i+1) });
 		}
 
-		for (var i = 0; i < self.model.MVs; i++) {
+		for (var i = 0; i < this.model.MVs; i++) {
 			for (var j = 0; j < 10; j++) {
 				var index = i*100+j;
 
-				if (self.states['mv_source_' + index] === undefined) {
-					self.states['mv_source_' + index] = {
+				if (this.states['mv_source_' + index] === undefined) {
+					this.states['mv_source_' + index] = {
 						mvId:        i,
 						windowIndex: j,
 						source:      0
@@ -1508,8 +1500,8 @@ class instance extends instance_skel {
 				}
 			}
 
-			if (self.states['mv_layout_' + index] === undefined) {
-				self.states['mv_layout_' + index] = {
+			if (this.states['mv_layout_' + index] === undefined) {
+				this.states['mv_layout_' + index] = {
 					mvId:        i,
 					layout:      0
 				};
@@ -1524,68 +1516,66 @@ class instance extends instance_skel {
 	 * @since 1.1.0
 	 */
 	setupSourceChoices() {
-		var self = this;
+		this.sources = [];
+		this.sources[0] =    { id: 0,    label: 'Black',        useME: 1, useAux: 1, useMV: 1, shortName: 'Blck' };
+		this.sources[1000] = { id: 1000, label: 'Bars',         useME: 1, useAux: 1, useMV: 1, shortName: 'Bars' };
+		this.sources[2001] = { id: 2001, label: 'Color 1',      useME: 1, useAux: 1, useMV: 1, shortName: 'Col1' };
+		this.sources[2002] = { id: 2002, label: 'Color 2',      useME: 1, useAux: 1, useMV: 1, shortName: 'Col2' };
+		this.sources[7001] = { id: 7001, label: 'Clean Feed 1', useME: 0, useAux: 1, useMV: 1, shortName: 'Cln1' };
+		this.sources[7002] = { id: 7002, label: 'Clean Feed 2', useME: 0, useAux: 1, useMV: 1, shortName: 'Cln2' };
 
-		self.sources = [];
-		self.sources[0] =    { id: 0,    label: 'Black',        useME: 1, useAux: 1, useMV: 1, shortName: 'Blck' };
-		self.sources[1000] = { id: 1000, label: 'Bars',         useME: 1, useAux: 1, useMV: 1, shortName: 'Bars' };
-		self.sources[2001] = { id: 2001, label: 'Color 1',      useME: 1, useAux: 1, useMV: 1, shortName: 'Col1' };
-		self.sources[2002] = { id: 2002, label: 'Color 2',      useME: 1, useAux: 1, useMV: 1, shortName: 'Col2' };
-		self.sources[7001] = { id: 7001, label: 'Clean Feed 1', useME: 0, useAux: 1, useMV: 1, shortName: 'Cln1' };
-		self.sources[7002] = { id: 7002, label: 'Clean Feed 2', useME: 0, useAux: 1, useMV: 1, shortName: 'Cln2' };
-
-		if (self.model.SSrc > 0) {
-			self.sources[6000] = { id: 6000, label: 'Super Source', useME: 1, useAux: 1, useMV: 1, shortName: 'SSrc' };
+		if (this.model.SSrc > 0) {
+			this.sources[6000] = { id: 6000, label: 'Super Source', useME: 1, useAux: 1, useMV: 1, shortName: 'SSrc' };
 		}
 
-		for(var i = 1; i <= self.model.inputs; i++) {
-			self.sources[i] = { id: i, label: 'Input ' + i, useME: 1, useAux: 1, useMV: 1, shortName: (i<10 ? 'In '+i : 'In'+i) };
+		for(var i = 1; i <= this.model.inputs; i++) {
+			this.sources[i] = { id: i, label: 'Input ' + i, useME: 1, useAux: 1, useMV: 1, shortName: (i<10 ? 'In '+i : 'In'+i) };
 		}
 
-		for(var i = 1; i <= self.model.MPs; i++) {
-			self.sources[(3000+i*10)]   = { id: (3000+i*10),   label: 'Mediaplayer '+i,        useME: 1, useAux: 1, useMV: 1, shortName: 'MP '+i };
-			self.sources[(3000+i*10+1)] = { id: (3000+i*10+1), label: 'Mediaplayer '+i+' Key', useME: 1, useAux: 1, useMV: 1, shortName: 'MP'+i+'K' };
+		for(var i = 1; i <= this.model.MPs; i++) {
+			this.sources[(3000+i*10)]   = { id: (3000+i*10),   label: 'Mediaplayer '+i,        useME: 1, useAux: 1, useMV: 1, shortName: 'MP '+i };
+			this.sources[(3000+i*10+1)] = { id: (3000+i*10+1), label: 'Mediaplayer '+i+' Key', useME: 1, useAux: 1, useMV: 1, shortName: 'MP'+i+'K' };
 		}
 
-		for(var i = 1; i <= self.model.MEs; i++) {
-			// ME 1 can't use used as an ME source, hence i>1 for useME
-			self.sources[(10000+i*10)]   = { id: (10000+i*10),   label: 'ME '+i+' Program', useME: (i>1 ? 1 : 0), useAux: 1, useMV: 1, shortName: 'M'+i+'PG' };
-			self.sources[(10000+i*10+1)] = { id: (10000+i*10+1), label: 'ME '+i+' Preview', useME: (i>1 ? 1 : 0), useAux: 1, useMV: 1, shortName: 'M'+i+'PV' };
+		for(var i = 1; i <= this.model.MEs; i++) {
+			// ME 1 can't be used as an ME source, hence i>1 for useME
+			this.sources[(10000+i*10)]   = { id: (10000+i*10),   label: 'ME '+i+' Program', useME: (i>1 ? 1 : 0), useAux: 1, useMV: 1, shortName: 'M'+i+'PG' };
+			this.sources[(10000+i*10+1)] = { id: (10000+i*10+1), label: 'ME '+i+' Preview', useME: (i>1 ? 1 : 0), useAux: 1, useMV: 1, shortName: 'M'+i+'PV' };
 		}
 
-		for(var i = 1; i <= self.model.auxes; i++) {
-			self.sources[(8000+i)] = { id: (8000+i),   label: 'Auxilary '+i, useME: 0, useAux: 0, useMV: 1, shortName: 'Aux'+i };
+		for(var i = 1; i <= this.model.auxes; i++) {
+			this.sources[(8000+i)] = { id: (8000+i),   label: 'Auxilary '+i, useME: 0, useAux: 0, useMV: 1, shortName: 'Aux'+i };
 		}
 
-		self.CHOICES_AUXSOURCES = [];
-		self.CHOICES_MESOURCES = [];
-		self.CHOICES_MVSOURCES = [];
+		this.CHOICES_AUXSOURCES = [];
+		this.CHOICES_MESOURCES = [];
+		this.CHOICES_MVSOURCES = [];
 
-		for(var key in self.sources) {
+		for(var key in this.sources) {
 
-			if (self.inputs[key] === undefined) {
-				self.inputs[key] = {
-					longName:  self.sources[key].label,
-					shortName: self.sources[key].shortName
+			if (this.inputs[key] === undefined) {
+				this.inputs[key] = {
+					longName:  this.sources[key].label,
+					shortName: this.sources[key].shortName
 				};
 			}
 
-			if (self.sources[key].useAux === 1) {
-				self.CHOICES_AUXSOURCES.push( { id: key, label: self.sources[key].label } );
+			if (this.sources[key].useAux === 1) {
+				this.CHOICES_AUXSOURCES.push( { id: key, label: this.sources[key].label } );
 			}
 
-			if (self.sources[key].useME === 1) {
-				self.CHOICES_MESOURCES.push( { id: key, label: self.sources[key].label } );
+			if (this.sources[key].useME === 1) {
+				this.CHOICES_MESOURCES.push( { id: key, label: this.sources[key].label } );
 			}
 
-			if (self.sources[key].useMV === 1) {
-				self.CHOICES_MVSOURCES.push( { id: key, label: self.sources[key].label } );
+			if (this.sources[key].useMV === 1) {
+				this.CHOICES_MVSOURCES.push( { id: key, label: this.sources[key].label } );
 			}
 		}
 
-		self.CHOICES_AUXSOURCES.sort(function(a, b){return a.id - b.id});
-		self.CHOICES_MESOURCES.sort(function(a, b){return a.id - b.id});
-		self.CHOICES_MVSOURCES.sort(function(a, b){return a.id - b.id});
+		this.CHOICES_AUXSOURCES.sort(function(a, b){return a.id - b.id});
+		this.CHOICES_MESOURCES.sort(function(a, b){return a.id - b.id});
+		this.CHOICES_MVSOURCES.sort(function(a, b){return a.id - b.id});
 	}
 
 	/**
@@ -1596,23 +1586,21 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	updateConfig(config) {
-		var self = this;
-		self.config = config;
+		this.config = config;
 
-		self.setupMvWindowChoices();
-		self.setAtemModel(config.modelID);
+		this.setupMvWindowChoices();
+		this.setAtemModel(config.modelID);
 
-		if (self.config.host !== undefined) {
-			if (self.atem !== undefined && self.atem.socket !== undefined && self.atem.socket._socket !== undefined) {
+		if (this.config.host !== undefined) {
+			if (this.atem !== undefined && this.atem.socket !== undefined && this.atem.socket._socket !== undefined) {
 				try {
-					self.atem.disconnect();
+					this.atem.disconnect();
 				} catch (e) {}
 			}
 
-			self.atem.connect(self.config.host);
+			this.atem.connect(this.config.host);
 		}
 	};
 }
 
-//instance_skel.extendedBy(instance);
 exports = module.exports = instance;
