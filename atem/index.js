@@ -128,35 +128,8 @@ class instance extends instance_skel {
 	 */
 	actions(system) {
 		var self = this;
-//CHOICES_INPUTS.sort(function(a, b){return a.id - b.id}); 
-		self.CHOICES_INPUTS = [
-			{ label: 'Black', id: 0 }
-		];
 
-		for (var i = 1; i <= self.model.inputs; ++i) {
-			self.CHOICES_INPUTS.push({
-				label: 'Input ' + i,
-				id: i
-			});
-		}
-
-		self.CHOICES_INPUTS.push({ label: 'Bars', id: 1000 });
-		self.CHOICES_INPUTS.push({ label: 'Color 1', id: 2001 });
-		self.CHOICES_INPUTS.push({ label: 'Color 2', id: 2002 });
-
-		for(var i = 1; i <= self.model.MPs; i++) {
-			self.CHOICES_INPUTS.push({ label: 'Mediaplayer  '+ i,          id: (3000+i*10) });
-			self.CHOICES_INPUTS.push({ label: 'Mediaplayer  '+ i + ' Key', id: (3000+i*10+1) });
-		}
-
-		self.CHOICES_INPUTS.push({ label: 'Super Source', id: 6000 });
-		self.CHOICES_INPUTS.push({ label: 'Clean Feed 1', id: 7001 });
-		self.CHOICES_INPUTS.push({ label: 'Clean Feed 2', id: 7002 });
-
-		for(var i = 1; i <= self.model.MEs; i++) {
-			self.CHOICES_INPUTS.push({ label: 'ME '+ i + ' Program', id: (10000+i*10) });
-			self.CHOICES_INPUTS.push({ label: 'ME '+ i + ' Preview', id: (10000+i*10+1) });
-		}
+		self.setupSourceChoices();
 
 		self.system.emit('instance_actions', self.id, {
 			'program': {
@@ -167,7 +140,7 @@ class instance extends instance_skel {
 						 label: 'Input',
 						 id: 'input',
 						 default: 1,
-						 choices: self.CHOICES_INPUTS
+						 choices: self.CHOICES_SOURCES
 					},
 					{
 						type: 'dropdown',
@@ -186,7 +159,7 @@ class instance extends instance_skel {
 						 label: 'Input',
 						 id: 'input',
 						 default: 1,
-						 choices: self.CHOICES_INPUTS
+						 choices: self.CHOICES_SOURCES
 					},
 					{
 						type: 'dropdown',
@@ -212,7 +185,7 @@ class instance extends instance_skel {
 						 label: 'Input',
 						 id: 'input',
 						 default: 1,
-						 choices: self.CHOICES_INPUTS
+						 choices: self.CHOICES_SOURCES
 					}
 				]
 			},
@@ -339,7 +312,7 @@ class instance extends instance_skel {
 						type:    'dropdown',
 						id:      'windowIndex',
 						label:   'Window #',
-						default: 3,
+						default: 2,
 						choices: self.CHOICES_MVWINDOW
 					},
 					{
@@ -347,7 +320,7 @@ class instance extends instance_skel {
 						id:      'source',
 						label:   'Source',
 						default: 0,
-						choices: self.CHOICES_INPUTS
+						choices: self.CHOICES_SOURCES
 					}
 				]
 			}
@@ -611,7 +584,7 @@ class instance extends instance_skel {
 					label: 'Input',
 					id: 'input',
 					default: 1,
-					choices: self.CHOICES_INPUTS
+					choices: self.CHOICES_SOURCES
 				},
 				{
 					type: 'dropdown',
@@ -643,7 +616,7 @@ class instance extends instance_skel {
 					label: 'Input',
 					id: 'input',
 					default: 1,
-					choices: self.CHOICES_INPUTS
+					choices: self.CHOICES_SOURCES
 				},
 				{
 					type: 'dropdown',
@@ -675,7 +648,7 @@ class instance extends instance_skel {
 					label: 'Input',
 					id: 'input',
 					default: 1,
-					choices: self.CHOICES_INPUTS
+					choices: self.CHOICES_SOURCES
 				},
 				{
 					type: 'dropdown',
@@ -1232,7 +1205,7 @@ class instance extends instance_skel {
 			debug('ATEM Model: ' + self.model.id);
 
 			// This is a funky test, but necessary
-			if ((!live && self.deviceModel > 0 && modelID > 0 && modelID != self.deviceModel) || (live && self.config.modelID > 0 && self.deviceModel != self.config.modelID)) {
+			if ((!live && self.deviceModel > 0 && modelID > 0 && modelID != self.deviceModel) || (live === true && self.config.modelID > 0 && self.deviceModel != self.config.modelID)) {
 				self.log('error', 'Connected to a ' + self.deviceName + ', but instance is configured for ' + self.model.label + '.  Change instance to \'Auto Detect\' or the appropriate model to ensure stability.');
 			}
 
@@ -1286,7 +1259,7 @@ class instance extends instance_skel {
 
 		self.CHOICES_MVWINDOW = [];
 
-		if (self.config.mvUnlock) {
+		if (self.config.mvUnlock == 'true') {
 			self.CHOICES_MVWINDOW.push({ id: 0, label: 'Window 1' });
 			self.CHOICES_MVWINDOW.push({ id: 1, label: 'Window 2' });
 		}
@@ -1294,6 +1267,46 @@ class instance extends instance_skel {
 		for (var i = 2; i < 10; i++) {
 			self.CHOICES_MVWINDOW.push({ id: i, label: 'Window '+ (i+1) });
 		}
+	}
+
+	/**
+	 * INTERNAL: use model data to define the choices for the source dropdowns.
+	 *
+	 * @access protected
+	 * @since 1.1.0
+	 */
+	setupSourceChoices() {
+		var self = this;
+
+		self.CHOICES_SOURCES = [
+			{ id: 0,    label: 'Black' },
+			{ id: 1000, label: 'Bars' },
+			{ id: 2001, label: 'Color 1' },
+			{ id: 2002, label: 'Color 2' },
+			{ id: 6000, label: 'Super Source' },
+			{ id: 7001, label: 'Clean Feed 1' },
+			{ id: 7002, label: 'Clean Feed 2' },
+		];
+
+		for(var i = 1; i <= self.model.inputs; i++) {
+			self.CHOICES_SOURCES.push({ id: i, label: 'Input ' + i });
+		}
+
+		for(var i = 1; i <= self.model.MPs; i++) {
+			self.CHOICES_SOURCES.push({ id: (3000+i*10),   label: 'Mediaplayer  '+ i });
+			self.CHOICES_SOURCES.push({ id: (3000+i*10+1), label: 'Mediaplayer  '+ i + ' Key' });
+		}
+
+		for(var i = 1; i <= self.model.MEs; i++) {
+			self.CHOICES_SOURCES.push({ id: (10000+i*10),   label: 'ME '+ i + ' Program' });
+			self.CHOICES_SOURCES.push({ id: (10000+i*10+1), label: 'ME '+ i + ' Preview' });
+		}
+
+		for(var i = 1; i <= self.model.auxes; i++) {
+			self.CHOICES_SOURCES.push({ id: (8000+i),   label: 'Auxilary '+ i });
+		}
+
+		self.CHOICES_SOURCES.sort(function(a, b){return a.id - b.id});
 	}
 
 	/**
@@ -1307,6 +1320,7 @@ class instance extends instance_skel {
 		var self = this;
 		self.config = config;
 
+		self.setupMvWindowChoices();
 		self.setAtemModel(config.modelID);
 
 		if (self.config.host !== undefined) {
