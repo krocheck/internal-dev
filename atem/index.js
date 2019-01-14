@@ -88,6 +88,8 @@ class instance extends instance_skel {
 		self.CHOICES_MODEL.sort(function(a, b){
 			var x = a.label.toLowerCase();
 			var y = b.label.toLowerCase();
+			if (a.id == 0) {return -1;}
+			if (b.id == 0) {return 1;}
 			if (x < y) {return -1;}
 			if (x > y) {return 1;}
 			return 0;
