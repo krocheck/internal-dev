@@ -26,11 +26,14 @@ export class MultiViewerPropertiesCommand extends AbstractCommand {
 	}
 
 	serialize () {
-		const buffer = Buffer.alloc(4)
-		buffer.writeUInt8(this.flag, 0)
-		buffer.writeUInt8(this.mvId, 1)
-		buffer.writeUInt8(this.properties.layout, 2)
-		return Buffer.concat([Buffer.from('CMvP', 'ascii'), buffer])
+		const rawCommand = 'CMvP'
+		return new Buffer([
+			...Buffer.from(rawCommand),
+			this.flag,
+			this.mvId,
+			this.properties.layout,
+			0x00
+		])
 	}
 
 	applyToState (state: AtemState) {

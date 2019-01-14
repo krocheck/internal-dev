@@ -25,11 +25,14 @@ export class MultiViewerSourceCommand extends AbstractCommand {
 	}
 
 	serialize () {
-		const buffer = Buffer.alloc(4)
-		buffer.writeUInt8(this.mvId, 0)
-		buffer.writeUInt8(this.properties.windowIndex, 1)
-		buffer.writeUInt16BE(this.properties.source, 2)
-		return Buffer.concat([Buffer.from('CMvI', 'ascii'), buffer])
+		const rawCommand = 'CMvI'
+		return new Buffer([
+			...Buffer.from(rawCommand),
+			this.mvId,
+			this.properties.windowIndex,
+			this.properties.source >> 8,
+			this.properties.source & 0xFF
+		])
 	}
 
 	applyToState (state: AtemState) {
