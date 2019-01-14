@@ -584,7 +584,7 @@ class instance extends instance_skel {
 					label: 'Input',
 					id: 'input',
 					default: 1,
-					choices: self.CHOICES_SOURCES
+					choices: self.CHOICES_MESOURCES
 				},
 				{
 					type: 'dropdown',
@@ -616,7 +616,7 @@ class instance extends instance_skel {
 					label: 'Input',
 					id: 'input',
 					default: 1,
-					choices: self.CHOICES_SOURCES
+					choices: self.CHOICES_MESOURCES
 				},
 				{
 					type: 'dropdown',
@@ -648,7 +648,7 @@ class instance extends instance_skel {
 					label: 'Input',
 					id: 'input',
 					default: 1,
-					choices: self.CHOICES_SOURCES
+					choices: self.CHOICES_AUXSOURCES
 				},
 				{
 					type: 'dropdown',
@@ -764,14 +764,16 @@ class instance extends instance_skel {
 		var presets = [];
 
 		for (var me = 0; me < self.model.MEs; ++me) {
-			for (var input in self.inputs) {
+			for (var input in self.CHOICES_MESOURCES) {
+				var key = self.CHOICES_MESOURCES[input].id;
+
 				presets.push({
 					category: 'Preview (M/E ' + (me+1) + ')',
-					label: 'Preview button for ' + self.inputs[input].shortName,
+					label: 'Preview button for ' + self.inputs[key].shortName,
 					bank: {
 						style: 'text',
-						text: '$(attem:short_' + input + ')',
-						size: '18',
+						text: '$(attem:short_' + key + ')',
+						size: 'auto',
 						color: '16777215',
 						bgcolor: 0
 					},
@@ -781,7 +783,7 @@ class instance extends instance_skel {
 							options: {
 								bg: 65280,
 								fg: 16777215,
-								input: input,
+								input: ikeynput,
 								mixeffect: me
 							}
 						}
@@ -791,18 +793,18 @@ class instance extends instance_skel {
 							action: 'preview',
 							options: {
 								mixeffect: me,
-								input: input
+								input: key
 							}
 						}
 					]
 				});
 				presets.push({
 					category: 'Program (M/E ' + (me+1) + ')',
-					label: 'Program button for ' + self.inputs[input].shortName,
+					label: 'Program button for ' + self.inputs[key].shortName,
 					bank: {
 						style: 'text',
-						text: '$(attem:short_' + input + ')',
-						size: '18',
+						text: '$(attem:short_' + key + ')',
+						size: 'auto',
 						color: '16777215',
 						bgcolor: 0
 					},
@@ -812,7 +814,7 @@ class instance extends instance_skel {
 							options: {
 								bg: 16711680,
 								fg: 16777215,
-								input: input,
+								input: key,
 								mixeffect: me
 							}
 						}
@@ -822,7 +824,7 @@ class instance extends instance_skel {
 							action: 'program',
 							options: {
 								mixeffect: me,
-								input: input
+								input: key
 							}
 						}
 					]
@@ -831,13 +833,15 @@ class instance extends instance_skel {
 		}
 
 		for (var i = 0; i < self.model.auxes; ++i) {
-			for (var input in self.inputs) {
+			for (var input in self.CHOICES_AUXSOURCES) {
+				var key = self.CHOICES_AUXSOURCES[input].id;
+
 				presets.push({
 					category: 'AUX ' + (i+1),
-					label: 'AUX' + (i+1) + ' button for ' + self.inputs[input].shortName,
+					label: 'AUX' + (i+1) + ' button for ' + self.inputs[key].shortName,
 					bank: {
 						style: 'text',
-						text: '$(attem:short_' + input + ')',
+						text: '$(attem:short_' + key + ')',
 						size: '18',
 						color: '16777215',
 						bgcolor: 0
@@ -848,7 +852,7 @@ class instance extends instance_skel {
 							options: {
 								bg: 16776960,
 								fg: 0,
-								input: input,
+								input: key,
 								aux: i
 							}
 						}
@@ -858,7 +862,7 @@ class instance extends instance_skel {
 							action: 'aux',
 							options: {
 								aux: i,
-								input: input
+								input: key
 							}
 						}
 					]
@@ -999,6 +1003,7 @@ class instance extends instance_skel {
 				]
 			});
 		}
+
 		self.setPresetDefinitions(presets);
 	}
 
