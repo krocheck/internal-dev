@@ -1297,37 +1297,44 @@ class instance extends instance_skel {
 		}
 
 		for(var i = 1; i <= self.model.MPs; i++) {
-			self.sources.push({ id: (3000+i*10),   label: 'Mediaplayer  '+ i,          useME: 1, useAux: 1, useMV: 1, shortName: 'MP '+i });
-			self.sources.push({ id: (3000+i*10+1), label: 'Mediaplayer  '+ i + ' Key', useME: 1, useAux: 1, useMV: 1, shortName: 'MP'+i+'K' });
+			self.sources.push({ id: (3000+i*10),   label: 'Mediaplayer '+i,        useME: 1, useAux: 1, useMV: 1, shortName: 'MP '+i });
+			self.sources.push({ id: (3000+i*10+1), label: 'Mediaplayer '+i+' Key', useME: 1, useAux: 1, useMV: 1, shortName: 'MP'+i+'K' });
 		}
 
 		for(var i = 1; i <= self.model.MEs; i++) {
-			self.sources.push({ id: (10000+i*10),   label: 'ME '+ i + ' Program', useME: (i>0 ? 1 : 0), useAux: 1, useMV: 1, shortName: 'M'+i+'PG' });
-			self.sources.push({ id: (10000+i*10+1), label: 'ME '+ i + ' Preview', useME: (i>0 ? 1 : 0), useAux: 1, useMV: 1, shortName: 'M'+i+'PV' });
+			self.sources.push({ id: (10000+i*10),   label: 'ME '+i+' Program', useME: (i>0 ? 1 : 0), useAux: 1, useMV: 1, shortName: 'M'+i+'PG' });
+			self.sources.push({ id: (10000+i*10+1), label: 'ME '+i+' Preview', useME: (i>0 ? 1 : 0), useAux: 1, useMV: 1, shortName: 'M'+i+'PV' });
 		}
 
 		for(var i = 1; i <= self.model.auxes; i++) {
-			self.sources.push({ id: (8000+i),   label: 'Auxilary '+ i, useME: 0, useAux: 0, useMV: 1, shortName: 'Aux'+i });
+			self.sources.push({ id: (8000+i),   label: 'Auxilary '+i, useME: 0, useAux: 0, useMV: 1, shortName: 'Aux'+i });
 		}
 
 		self.sources.sort(function(a, b){return a.id - b.id});
 
-		self.CHOICES_AUXSOURCES = {};
-		self.CHOICES_MESOURCES = {};
-		self.CHOICES_MVSOURCES = {};
+		self.CHOICES_AUXSOURCES = [];
+		self.CHOICES_MESOURCES = [];
+		self.CHOICES_MVSOURCES = [];
 
 		for(var key in self.sources) {
 
-			if (self.source[key].useAux === 1) {
-				self.CHOICES_AUXSOURCES.push( { id: self.source[key].id, label: self.source[key].label } );
+			if (self.inputs[self.sources[key].id] === undefined) {
+				self.inputs[self.sources[key].id] = {
+					longName:  self.sources[key].label,
+					shortName: self.sources[key].shortName
+				};
 			}
 
-			if (self.source[key].useME === 1) {
-				self.CHOICES_MESOURCES.push( { id: self.source[key].id, label: self.source[key].label } );
+			if (self.sources[key].useAux === 1) {
+				self.CHOICES_AUXSOURCES.push( { id: self.sources[key].id, label: self.sources[key].label } );
 			}
 
-			if (self.source[key].useMV === 1) {
-				self.CHOICES_MVSOURCES.push( { id: self.source[key].id, label: self.source[key].label } );
+			if (self.sources[key].useME === 1) {
+				self.CHOICES_MESOURCES.push( { id: self.sources[key].id, label: self.sources[key].label } );
+			}
+
+			if (self.sources[key].useMV === 1) {
+				self.CHOICES_MVSOURCES.push( { id: self.sources[key].id, label: self.sources[key].label } );
 			}
 		}
 	}
