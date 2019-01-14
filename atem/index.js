@@ -30,18 +30,19 @@ class instance extends instance_skel {
 		self.inputs      = {};
 		self.deviceName  = '';
 		self.deviceModel = 0;
+		self.initDone    = false;
 
 		self.CONFIG_MODEL = {
-			0: { id: 0, label: 'Auto Detect',          inputs: 8,  auxes: 3, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, macros: 100 },
-			1: { id: 1, label: 'TV Studio',            inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, macros: 100 },
-			2: { id: 2, label: '1 ME Production',      inputs: 8,  auxes: 3, MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, macros: 100 },
-			3: { id: 3, label: '2 ME Production',      inputs: 16, auxes: 6, MEs: 2, USKs: 4, DSKs: 2, MPs: 2, MVs: 2, macros: 100 },
-			4: { id: 4, label: 'Production Studio 4K', inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, macros: 100 },
-			5: { id: 5, label: '1 ME Production 4K',   inputs: 10, auxes: 3, MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, macros: 100 },
-			6: { id: 6, label: '2 ME Production 4K',   inputs: 20, auxes: 6, MEs: 2, USKs: 2, DSKs: 2, MPs: 2, MVs: 2, macros: 100 },
-			7: { id: 7, label: '4 ME Broadcast 4K',    inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, MPs: 4, MVs: 2, macros: 100 },
-			8: { id: 8, label: 'TV Studio HD',         inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, macros: 100 },
-			//9: { id: 9, label: '4ME?',                 inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, macros: 100 }
+			0: { id: 0, label: 'Auto Detect',          inputs: 8,  auxes: 3, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
+			1: { id: 1, label: 'TV Studio',            inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
+			2: { id: 2, label: '1 ME Production',      inputs: 8,  auxes: 3, MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
+			3: { id: 3, label: '2 ME Production',      inputs: 16, auxes: 6, MEs: 2, USKs: 4, DSKs: 2, MPs: 2, MVs: 2, SSrc: 1, macros: 100 },
+			4: { id: 4, label: 'Production Studio 4K', inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
+			5: { id: 5, label: '1 ME Production 4K',   inputs: 10, auxes: 3, MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
+			6: { id: 6, label: '2 ME Production 4K',   inputs: 20, auxes: 6, MEs: 2, USKs: 2, DSKs: 2, MPs: 2, MVs: 2, SSrc: 1, macros: 100 },
+			7: { id: 7, label: '4 ME Broadcast 4K',    inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, MPs: 4, MVs: 2, SSrc: 1, macros: 100 },
+			8: { id: 8, label: 'TV Studio HD',         inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
+			//9: { id: 9, label: '4ME?',                 inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, MPs: 4, MVs: 2, macros: 100 }
 		};
 
 		self.CHOICES_AUXES = [
@@ -387,6 +388,12 @@ class instance extends instance_skel {
 			case 'macrostop':
 				self.atem.macroStop();
 				break;
+			case 'setMvLayout':
+				self.atem.setMultiViewerProperties( { 'layout': opt.layout }, opt.mvId);
+				break;
+			case 'setMvSource':
+				self.atem.setMultiViewerSource( { 'windowIndex': opt.windowIndex, 'source': opt.source }, opt.mvId);
+				break;
 			default:
 				debug('Unknown action: ' + action.action);
 		}
@@ -665,7 +672,7 @@ class instance extends instance_skel {
 			options: [
 				{
 					type: 'colorpicker',
-					label: 'Color',
+					label: 'Foreground color',
 					id: 'fg',
 					default: self.rgb(255,255,255)
 				},
@@ -697,7 +704,7 @@ class instance extends instance_skel {
 			options: [
 				{
 					type: 'colorpicker',
-					label: 'Color',
+					label: 'Foreground color',
 					id: 'fg',
 					default: self.rgb(255,255,255)
 				},
@@ -722,7 +729,7 @@ class instance extends instance_skel {
 			options: [
 				{
 					type:   'colorpicker',
-					label:  'Color',
+					label:  'Foreground color',
 					id:     'fg',
 					default: self.rgb(255,255,255)
 				},
@@ -745,6 +752,77 @@ class instance extends instance_skel {
 					id:      'state',
 					default: 'isWaiting',
 					choices: self.CHOICES_MACROSTATE
+				}
+			]
+		};
+		feedbacks['mv_layout'] = {
+			label: 'Change colors from MV layout',
+			description: 'If the specified MV is set to the specified layout, change color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: self.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: self.rgb(255,255,0)
+				},
+				{
+					type:    'dropdown',
+					id:      'mvId',
+					label:   'MV',
+					default: 0,
+					choices: self.CHOICES_MV.slice(0, self.model.MVs)
+				},
+				{
+					type:    'dropdown',
+					id:      'layout',
+					label:   'Layout',
+					default: 0,
+					choices: self.CHOICES_MVLAYOUT
+				}
+			]
+		};
+		feedbacks['mv_source'] = {
+			label: 'Change colors from MV window',
+			description: 'If the specified MV window is set to the specified source, change color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: self.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: self.rgb(255,255,0)
+				},
+				{
+					type:    'dropdown',
+					id:      'mvId',
+					label:   'MV',
+					default: 0,
+					choices: self.CHOICES_MV.slice(0, self.model.MVs)
+				},
+				{
+					type:    'dropdown',
+					id:      'windowIndex',
+					label:   'Window #',
+					default: 2,
+					choices: self.CHOICES_MVWINDOW
+				},
+				{
+					type:    'dropdown',
+					id:      'source',
+					label:   'Source',
+					default: 0,
+					choices: self.CHOICES_MVSOURCES
 				}
 			]
 		};
@@ -773,7 +851,7 @@ class instance extends instance_skel {
 					bank: {
 						style: 'text',
 						text: '$(attem:short_' + key + ')',
-						size: 'auto',
+						size: '18',
 						color: '16777215',
 						bgcolor: 0
 					},
@@ -783,7 +861,7 @@ class instance extends instance_skel {
 							options: {
 								bg: 65280,
 								fg: 16777215,
-								input: ikeynput,
+								input: key,
 								mixeffect: me
 							}
 						}
@@ -804,7 +882,7 @@ class instance extends instance_skel {
 					bank: {
 						style: 'text',
 						text: '$(attem:short_' + key + ')',
-						size: 'auto',
+						size: '18',
 						color: '16777215',
 						bgcolor: 0
 					},
@@ -879,7 +957,7 @@ class instance extends instance_skel {
 					bank: {
 						style: 'text',
 						text: 'KEY ' + (i+1),
-						size: 'auto',
+						size: '24',
 						color: self.rgb(255,255,255),
 						bgcolor: 0
 					},
@@ -916,7 +994,7 @@ class instance extends instance_skel {
 				bank: {
 					style: 'text',
 					text: 'DSK ' + (i+1),
-					size: 'auto',
+					size: '24',
 					color: self.rgb(255,255,255),
 					bgcolor: 0
 				},
@@ -946,10 +1024,10 @@ class instance extends instance_skel {
 		for (var i = 1; i <= self.model.macros; i++) {
 			presets.push({
 				category: 'MACROS',
-				label: 'Macro ' + i,
+				label: 'Run button for macro ' + i,
 				bank: {
 					style:   'text',
-					text:    'Macro ' + i,
+					text:    '$(attem:macro_' + i + ')',
 					size:    'auto',
 					color:   self.rgb(255,255,255),
 					bgcolor: self.rgb(0,0,0)
@@ -1002,6 +1080,87 @@ class instance extends instance_skel {
 					}
 				]
 			});
+		}
+
+		for (var i = 0; i < self.model.MVs; i++) {
+
+			for (var x in self.CHOICES_MVLAYOUT) {
+
+				presets.push({
+					category: 'MV Layouts',
+					label: 'Set multi viewer '+(i+1)+' to layout '+self.CHOICES_MVLAYOUT[x].label,
+					bank: {
+						style:   'text',
+						text:    'MV '+(i+1)+' Layout '+self.CHOICES_MVLAYOUT[x].label,
+						size:    'auto',
+						color:   self.rgb(255,255,255),
+						bgcolor: self.rgb(0,0,0)
+					},
+					feedbacks: [
+						{
+							type: 'mv_layout',
+							options: {
+								bg:     self.rgb(255,255,0),
+								fg:     self.rgb(0,0,0),
+								mvId:   i,
+								layout: self.CHOICES_MVLAYOUT[x].id
+							}
+						}
+					],
+					actions: [
+						{
+							action: 'setMvLayout',
+							options: {
+								mvId:   i,
+								layout: self.CHOICES_MVLAYOUT[x].id
+							}
+						}
+					]
+				});
+			}
+
+			for (var j = 0; j < 10; j++) {
+
+				if (self.config.mvUnlock == 'false' && j<2) {}
+				else {
+					for (var k in self.CHOICES_MVSOURCES) {
+
+						presets.push({
+							category: 'MV ' + (i+1) + ' Window ' + (j+1),
+							label: 'Set multi viewer '+(i+1)+', window '+(j+1)+' to source '+self.CHOICES_MVSOURCES[k].label,
+							bank: {
+								style:   'text',
+								text:    '$(attem:short_' + self.CHOICES_MVSOURCES[k].id + ')',
+								size:    '18',
+								color:   self.rgb(255,255,255),
+								bgcolor: self.rgb(0,0,0)
+							},
+							feedbacks: [
+								{
+									type: 'mv_source',
+									options: {
+										bg:          self.rgb(255,255,0),
+										fg:          self.rgb(0,0,0),
+										mvId:        i,
+										source:      self.CHOICES_MVSOURCES[k].id,
+										windowIndex: j
+									}
+								}
+							],
+							actions: [
+								{
+									action: 'setMvSource',
+									options: {
+										mvId:        i,
+										source:      self.CHOICES_MVSOURCES[k].id,
+										windowIndex: j
+									}
+								}
+							]
+						});
+					}
+				}
+			}
 		}
 
 		self.setPresetDefinitions(presets);
@@ -1100,96 +1259,144 @@ class instance extends instance_skel {
 			case 'AuxSourceCommand':
 				self.states['aux' + state.auxBus] = state.properties.source;
 
-				self.checkFeedbacks('aux_bg');
+				if (self.initDone === true) {
+					self.checkFeedbacks('aux_bg');
+				}
 				break;
 
 			case 'PreviewInputCommand':
 				self.states['preview' + state.mixEffect] = state.properties.source;
+
 				if (self.inputs[state.properties.source] !== undefined) {
 					self.setVariable('pvw' + (state.mixEffect + 1) + '_input', self.inputs[state.properties.source].shortName);
 				}
 
-				self.checkFeedbacks('preview_bg');
+				if (self.initDone === true) {
+					self.checkFeedbacks('preview_bg');
+				}
 				break;
 
 			case 'ProgramInputCommand':
 				self.states['program' + state.mixEffect] = state.properties.source;
+
 				if (self.inputs[state.properties.source] !== undefined) {
 					self.setVariable('pgm' + (state.mixEffect + 1) + '_input', self.inputs[state.properties.source].shortName);
 				}
 
-				self.checkFeedbacks('program_bg');
+				if (self.initDone === true) {
+					self.checkFeedbacks('program_bg');
+				}
 				break;
 
 			case 'InputPropertiesCommand':
 				self.inputs[state.inputId] = state.properties;
-
 				// resend everything, since names of routes might have changed
-				self.initVariables();
+				if (self.initDone === true) {
+					self.initVariables();
+				}
 				break;
 
 			case 'InitCompleteCommand':
 				debug('Init done');
-				self.setAtemModel(self.deviceModel, true);
+				self.initDone = true;
 				self.log('info', 'Connected to a ' + self.deviceName);
+
+				self.checkFeedbacks('aux_bg');
+				self.checkFeedbacks('preview_bg');
+				self.checkFeedbacks('program_bg');
+				self.checkFeedbacks('dsk_bg');
+				self.checkFeedbacks('usk_bg');
+				self.checkFeedbacks('macro');
+				self.checkFeedbacks('mv_layout');
+				self.checkFeedbacks('mv_source');
 				break;
 
 			case 'DownstreamKeyStateCommand':
 				self.states['dsk' + state.downstreamKeyerId] = state.properties.onAir;
-				self.checkFeedbacks('dsk_bg');
+
+				if (self.initDone === true) {
+					self.checkFeedbacks('dsk_bg');
+				}
 				break;
 
 			case 'MixEffectKeyOnAirCommand':
 				self.states['usk' + state.mixEffect + '-' + state.upstreamKeyerId] = state.properties.onAir;
-				self.checkFeedbacks('usk_bg');
+
+				if (self.initDone === true) {
+					self.checkFeedbacks('usk_bg');
+				}
 				break;
 
 			case 'ProductIdentifierCommand':
 				self.deviceModel = sate.properties.model;
 				self.deviceName  = state.properties.deviceName;
+				self.setAtemModel(self.deviceModel, true);
 				break;
 
 			case 'MacroPropertiesCommand':
 				if (state.properties.macroIndex >= 0 && self.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
 					var macroIndex = self.properties.macroIndex+1;
-					//self.states['macro_'+macroIndex].macroIndex  = macroIndex;
 					self.states['macro_'+macroIndex].description = state.properties.description;
 					self.states['macro_'+macroIndex].isUsed      = state.properties.isUsed;
 					self.states['macro_'+macroIndex].name        = state.properties.name;
-					self.checkFeedbacks('macro');
+
+					if (self.initDone === true) {
+						self.checkFeedbacks('macro');
+					}
 				}
 				break;
 
 			case 'MacroRunStatusCommand':
 				if (state.properties.macroIndex >= 0 && self.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
 					var macroIndex = self.properties.macroIndex+1;
-					//self.states['macro_'+macroIndex].macroIndex = macroIndex;
 					self.states['macro_'+macroIndex].isRunning  = state.properties.isRunning;
 					self.states['macro_'+macroIndex].isWaiting  = state.properties.isWaiting;
 					self.states['macro_'+macroIndex].loop       = state.properties.loop;
-					self.checkFeedbacks('macro');
+
+					if (self.initDone === true) {
+						self.checkFeedbacks('macro');
+					}
 				}
 				break;
 
 			case 'MacroRecordStatusCommand':
 				if (state.properties.macroIndex >= 0 && self.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
 					var macroIndex = self.properties.macroIndex+1;
-					//self.states['macro_'+macroIndex].macroIndex  = macroIndex;
 					self.states['macro_'+macroIndex].isRecording = state.properties.isRecording;
-					self.checkFeedbacks('macro');
+
+					if (self.initDone === true) {
+						self.checkFeedbacks('macro');
+					}
 				}
 				break;
 
 			case 'MultiViewerPropertiesCommand':
+				if (state.mvId >= 0 && self.states['mv_layout_'+(state.mvId)] !== undefined) {
+					self.states['mv_layout_'+(state.mvId)].layout = state.properties.layout;
+					self.states['mv_layout_'+(state.mvId)].mvId   = state.mvId;
+
+					if (self.initDone === true) {
+						self.checkFeedbacks('mv_layout');
+					}
+				}
 				break;
 
 			case 'MultiViewerSourceCommand':
+				if (state.mvId >= 0 && self.states['mv_source_'+(state.index)] !== undefined) {
+					self.states['mv_source_'+(state.index)].mvId        = state.mvId;
+					self.states['mv_source_'+(state.index)].source      = state.properties.source;
+					self.states['mv_source_'+(state.index)].windowIndex = state.properties.windowIndex;
+
+					if (self.initDone === true) {
+						self.checkFeedbacks('mv_source');
+					}
+				}
 				break;
 		}
 	}
 
 	/**
-	 * INTERNAL: Does a bunch of setup and cleanup then we switch models.
+	 * INTERNAL: Fires a bunch of setup and cleanup when we switch models.
 	 * This is a tricky function because both Config and Atem use this.
 	 * Logic has to track who's who and make sure we don't init over a live switcher.
 	 *
@@ -1207,14 +1414,15 @@ class instance extends instance_skel {
 
 		if (self.CONFIG_MODEL[modelID] !== undefined) {
 
-			// Still need to setup this to deal with overrides
-			self.model = self.CONFIG_MODEL[modelID];
-			// End note
+			// Still not sure about this
+			if ((live === true && self.config.modelID == 0) || (live == false && (this.deviceModel == 0 || modelID > 0))) {
+				self.model = self.CONFIG_MODEL[modelID];
+				debug('ATEM Model: ' + self.model.id);
+			}
 
-			debug('ATEM Model: ' + self.model.id);
-
-			// This is a funky test, but necessary
-			if ((!live && self.deviceModel > 0 && modelID > 0 && modelID != self.deviceModel) || (live === true && self.config.modelID > 0 && self.deviceModel != self.config.modelID)) {
+			// This is a funky test, but necessary.  Can it somehow be an else if of the above ... or simply an else?
+			if ((live === false && self.deviceModel > 0 && modelID > 0 && modelID != self.deviceModel) ||
+				(live === true && self.config.modelID > 0 && self.deviceModel != self.config.modelID)) {
 				self.log('error', 'Connected to a ' + self.deviceName + ', but instance is configured for ' + self.model.label + '.  Change instance to \'Auto Detect\' or the appropriate model to ensure stability.');
 			}
 
@@ -1249,6 +1457,7 @@ class instance extends instance_skel {
 			});
 			self.atem.on('disconnected', function () {
 				self.status(self.STATUS_UNKNOWN, 'Disconnected');
+				self.initDone = false;
 			});
 
 			self.atem.connect(self.config.host);
@@ -1276,6 +1485,27 @@ class instance extends instance_skel {
 		for (var i = 2; i < 10; i++) {
 			self.CHOICES_MVWINDOW.push({ id: i, label: 'Window '+ (i+1) });
 		}
+
+		for (var i = 0; i < self.model.MVs; i++) {
+			for (var j = 0; j < 10; j++) {
+				var index = i*100+j;
+
+				if (self.states['mv_source_' + index] === undefined) {
+					self.states['mv_source_' + index] = {
+						mvId:        i,
+						windowIndex: j,
+						source:      0
+					};
+				}
+			}
+
+			if (self.states['mv_layout_' + index] === undefined) {
+				self.states['mv_layout_' + index] = {
+					mvId:        i,
+					layout:      0
+				};
+			}
+		}
 	}
 
 	/**
@@ -1292,9 +1522,12 @@ class instance extends instance_skel {
 		self.sources[1000] = { id: 1000, label: 'Bars',         useME: 1, useAux: 1, useMV: 1, shortName: 'Bars' };
 		self.sources[2001] = { id: 2001, label: 'Color 1',      useME: 1, useAux: 1, useMV: 1, shortName: 'Col1' };
 		self.sources[2002] = { id: 2002, label: 'Color 2',      useME: 1, useAux: 1, useMV: 1, shortName: 'Col2' };
-		self.sources[6000] = { id: 6000, label: 'Super Source', useME: 1, useAux: 1, useMV: 1, shortName: 'SSrc' };
 		self.sources[7001] = { id: 7001, label: 'Clean Feed 1', useME: 0, useAux: 1, useMV: 1, shortName: 'Cln1' };
 		self.sources[7002] = { id: 7002, label: 'Clean Feed 2', useME: 0, useAux: 1, useMV: 1, shortName: 'Cln2' };
+
+		if (self.model.SSrc > 0) {
+			self.sources[6000] = { id: 6000, label: 'Super Source', useME: 1, useAux: 1, useMV: 1, shortName: 'SSrc' };
+		}
 
 		for(var i = 1; i <= self.model.inputs; i++) {
 			self.sources[i] = { id: i, label: 'Input ' + i, useME: 1, useAux: 1, useMV: 1, shortName: (i<10 ? 'In '+i : 'In'+i) };
@@ -1306,8 +1539,9 @@ class instance extends instance_skel {
 		}
 
 		for(var i = 1; i <= self.model.MEs; i++) {
-			self.sources[(10000+i*10)]   = { id: (10000+i*10),   label: 'ME '+i+' Program', useME: (i>0 ? 1 : 0), useAux: 1, useMV: 1, shortName: 'M'+i+'PG' };
-			self.sources[(10000+i*10+1)] = { id: (10000+i*10+1), label: 'ME '+i+' Preview', useME: (i>0 ? 1 : 0), useAux: 1, useMV: 1, shortName: 'M'+i+'PV' };
+			// ME 1 can't use used as an ME source, hence i>1 for useME
+			self.sources[(10000+i*10)]   = { id: (10000+i*10),   label: 'ME '+i+' Program', useME: (i>1 ? 1 : 0), useAux: 1, useMV: 1, shortName: 'M'+i+'PG' };
+			self.sources[(10000+i*10+1)] = { id: (10000+i*10+1), label: 'ME '+i+' Preview', useME: (i>1 ? 1 : 0), useAux: 1, useMV: 1, shortName: 'M'+i+'PV' };
 		}
 
 		for(var i = 1; i <= self.model.auxes; i++) {
