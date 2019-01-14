@@ -1282,15 +1282,14 @@ class instance extends instance_skel {
 	setupSourceChoices() {
 		var self = this;
 
-		self.sources = {
-			0:    { id: 0,    label: 'Black',        useME: 1, useAux: 1, useMV: 1, shortName: 'Blck' },
-			1000: { id: 1000, label: 'Bars',         useME: 1, useAux: 1, useMV: 1, shortName: 'Bars' },
-			2001: { id: 2001, label: 'Color 1',      useME: 1, useAux: 1, useMV: 1, shortName: 'Col1' },
-			2002: { id: 2002, label: 'Color 2',      useME: 1, useAux: 1, useMV: 1, shortName: 'Col2' },
-			6000: { id: 6000, label: 'Super Source', useME: 1, useAux: 1, useMV: 1, shortName: 'SSrc' },
-			7001: { id: 7001, label: 'Clean Feed 1', useME: 0, useAux: 1, useMV: 1, shortName: 'Cln1' },
-			7002: { id: 7002, label: 'Clean Feed 2', useME: 0, useAux: 1, useMV: 1, shortName: 'Cln2' },
-		};
+		self.sources = [];
+		self.sources[0] =    { id: 0,    label: 'Black',        useME: 1, useAux: 1, useMV: 1, shortName: 'Blck' };
+		self.sources[1000] = { id: 1000, label: 'Bars',         useME: 1, useAux: 1, useMV: 1, shortName: 'Bars' };
+		self.sources[2001] = { id: 2001, label: 'Color 1',      useME: 1, useAux: 1, useMV: 1, shortName: 'Col1' };
+		self.sources[2002] = { id: 2002, label: 'Color 2',      useME: 1, useAux: 1, useMV: 1, shortName: 'Col2' };
+		self.sources[6000] = { id: 6000, label: 'Super Source', useME: 1, useAux: 1, useMV: 1, shortName: 'SSrc' };
+		self.sources[7001] = { id: 7001, label: 'Clean Feed 1', useME: 0, useAux: 1, useMV: 1, shortName: 'Cln1' };
+		self.sources[7002] = { id: 7002, label: 'Clean Feed 2', useME: 0, useAux: 1, useMV: 1, shortName: 'Cln2' };
 
 		for(var i = 1; i <= self.model.inputs; i++) {
 			self.sources[i] = { id: i, label: 'Input ' + i, useME: 1, useAux: 1, useMV: 1, shortName: (i<10 ? 'In '+i : 'In'+i) };
