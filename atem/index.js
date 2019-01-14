@@ -847,7 +847,8 @@ class instance extends instance_skel {
 	 */
 	initPresets () {
 		var presets = [];
-		var style = (this.config.presets==1 ? 'long_' : 'short_');
+		var pstText = (this.config.presets == 1 ? 'long_' : 'short_');
+		var pstSize = (this.config.presets == 1 ? 'auto' : '18')
 
 		for (var me = 0; me < this.model.MEs; ++me) {
 			for (var input in this.CHOICES_MESOURCES) {
@@ -858,8 +859,8 @@ class instance extends instance_skel {
 					label: 'Preview button for ' + this.inputs[key].shortName,
 					bank: {
 						style: 'text',
-						text: '$(attem:' + style + key + ')',
-						size: '18',
+						text: '$(attem:' + pstText + key + ')',
+						size: pstSize,
 						color: '16777215',
 						bgcolor: 0
 					},
@@ -889,8 +890,8 @@ class instance extends instance_skel {
 					label: 'Program button for ' + this.inputs[key].shortName,
 					bank: {
 						style: 'text',
-						text: '$(attem:' + style + key + ')',
-						size: '18',
+						text: '$(attem:' + pstText + key + ')',
+						size: pstSize,
 						color: '16777215',
 						bgcolor: 0
 					},
@@ -927,8 +928,8 @@ class instance extends instance_skel {
 					label: 'AUX' + (i+1) + ' button for ' + this.inputs[key].shortName,
 					bank: {
 						style: 'text',
-						text: '$(attem:' + style + key + ')',
-						size: '18',
+						text: '$(attem:' + pstText + key + ')',
+						size: pstSize,
 						color: '16777215',
 						bgcolor: 0
 					},
@@ -1138,8 +1139,8 @@ class instance extends instance_skel {
 							label: 'Set multi viewer '+(i+1)+', window '+(j+1)+' to source '+this.CHOICES_MVSOURCES[k].label,
 							bank: {
 								style:   'text',
-								text:    '$(attem:' + style + this.CHOICES_MVSOURCES[k].id + ')',
-								size:    '18',
+								text:    '$(attem:' + pstText + this.CHOICES_MVSOURCES[k].id + ')',
+								size:    pstSize,
 								color:   this.rgb(255,255,255),
 								bgcolor: this.rgb(0,0,0)
 							},
