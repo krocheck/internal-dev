@@ -140,7 +140,7 @@ class instance extends instance_skel {
 						 label: 'Input',
 						 id: 'input',
 						 default: 1,
-						 choices: self.CHOICES_SOURCES
+						 choices: self.CHOICES_MESOURCES
 					},
 					{
 						type: 'dropdown',
@@ -159,7 +159,7 @@ class instance extends instance_skel {
 						 label: 'Input',
 						 id: 'input',
 						 default: 1,
-						 choices: self.CHOICES_SOURCES
+						 choices: self.CHOICES_MESOURCES
 					},
 					{
 						type: 'dropdown',
@@ -185,7 +185,7 @@ class instance extends instance_skel {
 						 label: 'Input',
 						 id: 'input',
 						 default: 1,
-						 choices: self.CHOICES_SOURCES
+						 choices: self.CHOICES_AUXSOURCES
 					}
 				]
 			},
@@ -320,7 +320,7 @@ class instance extends instance_skel {
 						id:      'source',
 						label:   'Source',
 						default: 0,
-						choices: self.CHOICES_SOURCES
+						choices: self.CHOICES_MVSOURCES
 					}
 				]
 			}
@@ -1033,7 +1033,7 @@ class instance extends instance_skel {
 		}
 
 		// Input names
-		for (var key in self.inputs) {
+		for (var key in self.sources) {
 			variables.push({
 				label: 'Long name of input id ' + key,
 				name: 'long_' + key
@@ -1043,9 +1043,13 @@ class instance extends instance_skel {
 				name: 'short_' + key
 			});
 
-			if (self.inputs[key] !== undefined) {
-				self.setVariable('long_' + key, self.inputs[key].longName);
+			if (self.inputs[self.sources[key].id] !== undefined) {
+				self.setVariable('long_' + key,  self.inputs[key].longName);
 				self.setVariable('short_' + key, self.inputs[key].shortName);
+			}
+			else {
+				self.setVariable('long_' + key,  self.sources[key].label);
+				self.setVariable('short_' + key, self.sources[key].shortName);
 			}
 		}
 
@@ -1278,35 +1282,54 @@ class instance extends instance_skel {
 	setupSourceChoices() {
 		var self = this;
 
-		self.CHOICES_SOURCES = [
-			{ id: 0,    label: 'Black' },
-			{ id: 1000, label: 'Bars' },
-			{ id: 2001, label: 'Color 1' },
-			{ id: 2002, label: 'Color 2' },
-			{ id: 6000, label: 'Super Source' },
-			{ id: 7001, label: 'Clean Feed 1' },
-			{ id: 7002, label: 'Clean Feed 2' },
+		self.sources = [
+			{ id: 0,    label: 'Black',        useME: 1, useAux: 1, useMV: 1, shortName: 'Blck' },
+			{ id: 1000, label: 'Bars',         useME: 1, useAux: 1, useMV: 1, shortName: 'Bars' },
+			{ id: 2001, label: 'Color 1',      useME: 1, useAux: 1, useMV: 1, shortName: 'Col1' },
+			{ id: 2002, label: 'Color 2',      useME: 1, useAux: 1, useMV: 1, shortName: 'Col2' },
+			{ id: 6000, label: 'Super Source', useME: 1, useAux: 1, useMV: 1, shortName: 'SSrc' },
+			{ id: 7001, label: 'Clean Feed 1', useME: 0, useAux: 1, useMV: 1, shortName: 'Cln1' },
+			{ id: 7002, label: 'Clean Feed 2', useME: 0, useAux: 1, useMV: 1, shortName: 'Cln2' },
 		];
 
 		for(var i = 1; i <= self.model.inputs; i++) {
-			self.CHOICES_SOURCES.push({ id: i, label: 'Input ' + i });
+			self.sources.push({ id: i, label: 'Input ' + i, useME: 1, useAux: 1, useMV: 1, shortName: (i<10 ? 'In '+i : 'In'+i) });
 		}
 
 		for(var i = 1; i <= self.model.MPs; i++) {
-			self.CHOICES_SOURCES.push({ id: (3000+i*10),   label: 'Mediaplayer  '+ i });
-			self.CHOICES_SOURCES.push({ id: (3000+i*10+1), label: 'Mediaplayer  '+ i + ' Key' });
+			self.sources.push({ id: (3000+i*10),   label: 'Mediaplayer  '+ i,          useME: 1, useAux: 1, useMV: 1, shortName: 'MP '+i });
+			self.sources.push({ id: (3000+i*10+1), label: 'Mediaplayer  '+ i + ' Key', useME: 1, useAux: 1, useMV: 1, shortName: 'MP'+i+'K' });
 		}
 
 		for(var i = 1; i <= self.model.MEs; i++) {
-			self.CHOICES_SOURCES.push({ id: (10000+i*10),   label: 'ME '+ i + ' Program' });
-			self.CHOICES_SOURCES.push({ id: (10000+i*10+1), label: 'ME '+ i + ' Preview' });
+			self.sources.push({ id: (10000+i*10),   label: 'ME '+ i + ' Program', useME: (i>0 ? 1 : 0), useAux: 1, useMV: 1, shortName: 'M'+i+'PG' });
+			self.sources.push({ id: (10000+i*10+1), label: 'ME '+ i + ' Preview', useME: (i>0 ? 1 : 0), useAux: 1, useMV: 1, shortName: 'M'+i+'PV' });
 		}
 
 		for(var i = 1; i <= self.model.auxes; i++) {
-			self.CHOICES_SOURCES.push({ id: (8000+i),   label: 'Auxilary '+ i });
+			self.sources.push({ id: (8000+i),   label: 'Auxilary '+ i, useME: 0, useAux: 0, useMV: 1, shortName: 'Aux'+i });
 		}
 
-		self.CHOICES_SOURCES.sort(function(a, b){return a.id - b.id});
+		self.sources.sort(function(a, b){return a.id - b.id});
+
+		self.CHOICES_AUXSOURCES = {};
+		self.CHOICES_MESOURCES = {};
+		self.CHOICES_MVSOURCES = {};
+
+		for(var key in self.sources) {
+
+			if (self.source[key].useAux === 1) {
+				self.CHOICES_AUXSOURCES.push( { id: self.source[key].id, label: self.source[key].label } );
+			}
+
+			if (self.source[key].useME === 1) {
+				self.CHOICES_MESOURCES.push( { id: self.source[key].id, label: self.source[key].label } );
+			}
+
+			if (self.source[key].useMV === 1) {
+				self.CHOICES_MVSOURCES.push( { id: self.source[key].id, label: self.source[key].label } );
+			}
+		}
 	}
 
 	/**
