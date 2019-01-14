@@ -1309,8 +1309,6 @@ class instance extends instance_skel {
 			self.sources[(8000+i)] = { id: (8000+i),   label: 'Auxilary '+i, useME: 0, useAux: 0, useMV: 1, shortName: 'Aux'+i };
 		}
 
-		self.sources.sort(function(a, b){return a.id - b.id});
-
 		self.CHOICES_AUXSOURCES = [];
 		self.CHOICES_MESOURCES = [];
 		self.CHOICES_MVSOURCES = [];
@@ -1336,6 +1334,10 @@ class instance extends instance_skel {
 				self.CHOICES_MVSOURCES.push( { id: key, label: self.sources[key].label } );
 			}
 		}
+
+		self.CHOICES_AUXSOURCES.sort(function(a, b){return a.id - b.id});
+		self.CHOICES_MESOURCES.sort(function(a, b){return a.id - b.id});
+		self.CHOICES_MVSOURCES.sort(function(a, b){return a.id - b.id});
 	}
 
 	/**
