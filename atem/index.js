@@ -120,6 +120,15 @@ class instance extends instance_skel {
 			{ id: 3, label: '4' }
 		];
 
+		this.ICONS = {
+			trans0:  'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAYAAAATBx+NAAABEUlEQVR4nO3XsYqDQBRG4ZthQDs73//57OwUxIQRHKIkni4EPF+36xbLj3uz5xERz9BXyWmuORDI749zztF1XTRNs309z3OM4xjLsvzfb/4j9QaVcfq+j5SOL9W6rjEMw21HqmuUN+c8zvYDKW3P7qousv9ZfdK2rQMJBioH+Ztpmm47Xx2ofFqVg3xWvlee3dXhP+n9Y36/OeXN8WPe1LjkkQYOBEwNYGoAUwOYGsAjDUwNYGoAUwOYGsAjDRwImBrA1ACmBjA1gEcamBrA1ACmBjA1gEcaOBAwNYCpAUwNYGoAjzQwNYCpAUwNYGoAjzRwIGBqAFMDmBrA1AAeaWBqAFMDmBrA1AAeaeBAVyLiBWXm8V8PJiWhAAAAAElFTkSuQmCC',
+			trans10: 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAYAAAATBx+NAAABk0lEQVR4nO2XP04CQRjFn4ZYbFg1NHqANdhgxwk0HkDPyQWMnoAOCk1Yem0wAqEwJGM+cCfs39eJYd5vs8ky3xabl8wbfkcOcBC1HCuaZhQQobU7XkYRRkmCj05n8/tiNsNNmqK9Wv2/L/8jfActoggv/T6+W7nMcLJe43Y4RBxoSH6LjZOkFI5hazYLFR9Qtq2qeG+YHToqaYIPyAq5jsuG2aHjA+pNp5tCLmJrNguV3D9pO8nGhWO+l6bBnmAoBiTKqKQJCogg1SBINQhSDYJUg6CSJkg1CFINglSDINUgqKQJCogg1SBINQhSDYJUg6CSJkg1CFINglSDINUgqKQJCogg1SBINQhSDYJUg6CSJkg1CFINglSDINUgqKQJCoiQC2hyBTwOgLOv7W3PthY01kF2v3Xhzj/hipet2Sx7L7TbB/QwKIeTXTYLNSB/itmWmp9W76X2EljEYe4zlTTBB3T3XP/i/dPev3N/ZHvt9bq+pG0WfEm735PMCjmeb297DvkEc7slLapRSRMUUBMAfgCe/BxFmDkyuQAAAABJRU5ErkJggg==',
+			trans30: 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAYAAAATBx+NAAABnUlEQVR4nO2XTUoDQRSESwkuhoxKNnqAEd3EXU6geAA9Zy4geoLskoWCk71uIiYhCwm0vMRp5r92RtL1NQ09/WYxFLx6UwcOcBCNHEqadiQQoZMvL6MI4yTBR6+3eT6bzXCdpuiuVv/vy/8I70GLKMLzYIDvTkEzHK3XuBmNEAcqkm+xSZJUxDHszmqh4gXK2qqO95baviOTJniBzJCbOG+p7TteoP50ujHkMnZntVAp/EnbJJuUxnw/TYOdYCgLJKrIpAkSiKCoQVDUIChqEBQ1CDJpgqIGQVGDoKhBUNQgyKQJEoigqEFQ1CAoahAUNQgyaYKiBkFRg6CoQVDUIMikCRKIUBDo7QJ4GAInX9ttZ7sLGvMg26+XcKefcOVld1bL3gtte4Huh1VxsmW1UAXyU8xaan5c30vdJbCIw+wzmTTBC3T71Pzi3ePOv3N3ZL32ctVs0lYL3qTd7yQzQ47n223nkCeYy5u0qEcmTZBABEUNRt6gFTVappiiBpliihr1yKQJihqMrNcUNYhJO0WNdpMW9cikCRKoDQA/aDI3GCpYlokAAAAASUVORK5CYII=',
+			trans50: 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAYAAAATBx+NAAABqUlEQVR4nO2XQUoDQRRESwkuBqOSjR5gRDdxlxMoHkDPmQuIniA7s1BwstdNxCRkIYGWnzjNZNLTtTOSrtc09PSfxVDw60/tOcBBNLIvaeJIIEKrWp5lGZ7zHB+dzvL5dDzGVVHgcD7/f1/+R3gPmmYZnno9fLfWNMPBYoHrwQDtREXyLTbM8w1xDLuzWqp4gcq2CvEeqe06MmmCF8gMuYmzSG3X8QJ1R6OlIdexO6ulytqftE2yYW3Md4si2QmGukBiE5k0QQIRFDUIihoERQ2CogZBJk1Q1CAoahAUNQiKGgSZNEECEdYEejsH7vvA8ddq29nuksY8yPbrBdzJJ1x92Z3VyvdS216gu/6mOOWyWqoC+SlmLTU5CvfS4QyYttPsM5k0wQt089j84u3D1r9ze5S99nLZbNJWS96k3e8kM0NuT1bbzilPMFc1aRFGJk2QQARFDUbVoBU1IlNMUYNMMUWNMDJpgqIGo+w1RQ1i0k5RI27SIoxMmiCBCIoajKpBK2pEppiiBpliihphZNIERQ1G2WuKGsSknaJG3KRFGJk0QQLFAPADXxxR6+1L46oAAAAASUVORK5CYII=',
+			trans70: 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAYAAAATBx+NAAABs0lEQVR4nO2XQUrDQBiFf6W4CI1KN3qAiG7qridQPICesxcQPUF37ULBdK+bim3pQgojf+sMk2Qyb2el874QSOfPIjz43+s7MCJGSCuHlCYOBQJ0/PEyy2RcFPLR621+n81mcl2W0l2t/t+X/xHOgxZZJs+DgXx3KprJ0XotN6OR5ImK5FZsUhQNcRQ901mqOIHsWoV4j8z2HZo0wAmkhtzGeWS27ziB+tPpxpDr6JnOUqXyT1qTbFKL+X5ZJptgUheINKFJAygQoCLQ24XIw1Dk5Gt767OeJY16kN6vl2JOP8XULz3TmX0vtdsJdD9simMvnaUqkEsxXan5cXiXukuRRZ7mntGkAU6g26f2F+8ed/6du8Pu2stVu0nrLHmTNr9Jpoacz7e3PqecYMY3aRKGJg2gQABWDYRv0KwakRRj1QApxqoRhiYNYNVA2F1j1QAmbVg14iZNwtCkARQIwKqB8A2aVSOSYqwaIMVYNcLQpAGsGgi7a6wawKQNq0bcpEkYmjSAAgFYNRC+QbNqRFKMVQOkGKtGGJo0gFUDYXeNVQOYtGHViJs0CUOTBlCgGCLyA4O6bL7/MAr3AAAAAElFTkSuQmCC',
+			trans90: 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAYAAAATBx+NAAABS0lEQVR4nO2XQUoDQRBFS9cm5hLBHERyAD1nLhByjwgeIiS6LyliD62pqb/Mot8bGoaZWQwf6hfvwc3cYJZHoqkhIMGfgD7XZu87s+fz9cR9PBua6KA4Hy/mq5P5/yuexbv23WhnCuhtdxtOu+LdqAFNWyxG6rLMZ+np2+xrMeacUdKCKaDXw/yH2/3d//N+tFk7buZLOt4NX9L+u8mikBeX64n7kTeY9yUNOZS0gIAEqIaiL2hUo9hiqIbYYqhGDiUtQDUUbdZQDVHSjmrUJQ05lLSAgASohqIvaFSj2GKohthiqEYOJS1ANRRt1lANUdKOatQlDTmUtICABKiGoi9oVKPYYqiG2GKoRg4lLUA1FG3WUA1R0o5q1CUNOZS0gIAEqIaiL2hUo9hiqIbYYqhGDiUtQDUUbdZQDVHSjmrUJQ05lLSAgCrM7AfWDIeR8gJXywAAAABJRU5ErkJggg=='
+		};
+
 		if (this.config.modelID !== undefined){
 			this.model = this.CONFIG_MODEL[this.config.modelID];
 		}
@@ -289,7 +298,7 @@ class instance extends instance_skel {
 			'macrocontinue': { label: 'Continue MACRO' },
 			'macrostop':     { label: 'Stop MACROS' },
 			'setMvLayout': {
-				label: 'Change MV Layout',
+				label: 'Change MV layout',
 				options: [
 					{
 						type:    'dropdown',
@@ -308,7 +317,7 @@ class instance extends instance_skel {
 				]
 			},
 			'setMvWindow': {
-				label: 'Change MV Window Source',
+				label: 'Change MV window source',
 				options: [
 					{
 						type:    'dropdown',
@@ -363,14 +372,14 @@ class instance extends instance_skel {
 				break;
 			case 'usk':
 				if (opt.onair == 'toggle') {
-					this.atem.setUpstreamKeyerOnAir(!this.states['usk' + opt.mixeffect + '-' + opt.key], parseInt(opt.mixeffect), parseInt(opt.key));
+					this.atem.setUpstreamKeyerOnAir(!this.states['usk' + opt.mixeffect + '-' + opt.key].onAir, parseInt(opt.mixeffect), parseInt(opt.key));
 				} else {
 					this.atem.setUpstreamKeyerOnAir(opt.onair == 'true', parseInt(opt.mixeffect), parseInt(opt.key));
 				}
 				break;
 			case 'dsk':
 				if (opt.onair == 'toggle') {
-					this.atem.setDownstreamKeyOnAir(!this.states['dsk' + opt.key], parseInt(opt.key));
+					this.atem.setDownstreamKeyOnAir(!this.states['dsk' + opt.key].onAir, parseInt(opt.key));
 				} else {
 					this.atem.setDownstreamKeyOnAir(opt.onair == 'true', parseInt(opt.key));
 				}
@@ -379,10 +388,10 @@ class instance extends instance_skel {
 				this.atem.autoTransition(parseInt(opt.mixeffect));
 				break;
 			case 'macrorun':
-				if (opt.action == 'runContinue' && this.states['macro_' + opt.macro].isWaiting == 1) {
+				if (opt.action == 'runContinue' && this.getMacro(opt.macro).isWaiting == 1) {
 					this.atem.macroContinue();
 				}
-				else if (this.states['macro_' + opt.macro].isRecording == 1) {
+				else if (this.getMacro(opt.macro).isRecording == 1) {
 					this.atem.macroStopRecord()
 				}
 				else {
@@ -476,6 +485,7 @@ class instance extends instance_skel {
 			this.atem.disconnect();
 			delete this.atem;
 		}
+
 		debug("destroy", this.id);
 	};
 
@@ -490,64 +500,91 @@ class instance extends instance_skel {
 	 */
 	feedback(feedback, bank) {
 		var out  = {};
+		var opt = feedback.options;
 
 		if (feedback.type == 'preview_bg') {
-			if (this.states['preview' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
-				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
+			if (this.states['me' + opt.mixeffect].pvwSrc == parseInt(opt.input)) {
+				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
 		else if (feedback.type == 'program_bg') {
-			if (this.states['program' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
-				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
+			if (this.states['me' + opt.mixeffect].pgmSrc == parseInt(opt.input)) {
+				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
 		else if (feedback.type == 'aux_bg') {
-			if (this.states['aux' + feedback.options.aux] == parseInt(feedback.options.input)) {
-				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
+			if (this.states['aux' + opt.aux] == parseInt(opt.input)) {
+				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
 		else if (feedback.type == 'usk_bg') {
-			if (this.states['usk' + feedback.options.mixeffect + '-' + feedback.options.key]) {
-				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
+			if (this.states['usk' + opt.mixeffect + '-' + opt.key].onAir) {
+				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
 		else if (feedback.type == 'dsk_bg') {
-			if (this.states['dsk' + feedback.options.key]) {
-				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
+			if (this.states['dsk' + opt.key].onAir) {
+				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
 		else if (feedback.type == 'macro') {
-			var state = this.states['macro_' + feedback.options.macroIndex];
+			var state = this.getMacro(opt.macroIndex);
 
-			if (state.macroIndex == (parseInt(feedback.options.macroIndex))) {
-				if (( feedback.options.state == 'isRunning' && state.isRunning == 1 ) ||
-					( feedback.options.state == 'isWaiting' && state.isWaiting == 1 ) ||
-					( feedback.options.state == 'isRecording' && state.isRecording == 1 ) ||
-					( feedback.options.state == 'isUsed' && state.isUsed == 1 )) {
-					out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
+			if (state.macroIndex == (parseInt(opt.macroIndex))) {
+				if (( opt.state == 'isRunning'   && state.isRunning   == 1 ) ||
+					( opt.state == 'isWaiting'   && state.isWaiting   == 1 ) ||
+					( opt.state == 'isRecording' && state.isRecording == 1 ) ||
+					( opt.state == 'isUsed'      && state.isUsed      == 1 )) {
+					out = { color: opt.fg, bgcolor: opt.bg };
 				}
 			}
 		}
 		else if (feedback.type == 'mv_layout') {
 			var state = this.states['mv_layout_' + feedback.mvId];
 
-			if (state.mvId == (parseInt(feedback.mvId)) && state.layout == (parseInt(feedback.layout))) {
-				out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
+			if (state.mvId == (parseInt(opt.mvId)) && state.layout == (parseInt(opt.layout))) {
+				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
 		else if (feedback.type == 'mv_source') {
-			var index = (parseInt(feedback.options.mvId)) & (parseInt(feedback.options.windowIndex));
+			var index = (parseInt(opt.mvId)) & (parseInt(opt.windowIndex));
 			var state = this.states['mv_source_' + index];
 
-			if (state.mvId == (parseInt(feedback.options.mvId)) && 
-				state.windowIndex == (parseInt(feedback.options.windowIndex)) &&
-				state.source == (parseInt(feedback.options.source))) {
-					out = { color: feedback.options.fg, bgcolor: feedback.options.bg };
+			if (state.mvId        == (parseInt(opt.mvId)) && 
+				state.windowIndex == (parseInt(opt.windowIndex)) &&
+				state.source      == (parseInt(opt.source))) {
+					out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
 
 		return out;
-	};
+	}
+
+	/**
+	 * INTERNAL: returns the desired macro state object.
+	 *
+	 * @param {number} id - the macro id to fetch
+	 * @returns {Object} the desired macro object
+	 * @access protected
+	 * @since 1.0.0
+	 */
+	getMacro(id) {
+
+		if (this.states['macro_' + i] === undefined) {
+			this.states['macro_' + i] = {
+				macroIndex:  i,
+				isRunning:   0,
+				isWaiting:   0,
+				isUsed:      0,
+				isRecording: 0,
+				loop:        0,
+				name:        'Macro ' + i,
+				description: ''
+			};
+		}
+
+		return this.states['macro_' + i];
+	}
 
 	/**
 	 * Main initialization function called once the module
@@ -569,7 +606,7 @@ class instance extends instance_skel {
 		this.initPresets();
 
 		this.setupAtemConnection();
-	};
+	}
 
 	/**
 	 * INTERNAL: initialize feedbacks.
@@ -837,7 +874,6 @@ class instance extends instance_skel {
 				}
 			]
 		};
-
 
 		this.setFeedbackDefinitions(feedbacks);
 	};
@@ -1190,19 +1226,44 @@ class instance extends instance_skel {
 
 		// PGM/PV busses
 		for (var i = 0; i < this.model.MEs; ++i) {
+
+			if (this.states['me'+i] === undefined) {
+				this.states['me'+i] = {
+					handlePosition: 0,
+					inTransition:   0,
+					transStyle:     0,
+					transIcon:      'trans0',
+					selection:      1,
+					previewTrans:   0,
+					fadeToBlack:    0,
+					pgmSrc:         0,
+					pvwSrc:         0,
+					key1fill:       0,
+					key1key:        0,
+					key2fill:       0,
+					key2key:        0,
+					key3fill:       0,
+					key3key:        0,
+					key4fill:       0,
+					key4key:        0
+				};
+			}
+
 			variables.push({
 				label: 'Label of input active on program bus (M/E ' + (i+1) + ')',
 				name: 'pgm' + (i+1) + '_input'
 			});
-			if (this.inputs[this.states['program' + i]] !== undefined) {
-				this.setVariable('pgm' + (i+1) + '_input', this.inputs[this.states['program' + i]].shortName);
+			if (this.inputs[this.states['me'+i].pgmSrc]] !== undefined) {
+				var id = this.states['me'+i].pgmSrc;
+				this.setVariable('pgm' + (i+1) + '_input', (this.config.presets == 1 ? this.inputs[id].longName : this.inputs[id].shortName));
 			}
 			variables.push({
 				label: 'Label of input active on preview bus (M/E ' + (i+1) + ')',
 				name: 'pvw' + (i+1) + '_input'
 			});
-			if (this.inputs[this.states['preview' + i]] !== undefined) {
-				this.setVariable('pvw' + (i+1) + '_input', this.inputs[this.states['preview' + i]].shortName);
+			if (this.inputs[this.states['me'+i].pvwSrc] !== undefined) {
+				var id = this.states['me'+i].pvwSrc;
+				this.setVariable('pvw' + (i+1) + '_input', (this.config.presets == 1 ? this.inputs[id].longName : this.inputs[id].shortName));
 			}
 		}
 
@@ -1229,26 +1290,12 @@ class instance extends instance_skel {
 
 		// Macros
 		for (var i = 1; i <= this.model.macros; i++) {
-
-			if (this.states['macro_' + i] === undefined) {
-				this.states['macro_' + i] = {
-					macroIndex:  i,
-					isRunning:   0,
-					isWaiting:   0,
-					isUsed:      0,
-					isRecording: 0,
-					loop:        0,
-					name:        'Macro ' + i,
-					description: ''
-				};
-			}
-
 			variables.push({
 				label: 'Name of macro id ' + i,
 				name: 'macro_' + i
 			});
-
-			this.setVariable('macro_' + i, this.states['macro_' + i].name);
+this.getMacro(i).name = 'Test '+i;
+			this.setVariable('macro_' + i, this.getMacro(i).name);
 		}
 
 		this.setVariableDefinitions(variables);
@@ -1273,35 +1320,11 @@ class instance extends instance_skel {
 				}
 				break;
 
-			case 'PreviewInputCommand':
-				this.states['preview' + state.mixEffect] = state.properties.source;
-
-				if (this.inputs[state.properties.source] !== undefined) {
-					this.setVariable('pvw' + (state.mixEffect + 1) + '_input', this.inputs[state.properties.source].shortName);
-				}
+			case 'DownstreamKeyStateCommand':
+				this.states['dsk' + state.downstreamKeyerId] = state.properties;
 
 				if (this.initDone === true) {
-					this.checkFeedbacks('preview_bg');
-				}
-				break;
-
-			case 'ProgramInputCommand':
-				this.states['program' + state.mixEffect] = state.properties.source;
-
-				if (this.inputs[state.properties.source] !== undefined) {
-					this.setVariable('pgm' + (state.mixEffect + 1) + '_input', this.inputs[state.properties.source].shortName);
-				}
-
-				if (this.initDone === true) {
-					this.checkFeedbacks('program_bg');
-				}
-				break;
-
-			case 'InputPropertiesCommand':
-				this.inputs[state.inputId] = state.properties;
-				// resend everything, since names of routes might have changed
-				if (this.initDone === true) {
-					this.initVariables();
+					this.checkFeedbacks('dsk_bg');
 				}
 				break;
 
@@ -1320,47 +1343,32 @@ class instance extends instance_skel {
 				this.checkFeedbacks('mv_source');
 				break;
 
-			case 'DownstreamKeyStateCommand':
-				this.states['dsk' + state.downstreamKeyerId] = state.properties.onAir;
-
+			case 'InputPropertiesCommand':
+				this.inputs[state.inputId] = state.properties;
+				// resend everything, since names of routes might have changed
 				if (this.initDone === true) {
-					this.checkFeedbacks('dsk_bg');
+					this.initVariables();
 				}
 				break;
 
 			case 'MixEffectKeyOnAirCommand':
-				this.states['usk' + state.mixEffect + '-' + state.upstreamKeyerId] = state.properties.onAir;
+				this.states['usk' + state.mixEffect + '-' + state.upstreamKeyerId] = state.properties;
 
 				if (this.initDone === true) {
 					this.checkFeedbacks('usk_bg');
 				}
 				break;
 
-			case 'ProductIdentifierCommand':
-				this.deviceModel = state.properties.model;
-				this.deviceName  = state.properties.deviceName;
-				this.setAtemModel(this.deviceModel, true);
+			case 'MixEffectKeyPropertiesGetCommand':
+				
 				break;
 
 			case 'MacroPropertiesCommand':
-				if (state.properties.macroIndex >= 0 && this.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
-					var macroIndex = this.properties.macroIndex+1;
-					this.states['macro_'+macroIndex].description = state.properties.description;
-					this.states['macro_'+macroIndex].isUsed      = state.properties.isUsed;
-					this.states['macro_'+macroIndex].name        = state.properties.name;
-
-					if (this.initDone === true) {
-						this.checkFeedbacks('macro');
-					}
-				}
-				break;
-
-			case 'MacroRunStatusCommand':
-				if (state.properties.macroIndex >= 0 && this.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
-					var macroIndex = this.properties.macroIndex+1;
-					this.states['macro_'+macroIndex].isRunning  = state.properties.isRunning;
-					this.states['macro_'+macroIndex].isWaiting  = state.properties.isWaiting;
-					this.states['macro_'+macroIndex].loop       = state.properties.loop;
+				if (state.properties.macroIndex >= 0) {
+					var macroIndex = this.properties.macroIndex + 1;
+					this.getMacro(macroIndex).description = state.properties.description;
+					this.getMacro(macroIndex).isUsed      = state.properties.isUsed;
+					this.getMacro(macroIndex).name        = state.properties.name;
 
 					if (this.initDone === true) {
 						this.checkFeedbacks('macro');
@@ -1369,9 +1377,22 @@ class instance extends instance_skel {
 				break;
 
 			case 'MacroRecordStatusCommand':
-				if (state.properties.macroIndex >= 0 && this.states['macro_'+(state.properties.macroIndex+1)] !== undefined) {
+				if (state.properties.macroIndex >= 0) {
+					var macroIndex = this.properties.macroIndex + 1;
+					this.getMacro(macroIndex).isRecording = state.properties.isRecording;
+
+					if (this.initDone === true) {
+						this.checkFeedbacks('macro');
+					}
+				}
+				break;
+
+			case 'MacroRunStatusCommand':
+				if (state.properties.macroIndex >= 0) {
 					var macroIndex = this.properties.macroIndex+1;
-					this.states['macro_'+macroIndex].isRecording = state.properties.isRecording;
+					this.getMacro(macroIndex).isRunning  = state.properties.isRunning;
+					this.getMacro(macroIndex).isWaiting  = state.properties.isWaiting;
+					this.getMacro(macroIndex).loop       = state.properties.loop;
 
 					if (this.initDone === true) {
 						this.checkFeedbacks('macro');
@@ -1398,6 +1419,78 @@ class instance extends instance_skel {
 
 					if (this.initDone === true) {
 						this.checkFeedbacks('mv_source');
+					}
+				}
+				break;
+
+			case 'ProductIdentifierCommand':
+				this.deviceModel = state.properties.model;
+				this.deviceName  = state.properties.deviceName;
+				this.setAtemModel(this.deviceModel, true);
+				break;
+
+			case 'ProgramInputCommand':
+				this.states['me' + state.mixEffect].pgmSrc = state.properties.source;
+
+				if (this.inputs[state.properties.source] !== undefined) {
+					var id = state.properties.source;
+					this.setVariable('pgm' + (state.mixEffect+1) + '_input', (this.config.presets == 1 ? this.inputs[id].longName : this.inputs[id].shortName));
+				}
+
+				if (this.initDone === true) {
+					this.checkFeedbacks('program_bg');
+				}
+				break;
+
+			case 'PreviewInputCommand':
+				this.states['me' + state.mixEffect].pvwSrc = state.properties.source;
+
+				if (this.inputs[state.properties.source] !== undefined) {
+					var id = state.properties.source;
+					this.setVariable('pvw' + (state.mixEffect+1) + '_input', (this.config.presets == 1 ? this.inputs[id].longName : this.inputs[id].shortName));
+				}
+
+				if (this.initDone === true) {
+					this.checkFeedbacks('preview_bg');
+				}
+				break;
+
+			case 'PreviewTransitionCommand':
+				if ( state.mixEffect >= 0 && this.states['me'+(state.mixEffect)] !== undefined) {
+					this.states['me'+(state.mixEffect)].previewTrans = state.properties.preview;
+
+					if (this.initDone === true) {
+						this.checkFeedbacks('trans_pvw');
+					}
+				}
+				break;
+
+			case 'TransitionPositionCommand':
+				if ( state.mixEffect >= 0 && this.states['me'+(state.mixEffect)] !== undefined) {
+					this.states['me'+(state.mixEffect)].handlePosition = state.properties.handlePosition;
+
+					var iconId = state.properties.handlePosition / 100;
+					iconId = ( iconId >= 90 ? 90 : ( iconId >= 70 ? 70 : ( iconId >= 50 ? 50 : ( iconId >= 30 ? 30 : ( iconId >= 10 ? 10 : 0 )))));
+					var newIcon = 'trans' + iconId;
+
+					if (newIcon != this.states['me'+(state.mixEffect)].transIcon || state.properties.inTransition != this.states['me'+(state.mixEffect)].inTransition) {
+						this.states['me'+(state.mixEffect)].transIcon    = newIcon;
+						this.states['me'+(state.mixEffect)].inTransition = state.properties.inTransition;
+
+						if (this.initDone === true) {
+							this.checkFeedbacks('trans_state');
+						}
+					}
+				}
+				break;
+
+			case 'TransitionPropertiesCommand':
+				if ( state.mixEffect >= 0 && this.states['me'+(state.mixEffect)] !== undefined) {
+					this.states['me'+(state.mixEffect)].transStyle = state.properties.style;
+					this.states['me'+(state.mixEffect)].selection  = state.properties.selection;
+
+					if (this.initDone === true) {
+						this.checkFeedbacks('trans_mods');
 					}
 				}
 				break;
@@ -1537,8 +1630,8 @@ class instance extends instance_skel {
 		}
 
 		for(var i = 1; i <= this.model.MPs; i++) {
-			this.sources[(3000+i*10)]   = { id: (3000+i*10),   label: 'Mediaplayer '+i,        useME: 1, useAux: 1, useMV: 1, shortName: 'MP '+i };
-			this.sources[(3000+i*10+1)] = { id: (3000+i*10+1), label: 'Mediaplayer '+i+' Key', useME: 1, useAux: 1, useMV: 1, shortName: 'MP'+i+'K' };
+			this.sources[(3000+i*10)]   = { id: (3000+i*10),   label: 'Media Player '+i,        useME: 1, useAux: 1, useMV: 1, shortName: 'MP '+i };
+			this.sources[(3000+i*10+1)] = { id: (3000+i*10+1), label: 'Media Player '+i+' Key', useME: 1, useAux: 1, useMV: 1, shortName: 'MP'+i+'K' };
 		}
 
 		for(var i = 1; i <= this.model.MEs; i++) {
@@ -1604,7 +1697,7 @@ class instance extends instance_skel {
 
 			this.atem.connect(this.config.host);
 		}
-	};
+	}
 }
 
 exports = module.exports = instance;
