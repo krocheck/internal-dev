@@ -280,14 +280,14 @@ export class Atem extends EventEmitter {
 
 	setMultiViewerProperties (newProps: Partial<MultiViewerPropertiesState>, mv = 0) {
 		const command = new Commands.MultiViewerPropertiesCommand()
-		command.mvId = mv
+		command.multiViewerId = mv
 		command.updateProps(newProps)
 		return this.sendCommand(command)
 	}
 
 	setMultiViewerSource (newProps: Partial<MultiViewerSourceState>, mv = 0) {
 		const command = new Commands.MultiViewerSourceCommand()
-		command.mvId = mv
+		command.multiViewerId = mv
 		command.updateProps(newProps)
 		return this.sendCommand(command)
 	}

@@ -4,7 +4,7 @@ import { MultiViewerSourceState } from '../../state/settings'
 
 export class MultiViewerSourceCommand extends AbstractCommand {
 	rawName = 'MvIn'
-	mvId: number
+	multiViewerId: number
 	index: number
 
 	properties: MultiViewerSourceState
@@ -16,7 +16,7 @@ export class MultiViewerSourceCommand extends AbstractCommand {
 	deserialize (rawCommand: Buffer) {
 		// Storing MV1 as 0-9 and MV2 as 100-109 (just in case future MVs do >10 windows)
 		this.index = rawCommand.readUInt8(0)*100 + rawCommand.readUInt8(1)
-		this.mvId = rawCommand.readUInt8(0)
+		this.multiViewerId = rawCommand.readUInt8(0)
 
 		this.properties = {
 			source: rawCommand.readUInt16BE(2),
@@ -28,7 +28,7 @@ export class MultiViewerSourceCommand extends AbstractCommand {
 		const rawCommand = 'CMvI'
 		return new Buffer([
 			...Buffer.from(rawCommand),
-			this.mvId,
+			this.multiViewerId,
 			this.properties.windowIndex,
 			this.properties.source >> 8,
 			this.properties.source & 0xFF

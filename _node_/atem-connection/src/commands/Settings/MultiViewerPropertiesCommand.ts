@@ -9,7 +9,7 @@ export class MultiViewerPropertiesCommand extends AbstractCommand {
 	}
 
 	rawName = 'MvPr'
-	mvId: number
+	multiViewerId: number
 
 	properties: MultiViewerPropertiesState
 
@@ -18,7 +18,7 @@ export class MultiViewerPropertiesCommand extends AbstractCommand {
 	}
 
 	deserialize (rawCommand: Buffer) {
-		this.mvId = rawCommand.readUInt8(0)
+		this.multiViewerId = rawCommand.readUInt8(0)
 
 		this.properties = {
 			layout: rawCommand.readUInt8(1),
@@ -30,15 +30,15 @@ export class MultiViewerPropertiesCommand extends AbstractCommand {
 		return new Buffer([
 			...Buffer.from(rawCommand),
 			this.flag,
-			this.mvId,
+			this.multiViewerId,
 			this.properties.layout,
 			0x00
 		])
 	}
 
 	applyToState (state: AtemState) {
-		state.settings.multiViewerProperties[this.mvId] = {
-			...state.settings.multiViewerProperties[this.mvId],
+		state.settings.multiViewerProperties[this.multiViewerId] = {
+			...state.settings.multiViewerProperties[this.multiViewerId],
 			...this.properties
 		}
 	}
