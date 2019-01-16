@@ -304,7 +304,7 @@ class instance extends instance_skel {
 				options: [
 					{
 						type:    'dropdown',
-						id:      'mvId',
+						id:      'multiViewerId',
 						label:   'MV',
 						default: 0,
 						choices: this.CHOICES_MV.slice(0, this.model.MVs)
@@ -323,7 +323,7 @@ class instance extends instance_skel {
 				options: [
 					{
 						type:    'dropdown',
-						id:      'mvId',
+						id:      'multiViewerId',
 						label:   'MV',
 						default: 0,
 						choices: this.CHOICES_MV.slice(0, this.model.MVs)
@@ -407,10 +407,10 @@ class instance extends instance_skel {
 				this.atem.macroStop();
 				break;
 			case 'setMvLayout':
-				this.atem.setMultiViewerProperties( { 'layout': opt.layout }, opt.mvId);
+				this.atem.setMultiViewerProperties( { 'layout': opt.layout }, opt.multiViewerId);
 				break;
 			case 'setMvSource':
-				this.atem.setMultiViewerSource( { 'windowIndex': opt.windowIndex, 'source': opt.source }, opt.mvId);
+				this.atem.setMultiViewerSource( { 'windowIndex': opt.windowIndex, 'source': opt.source }, opt.multiViewerId);
 				break;
 			default:
 				debug('Unknown action: ' + action.action);
@@ -542,19 +542,12 @@ class instance extends instance_skel {
 			}
 		}
 		else if (feedback.type == 'mv_layout') {
-			var state = this.states['mv_layout_' + feedback.mvId];
-
-			if (state.mvId == (parseInt(opt.mvId)) && state.layout == (parseInt(opt.layout))) {
+			if (this.getMV(feedback.multiViewerId).layout == (parseInt(opt.layout))) {
 				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
 		else if (feedback.type == 'mv_source') {
-			var index = (parseInt(opt.mvId)) & (parseInt(opt.windowIndex));
-			var state = this.states['mv_source_' + index];
-
-			if (state.mvId        == (parseInt(opt.mvId)) && 
-				state.windowIndex == (parseInt(opt.windowIndex)) &&
-				state.source      == (parseInt(opt.source))) {
+			if (this.getMvWindow(parseInt(opt.multiViewerId), parseInt(opt.windowIndex)).source == (parseInt(opt.source))) {
 					out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
@@ -990,7 +983,7 @@ class instance extends instance_skel {
 				},
 				{
 					type:    'dropdown',
-					id:      'mvId',
+					id:      'multiViewerId',
 					label:   'MV',
 					default: 0,
 					choices: this.CHOICES_MV.slice(0, this.model.MVs)
@@ -1022,7 +1015,7 @@ class instance extends instance_skel {
 				},
 				{
 					type:    'dropdown',
-					id:      'mvId',
+					id:      'multiViewerId',
 					label:   'MV',
 					default: 0,
 					choices: this.CHOICES_MV.slice(0, this.model.MVs)
@@ -1319,7 +1312,7 @@ class instance extends instance_skel {
 							options: {
 								bg:     this.rgb(255,255,0),
 								fg:     this.rgb(0,0,0),
-								mvId:   i,
+								multiViewerId:   i,
 								layout: this.CHOICES_MVLAYOUT[x].id
 							}
 						}
@@ -1328,7 +1321,7 @@ class instance extends instance_skel {
 						{
 							action: 'setMvLayout',
 							options: {
-								mvId:   i,
+								multiViewerId:   i,
 								layout: this.CHOICES_MVLAYOUT[x].id
 							}
 						}
@@ -1358,7 +1351,7 @@ class instance extends instance_skel {
 									options: {
 										bg:          this.rgb(255,255,0),
 										fg:          this.rgb(0,0,0),
-										mvId:        i,
+										multiViewerId:        i,
 										source:      this.CHOICES_MVSOURCES[k].id,
 										windowIndex: j
 									}
@@ -1368,7 +1361,7 @@ class instance extends instance_skel {
 								{
 									action: 'setMvSource',
 									options: {
-										mvId:        i,
+										multiViewerId:        i,
 										source:      this.CHOICES_MVSOURCES[k].id,
 										windowIndex: j
 									}
@@ -1545,25 +1538,18 @@ class instance extends instance_skel {
 				break;
 
 			case 'MultiViewerPropertiesCommand':
-				if (state.mvId >= 0 && this.states['mv_layout_'+(state.mvId)] !== undefined) {
-					this.states['mv_layout_'+(state.mvId)].layout = state.properties.layout;
-					this.states['mv_layout_'+(state.mvId)].mvId   = state.mvId;
+				this.updateMV(state.multiViewerId, this.properties);
 
-					if (this.initDone === true) {
-						this.checkFeedbacks('mv_layout');
-					}
+				if (this.initDone === true) {
+					this.checkFeedbacks('mv_layout');
 				}
 				break;
 
 			case 'MultiViewerSourceCommand':
-				if (state.mvId >= 0 && this.states['mv_source_'+(state.index)] !== undefined) {
-					this.states['mv_source_'+(state.index)].mvId        = state.mvId;
-					this.states['mv_source_'+(state.index)].source      = state.properties.source;
-					this.states['mv_source_'+(state.index)].windowIndex = state.properties.windowIndex;
+				this.updateMvWindow(state.multiViewerId, state.properties.windowIndex, state.properties)
 
-					if (this.initDone === true) {
-						this.checkFeedbacks('mv_source');
-					}
+				if (this.initDone === true) {
+					this.checkFeedbacks('mv_source');
 				}
 				break;
 
