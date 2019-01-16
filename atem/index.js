@@ -27,6 +27,7 @@ class instance extends instance_skel {
 
 		this.model       = {};
 		this.states      = {};
+		this.sources     = [];
 		this.deviceName  = '';
 		this.deviceModel = 0;
 		this.initDone    = false;
@@ -620,7 +621,7 @@ class instance extends instance_skel {
 				isUsed:      0,
 				isRecording: 0,
 				loop:        0,
-				name:        'Macro ' + (i+1),
+				name:        'Macro ' + (id+1),
 				description: ''
 			};
 		}
@@ -1637,7 +1638,7 @@ class instance extends instance_skel {
 	 */
 	resetSources() {
 
-		for (var x in sources) {
+		for (var x in this.sources) {
 			this.sources[x].init = 0;
 		}
 	}
@@ -1694,7 +1695,7 @@ class instance extends instance_skel {
 	 * @access protected
 	 * @since 1.1.0
 	 */
-	setSource(id, useMe, useAux, useMV, shortLabel, label) {
+	setSource(id, useME, useAux, useMV, shortLabel, label) {
 		
 		var source = this.getSource(id);
 
@@ -1711,7 +1712,7 @@ class instance extends instance_skel {
 			source.shortLabel = source.shortName
 		}
 		else {
-			source.shortLabel: shortLabel;
+			source.shortLabel = shortLabel;
 			source.shortName = shortLabel;
 		}
 
