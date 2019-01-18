@@ -547,7 +547,7 @@ class instance extends instance_skel {
 			}
 		}
 		else if (feedback.type == 'mv_source') {
-			if (this.getMvWindow(parseInt(opt.multiViewerId), parseInt(opt.windowIndex)).source == (parseInt(opt.source))) {
+			if (this.getMvWindow(parseInt(opt.multiViewerId), parseInt(opt.windowIndex).source == (parseInt(opt.source))) {
 					out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
@@ -614,6 +614,7 @@ class instance extends instance_skel {
 				isUsed:      0,
 				isRecording: 0,
 				loop:        0,
+				label:       'Macro ' + (id+1),
 				name:        'Macro ' + (id+1),
 				description: ''
 			};
@@ -1429,7 +1430,7 @@ class instance extends instance_skel {
 				name: 'macro_' + (i+1)
 			});
 
-			this.setVariable('macro_' + (i+1), this.getMacro(i).name);
+			this.setVariable('macro_' + (i+1), (this.getMacro(i).name != '' ? this.getMacro(i).name : this.getMacro(i).label));
 		}
 
 		this.setVariableDefinitions(variables);
@@ -1880,7 +1881,7 @@ class instance extends instance_skel {
 			}
 		}
 
-		this.setVariable('macro_' + (id+1), macro.name);
+		this.setVariable('macro_' + (id+1), (macro.name != '' ? macro.name : macro.label));
 	}
 
 	/**
