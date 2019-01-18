@@ -21,13 +21,14 @@ class instance extends instance_skel {
 	 * @param {string} id - the instance ID
 	 * @param {Object} config - saved user configuration parameters
 	 * @since 1.0.0
-	 */get
+	 */
 	constructor(system, id, config) {
 		super(system, id, config);
 
 		this.model       = {};
 		this.states      = {};
 		this.sources     = [];
+		this.macros      = [];
 		this.deviceName  = '';
 		this.deviceModel = 0;
 		this.initDone    = false;
@@ -540,7 +541,7 @@ class instance extends instance_skel {
 			}
 		}
 		else if (feedback.type == 'mv_source') {
-			if (this.getMvWindow(parseInt(opt.multiViewerId), parseInt(opt.windowIndex)).source == opt.source) {
+			if (this.getMvWindow(opt.multiViewerId, opt.windowIndex).source == opt.source) {
 					out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
@@ -687,7 +688,7 @@ class instance extends instance_skel {
 	 */
 	getMvWindow(mv, window) {
 
-		return this.getMV(mv)['window' + window];
+		return this.getMV(mv).windows['window' + window];
 	}
 
 	/**
