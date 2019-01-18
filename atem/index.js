@@ -102,13 +102,6 @@ class instance extends instance_skel {
 			{ id: 1, label: 'MV 2' }
 		];
 
-		this.CHOICES_MVLAYOUT = [
-			{ id: 0, label: 'Top' },
-			{ id: 1, label: 'Bottom' },
-			{ id: 2, label: 'Left' },
-			{ id: 3, label: 'Right' }
-		];
-
 		this.setupMvWindowChoices();
 
 		this.CHOICES_PRESETSTYLE = [
@@ -300,26 +293,7 @@ class instance extends instance_skel {
 			},
 			'macrocontinue': { label: 'Continue MACRO' },
 			'macrostop':     { label: 'Stop MACROS' },
-			'setMvLayout': {
-				label: 'Change MV layout',
-				options: [
-					{
-						type:    'dropdown',
-						id:      'multiViewerId',
-						label:   'MV',
-						default: 0,
-						choices: this.CHOICES_MV.slice(0, this.model.MVs)
-					},
-					{
-						type:    'dropdown',
-						id:      'layout',
-						label:   'Layout',
-						default: 0,
-						choices: this.CHOICES_MVLAYOUT
-					}
-				]
-			},
-			'setMvWindow': {
+			'setMvSource': {
 				label: 'Change MV window source',
 				options: [
 					{
@@ -407,9 +381,6 @@ class instance extends instance_skel {
 			case 'macrostop':
 				this.atem.macroStop();
 				break;
-			case 'setMvLayout':
-				this.atem.setMultiViewerProperties( { 'layout': opt.layout }, opt.multiViewerId);
-				break;
 			case 'setMvSource':
 				this.atem.setMultiViewerSource( { 'windowIndex': opt.windowIndex, 'source': opt.source }, opt.multiViewerId);
 				break;
@@ -457,21 +428,6 @@ class instance extends instance_skel {
 				width:   6,
 				choices: this.CHOICES_PRESETSTYLE,
 				default: 0
-			},
-			{
-				type:    'text',
-				id:      'info',
-				width:   12,
-				label:   'Information',
-				value:   'Companion is able to re-route the Program and Preview multi viewer windows via the ATEM API.  By default this is disabled since there is no way through the ATEM software to change them back to their defaults.  These windows can be unlocked below, <b>but do so with caution!</b>'
-			},
-			{
-				type:    'dropdown',
-				id:      'mvUnlock',
-				label:   'Unlock PGM / PV Multi Viewer Windows?',
-				width:   6,
-				choices: this.CHOICES_YESNO_BOOLEAN,
-				default: false
 			}
 		]
 	};
@@ -531,12 +487,7 @@ class instance extends instance_skel {
 			}
 		}
 		else if (feedback.type == 'macro') {
-			if ( this.getMacro(parseInt(opt.macroIndex)-1)[opt.state] == 1 ) {
-				out = { color: opt.fg, bgcolor: opt.bg };
-			}
-		}
-		else if (feedback.type == 'mv_layout') {
-			if (this.getMV(feedback.multiViewerId).layout == parseInt(opt.layout)) {
+			if ( this.getMacro(opt.macroIndex-1)[opt.state] == 1 ) {
 				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
@@ -658,7 +609,6 @@ class instance extends instance_skel {
 		if (this.states['mv_' + id] === undefined) {
 			this.states['mv_' + id] = {
 				multiViewerId:  id,
-				layout:         0,
 				windows: {
 					window0: { windowIndex: 0, source: 0 },
 					window1: { windowIndex: 1, source: 0 },
@@ -960,38 +910,6 @@ class instance extends instance_skel {
 				}
 			]
 		};
-		feedbacks['mv_layout'] = {
-			label: 'Change colors from MV layout',
-			description: 'If the specified MV is set to the specified layout, change color of the bank',
-			options: [
-				{
-					type: 'colorpicker',
-					label: 'Foreground color',
-					id: 'fg',
-					default: this.rgb(0,0,0)
-				},
-				{
-					type: 'colorpicker',
-					label: 'Background color',
-					id: 'bg',
-					default: this.rgb(255,255,0)
-				},
-				{
-					type:    'dropdown',
-					id:      'multiViewerId',
-					label:   'MV',
-					default: 0,
-					choices: this.CHOICES_MV.slice(0, this.model.MVs)
-				},
-				{
-					type:    'dropdown',
-					id:      'layout',
-					label:   'Layout',
-					default: 0,
-					choices: this.CHOICES_MVLAYOUT
-				}
-			]
-		};
 		feedbacks['mv_source'] = {
 			label: 'Change colors from MV window',
 			description: 'If the specified MV window is set to the specified source, change color of the bank',
@@ -1289,81 +1207,43 @@ class instance extends instance_skel {
 
 		for (var i = 0; i < this.model.MVs; i++) {
 
-			for (var x in this.CHOICES_MVLAYOUT) {
-
-				presets.push({
-					category: 'MV Layouts',
-					label: 'Set multi viewer '+(i+1)+' to layout '+this.CHOICES_MVLAYOUT[x].label,
-					bank: {
-						style:   'text',
-						text:    'MV '+(i+1)+' Layout '+this.CHOICES_MVLAYOUT[x].label,
-						size:    'auto',
-						color:   this.rgb(255,255,255),
-						bgcolor: this.rgb(0,0,0)
-					},
-					feedbacks: [
-						{
-							type: 'mv_layout',
-							options: {
-								bg:     this.rgb(255,255,0),
-								fg:     this.rgb(0,0,0),
-								multiViewerId:   i,
-								layout: this.CHOICES_MVLAYOUT[x].id
-							}
-						}
-					],
-					actions: [
-						{
-							action: 'setMvLayout',
-							options: {
-								multiViewerId:   i,
-								layout: this.CHOICES_MVLAYOUT[x].id
-							}
-						}
-					]
-				});
-			}
-
 			for (var j = 0; j < 10; j++) {
 
-				if (this.config.mvUnlock == 'false' && j<2) {}
-				else {
-					for (var k in this.CHOICES_MVSOURCES) {
+				for (var k in this.CHOICES_MVSOURCES) {
 
-						presets.push({
-							category: 'MV ' + (i+1) + ' Window ' + (j+1),
-							label: 'Set multi viewer '+(i+1)+', window '+(j+1)+' to source '+this.CHOICES_MVSOURCES[k].label,
-							bank: {
-								style:   'text',
-								text:    '$(attem:' + pstText + this.CHOICES_MVSOURCES[k].id + ')',
-								size:    pstSize,
-								color:   this.rgb(255,255,255),
-								bgcolor: this.rgb(0,0,0)
-							},
-							feedbacks: [
-								{
-									type: 'mv_source',
-									options: {
-										bg:          this.rgb(255,255,0),
-										fg:          this.rgb(0,0,0),
-										multiViewerId:        i,
-										source:      this.CHOICES_MVSOURCES[k].id,
-										windowIndex: j
-									}
+					presets.push({
+						category: 'MV ' + (i+1) + ' Window ' + (j+1),
+						label: 'Set multi viewer '+(i+1)+', window '+(j+1)+' to source '+this.CHOICES_MVSOURCES[k].label,
+						bank: {
+							style:   'text',
+							text:    '$(attem:' + pstText + this.CHOICES_MVSOURCES[k].id + ')',
+							size:    pstSize,
+							color:   this.rgb(255,255,255),
+							bgcolor: this.rgb(0,0,0)
+						},
+						feedbacks: [
+							{
+								type: 'mv_source',
+								options: {
+									bg:          this.rgb(255,255,0),
+									fg:          this.rgb(0,0,0),
+									multiViewerId:        i,
+									source:      this.CHOICES_MVSOURCES[k].id,
+									windowIndex: j
 								}
-							],
-							actions: [
-								{
-									action: 'setMvSource',
-									options: {
-										multiViewerId:        i,
-										source:      this.CHOICES_MVSOURCES[k].id,
-										windowIndex: j
-									}
+							}
+						],
+						actions: [
+							{
+								action: 'setMvSource',
+								options: {
+									multiViewerId:        i,
+									source:      this.CHOICES_MVSOURCES[k].id,
+									windowIndex: j
 								}
-							]
-						});
-					}
+							}
+						]
+					});
 				}
 			}
 		}
@@ -1484,7 +1364,6 @@ class instance extends instance_skel {
 				this.checkFeedbacks('dsk_bg');
 				this.checkFeedbacks('usk_bg');
 				this.checkFeedbacks('macro');
-				this.checkFeedbacks('mv_layout');
 				this.checkFeedbacks('mv_source');
 				break;
 
@@ -1516,7 +1395,7 @@ class instance extends instance_skel {
 				}
 				break;
 
-			case 'MacroRecordStatusCommand':
+			case 'MacroRecordingStatusCommand':
 				this.updateMacro(state.properties.macroIndex, state.properties);
 
 				if (this.initDone === true) {
@@ -1529,14 +1408,6 @@ class instance extends instance_skel {
 
 				if (this.initDone === true) {
 					this.checkFeedbacks('macro');
-				}
-				break;
-
-			case 'MultiViewerPropertiesCommand':
-				this.updateMV(state.multiViewerId, this.properties);
-
-				if (this.initDone === true) {
-					this.checkFeedbacks('mv_layout');
 				}
 				break;
 
@@ -1741,11 +1612,6 @@ class instance extends instance_skel {
 	 */
 	setupMvWindowChoices() {
 		this.CHOICES_MVWINDOW = [];
-
-		if (this.config.mvUnlock == 'true') {
-			this.CHOICES_MVWINDOW.push({ id: 0, label: 'Window 1' });
-			this.CHOICES_MVWINDOW.push({ id: 1, label: 'Window 2' });
-		}
 
 		for (var i = 2; i < 10; i++) {
 			this.CHOICES_MVWINDOW.push({ id: i, label: 'Window '+ (i+1) });

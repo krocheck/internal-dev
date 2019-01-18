@@ -6,7 +6,7 @@ import AbstractCommand from './commands/AbstractCommand'
 import * as Commands from './commands'
 import * as DataTransferCommands from './commands/DataTransfer'
 import { MediaPlayer } from './state/media'
-import { MultiViewerPropertiesState, MultiViewerSourceState } from './state/settings'
+import { MultiViewerSourceState } from './state/settings'
 import {
 	DipTransitionSettings,
 	DVETransitionSettings,
@@ -275,13 +275,6 @@ export class Atem extends EventEmitter {
 		const command = new Commands.MacroActionCommand()
 		command.index = 0
 		command.updateProps({action: MacroAction.StopRecord})
-		return this.sendCommand(command)
-	}
-
-	setMultiViewerProperties (newProps: Partial<MultiViewerPropertiesState>, mv = 0) {
-		const command = new Commands.MultiViewerPropertiesCommand()
-		command.multiViewerId = mv
-		command.updateProps(newProps)
 		return this.sendCommand(command)
 	}
 
