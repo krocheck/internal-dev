@@ -59,7 +59,6 @@ instance.prototype.updateLabels = function(labeltype, object) {
 			self.setVariable('input_' + (parseInt(num) + 1), label);
 		}
 	}
-
 	else if (labeltype == 'OUTPUT LABELS') {
 		for (var key in object) {
 			var parsethis = object[key];
@@ -85,14 +84,13 @@ instance.prototype.videohubInformation = function(key,data) {
 		self.has_data = true;
 		self.update_variables()
 	}
-
 	else if (key == 'VIDEO OUTPUT ROUTING') {
 		self.updateRouting(key,data);
 		self.has_data = true;
 		self.update_variables()
 
 		self.checkFeedbacks('input_bg');
-		self.checkFeedbacks('selected_input');
+		self.checkFeedbacks('selected_source');
 	}
 
 	else {
@@ -168,11 +166,9 @@ instance.prototype.init_tcp = function() {
 			if (self.command === null && line.match(/:/) ) {
 				self.command = line;
 			}
-
 			else if (self.command !== null && line.length > 0) {
 				self.stash.push(line.trim());
 			}
-
 			else if (line.length === 0 && self.command !== null) {
 				var cmd = self.command.trim().split(/:/)[0];
 
@@ -181,7 +177,6 @@ instance.prototype.init_tcp = function() {
 				self.stash = [];
 				self.command = null;
 			}
-
 			else {
 				debug("weird response from videohub", line, line.length);
 			}
@@ -337,7 +332,7 @@ instance.prototype.update_variables = function (system) {
 		]
 	};
 
-	feedbacks['selected_output'] = {
+	feedbacks['selected_destination'] = {
 		label: 'Change background color by selected destination',
 		description: 'If the input specified is in use by the selected output specified, change background color of the bank',
 		options: [
@@ -345,13 +340,13 @@ instance.prototype.update_variables = function (system) {
 				type: 'colorpicker',
 				label: 'Foreground color',
 				id: 'fg',
-				default: self.rgb(255,255,255)
+				default: self.rgb(0,0,0)
 			},
 			{
 				type: 'colorpicker',
 				label: 'Background color',
 				id: 'bg',
-				default: self.rgb(255,0,0)
+				default: self.rgb(255,255,0)
 			},
 			{
 				type: 'dropdown',
@@ -363,7 +358,7 @@ instance.prototype.update_variables = function (system) {
 		]
 	};
 
-	feedbacks['selected_input'] = {
+	feedbacks['selected_source'] = {
 		label: 'Change background color by route to selected destination',
 		description: 'If the input specified is in use by the selected output specified, change background color of the bank',
 		options: [
@@ -371,13 +366,13 @@ instance.prototype.update_variables = function (system) {
 				type: 'colorpicker',
 				label: 'Foreground color',
 				id: 'fg',
-				default: self.rgb(255,255,255)
+				default: self.rgb(0,0,0)
 			},
 			{
 				type: 'colorpicker',
 				label: 'Background color',
 				id: 'bg',
-				default: self.rgb(255,0,0)
+				default: self.rgb(255,255,0)
 			},
 			{
 				type: 'dropdown',
@@ -521,7 +516,7 @@ instance.prototype.action = function(action) {
 		self.checkFeedbacks('selected_destination');
 		self.checkFeedbacks('selected_source');
 	}
-	else if ( action.action === 'route_input') {
+	else if ( action.action === 'route_source') {
 		cmd = "VIDEO OUTPUT ROUTING:\n"+this.selected+" "+action.options.source+"\n\n";
 	}
 
