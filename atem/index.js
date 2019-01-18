@@ -530,24 +530,17 @@ class instance extends instance_skel {
 			}
 		}
 		else if (feedback.type == 'macro') {
-			var state = this.getMacro(parseInt(opt.macroIndex)-1);
-
-			if (state.macroIndex == (parseInt(opt.macroIndex)-1)) {
-				if (( opt.state == 'isRunning'   && state.isRunning   == 1 ) ||
-					( opt.state == 'isWaiting'   && state.isWaiting   == 1 ) ||
-					( opt.state == 'isRecording' && state.isRecording == 1 ) ||
-					( opt.state == 'isUsed'      && state.isUsed      == 1 )) {
-					out = { color: opt.fg, bgcolor: opt.bg };
-				}
+			if ( this.getMacro(parseInt(opt.macroIndex)-1)[opt.state] == 1 ) {
+				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
 		else if (feedback.type == 'mv_layout') {
-			if (this.getMV(feedback.multiViewerId).layout == (parseInt(opt.layout))) {
+			if (this.getMV(feedback.multiViewerId).layout == parseInt(opt.layout)) {
 				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
 		else if (feedback.type == 'mv_source') {
-			if (this.getMvWindow(parseInt(opt.multiViewerId), parseInt(opt.windowIndex).source == (parseInt(opt.source))) {
+			if (this.getMvWindow(parseInt(opt.multiViewerId), parseInt(opt.windowIndex)).source == opt.source) {
 					out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
