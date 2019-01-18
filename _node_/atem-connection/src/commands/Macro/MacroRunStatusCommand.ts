@@ -20,8 +20,8 @@ export class MacroRunStatusCommand extends AbstractCommand {
 	}
 
 	applyToState (state: AtemState) {
-		state.macro.macroPlayer[this.macroIndexID] = {
-			...state.macro.macroPlayer[this.macroIndexID],
+		state.macro.macroPlayer = {
+			...state.macro.macroPlayer,
 			...this.properties
 		}
 	}

@@ -21,7 +21,7 @@ class instance extends instance_skel {
 	 * @param {string} id - the instance ID
 	 * @param {Object} config - saved user configuration parameters
 	 * @since 1.0.0
-	 */
+	 */get
 	constructor(system, id, config) {
 		super(system, id, config);
 
@@ -599,8 +599,8 @@ class instance extends instance_skel {
 	 */
 	getMacro(id) {
 
-		if (this.states['macro_' + id] === undefined) {
-			this.states['macro_' + id] = {
+		if (this.macros[id] === undefined) {
+			this.macros[id] = {
 				macroIndex:  id,
 				isRunning:   0,
 				isWaiting:   0,
@@ -613,7 +613,7 @@ class instance extends instance_skel {
 			};
 		}
 
-		return this.states['macro_' + id];
+		return this.macros[id];
 	}
 
 	/**
@@ -1866,15 +1866,28 @@ class instance extends instance_skel {
 	 * @since 1.1.0
 	 */
 	updateMacro(id, properties) {
-		var macro = this.getMacro(id);
 
 		if (typeof properties === 'object') {
-			for (var x in properties) {
-				macro[x] = properties[x];
+
+			if (id == 65535) {
+				for (var x in properties) {
+					if (properties[x] == 0) {
+						for( var i in this.macros) {
+							this.macros[i][x] = properties[x];
+						}
+					}
+				}
+			}
+			else {
+				var macro = this.getMacro(id);
+
+				for (var x in properties) {
+					macro[x] = properties[x];
+				}
+
+				this.setVariable('macro_' + (id+1), (macro.description != '' ? macro.description : macro.label));
 			}
 		}
-
-		this.setVariable('macro_' + (id+1), (macro.name != '' ? macro.name : macro.label));
 	}
 
 	/**

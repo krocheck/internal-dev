@@ -18,8 +18,8 @@ export class MacroRecordingStatusCommand extends AbstractCommand {
 	}
 
 	applyToState (state: AtemState) {
-		state.macro.macroRecorder[this.macroIndexID] = {
-			...state.macro.macroRecorder[this.macroIndexID],
+		state.macro.macroRecorder = {
+			...state.macro.macroRecorder,
 			...this.properties
 		}
 	}
