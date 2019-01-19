@@ -176,7 +176,7 @@ class instance extends instance_skel {
 				]
 			},
 			'uskSource': {
-				label: 'Set inputs on USK',
+				label: 'Set inputs on Upstream KEY',
 				options: [
 					{
 						type: 'dropdown',
@@ -209,7 +209,7 @@ class instance extends instance_skel {
 				]
 			},
 			'dskSource': {
-				label: 'Set inputs on DSK',
+				label: 'Set inputs on Downstream KEY',
 				options: [
 					{
 						type: 'dropdown',
