@@ -396,8 +396,8 @@ class instance extends instance_skel {
 				this.atem.setUpstreamKeyerCutSource(parseInt(opt.cut), parseInt(opt.mixeffect), parseInt(opt.key));
 				break;
 			case 'dskSource':
-				this.atem.setDownstreamKeyerFillSource(parseInt(opt.fill), parseInt(opt.key));
-				this.atem.setDownstreamKeyerCutSource(parseInt(opt.cut), parseInt(opt.key));
+				this.atem.setDownstreamKeyFillSource(parseInt(opt.fill), parseInt(opt.key));
+				this.atem.setDownstreamKeyCutSource(parseInt(opt.cut), parseInt(opt.key));
 				break;
 			case 'aux':
 				this.atem.setAuxSource(parseInt(opt.input), parseInt(opt.aux));
@@ -1277,7 +1277,7 @@ class instance extends instance_skel {
 								options: {
 									onair: 'toggle',
 									fill: key,
-									cut: (key == 3010 || key == 3020 ? key+1 : 0),
+									cut: (key == 3010 || key == 3020 ? parseInt(key)+1 : 0),
 									key: i,
 									mixeffect: me
 								}
@@ -1351,7 +1351,7 @@ class instance extends instance_skel {
 							options: {
 								onair: 'toggle',
 								fill: key,
-								cut: (key == 3010 || key == 3020 ? key+1 : 0),
+								cut: (key == 3010 || key == 3020 ? parseInt(key)+1 : 0),
 								key: i
 							}
 						}
