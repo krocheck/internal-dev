@@ -1264,8 +1264,8 @@ class instance extends instance_skel {
 								type: 'usk_source',
 								options: {
 									bg: this.rgb(238,238,0),
-									fg: this.rgb(255,255,255),
-									fill: input,
+									fg: this.rgb(0,0,0),
+									fill: key,
 									key: i,
 									mixeffect: me
 								}
@@ -1276,8 +1276,8 @@ class instance extends instance_skel {
 								action: 'uskSource',
 								options: {
 									onair: 'toggle',
-									fill: input,
-									cut: 0,
+									fill: key,
+									cut: (key == 3010 || key == 3020 ? key+1 : 0),
 									key: i,
 									mixeffect: me
 								}
@@ -1339,8 +1339,8 @@ class instance extends instance_skel {
 							type: 'dsk_source',
 							options: {
 								bg: this.rgb(238,238,0),
-								fg: this.rgb(255,255,255),
-								fill: input,
+								fg: this.rgb(0,0,0),
+								fill: key,
 								key: i
 							}
 						}
@@ -1350,8 +1350,8 @@ class instance extends instance_skel {
 							action: 'dskSource',
 							options: {
 								onair: 'toggle',
-								fill: input,
-								cut: 0,
+								fill: key,
+								cut: (key == 3010 || key == 3020 ? key+1 : 0),
 								key: i
 							}
 						}
