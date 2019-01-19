@@ -510,7 +510,7 @@ class instance extends instance_skel {
 			}
 		}
 		else if (feedback.type == 'usk_source') {
-			if (this.getUSK(opt.mixeffect, opt.key).fillSource == opt.fill) {
+			if (this.getUSK(opt.mixeffect, opt.key).fillSource == parseInt(opt.fill)) {
 				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
@@ -1487,6 +1487,7 @@ class instance extends instance_skel {
 				this.checkFeedbacks('program_bg');
 				this.checkFeedbacks('dsk_bg');
 				this.checkFeedbacks('usk_bg');
+				this.checkFeedbacks('usk_source');
 				this.checkFeedbacks('macro');
 				this.checkFeedbacks('mv_source');
 				break;
@@ -1508,6 +1509,11 @@ class instance extends instance_skel {
 				break;
 
 			case 'MixEffectKeyPropertiesGetCommand':
+				this.updateUSK(state.mixEffect, state.upstreamKeyerId, state.properties);
+
+				if (this.initDone === true) {
+					this.checkFeedbacks('usk_source');
+				}
 				
 				break;
 
