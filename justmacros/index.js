@@ -47,7 +47,7 @@ class instance extends instance_skel {
 						type:  'textinput',
 						label: 'Function Name',
 						id:    'func',
-						regex: '/^[A-Za-z0-9]*$/'
+						regex: '/^[A-Za-z0-9_\-]*$/'
 					},
 					{
 						type:  'textinput',
@@ -63,7 +63,7 @@ class instance extends instance_skel {
 						type:  'textinput',
 						label: 'Script Name',
 						id:    'script',
-						regex: '/^[A-Za-z0-9]*$/'
+						regex: '/^[A-Za-z0-9_\-]*$/'
 					}
 				]
 			}
@@ -89,7 +89,7 @@ class instance extends instance_skel {
 		}
 		else if (action.action == 'luaScript') {
 			if ( action.options.script != '' ) {
-				cmd = base + 'ScriptExecute(' + action.options.script + ');';
+				cmd = base + 'ScriptExecute("' + action.options.script + '");';
 			}
 		}
 
