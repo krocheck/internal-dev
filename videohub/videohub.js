@@ -511,11 +511,6 @@ instance.prototype.action = function(action) {
 		self.checkFeedbacks('selected_destination');
 		self.checkFeedbacks('selected_source');
 	}
-	else if ( action.action === 'select_destination') {
-		this.selected = action.options.destination;
-		self.checkFeedbacks('selected_destination');
-		self.checkFeedbacks('selected_source');
-	}
 	else if ( action.action === 'route_source') {
 		cmd = "VIDEO OUTPUT ROUTING:\n"+this.selected+" "+action.options.source+"\n\n";
 	}

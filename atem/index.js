@@ -1207,7 +1207,7 @@ class instance extends instance_skel {
 
 		for (var i = 0; i < this.model.MVs; i++) {
 
-			for (var j = 0; j < 10; j++) {
+			for (var j = 2; j < 10; j++) {
 
 				for (var k in this.CHOICES_MVSOURCES) {
 
@@ -1304,7 +1304,7 @@ class instance extends instance_skel {
 				name: 'macro_' + (i+1)
 			});
 
-			this.setVariable('macro_' + (i+1), (this.getMacro(i).name != '' ? this.getMacro(i).name : this.getMacro(i).label));
+			this.setVariable('macro_' + (i+1), (this.getMacro(i).description != '' ? this.getMacro(i).description : this.getMacro(i).label));
 		}
 
 		this.setVariableDefinitions(variables);
@@ -1358,6 +1358,7 @@ class instance extends instance_skel {
 				this.initDone = true;
 				this.log('info', 'Connected to a ' + this.deviceName);
 
+				this.setAtemModel(this.deviceModel, true);
 				this.checkFeedbacks('aux_bg');
 				this.checkFeedbacks('preview_bg');
 				this.checkFeedbacks('program_bg');
@@ -1422,7 +1423,6 @@ class instance extends instance_skel {
 			case 'ProductIdentifierCommand':
 				this.deviceModel = state.properties.model;
 				this.deviceName  = state.properties.deviceName;
-				this.setAtemModel(this.deviceModel, true);
 				break;
 
 			case 'ProgramInputCommand':
