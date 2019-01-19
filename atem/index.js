@@ -208,6 +208,32 @@ class instance extends instance_skel {
 					}
 				]
 			},
+			'dskSource': {
+				label: 'Set inputs on DSK',
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Key',
+						id: 'key',
+						default: '0',
+						choices: this.CHOICES_DSKS.slice(0, this.model.DSKs)
+					},
+					{
+						 type: 'dropdown',
+						 label: 'Fill Source',
+						 id: 'fill',
+						 default: 1,
+						 choices: this.CHOICES_MESOURCES
+					},
+					{
+						 type: 'dropdown',
+						 label: 'Key Source',
+						 id: 'cut',
+						 default: 0,
+						 choices: this.CHOICES_MESOURCES
+					}
+				]
+			},
 			'aux': {
 				label: 'Set AUX bus',
 				options: [
@@ -369,6 +395,10 @@ class instance extends instance_skel {
 				this.atem.setUpstreamKeyerFillSource(parseInt(opt.fill), parseInt(opt.mixeffect), parseInt(opt.key));
 				this.atem.setUpstreamKeyerCutSource(parseInt(opt.cut), parseInt(opt.mixeffect), parseInt(opt.key));
 				break;
+			case 'dskSource':
+				this.atem.setDownstreamKeyerFillSource(parseInt(opt.fill), parseInt(opt.key));
+				this.atem.setDownstreamKeyerCutSource(parseInt(opt.cut), parseInt(opt.key));
+				break;
 			case 'aux':
 				this.atem.setAuxSource(parseInt(opt.input), parseInt(opt.aux));
 				break;
@@ -516,6 +546,11 @@ class instance extends instance_skel {
 		}
 		else if (feedback.type == 'dsk_bg') {
 			if (this.getDSK(opt.key).onAir) {
+				out = { color: opt.fg, bgcolor: opt.bg };
+			}
+		}
+		else if (feedback.type == 'dsk_source') {
+			if (this.getDSK(opt.key).fillSource == parseInt(opt.fill)) {
 				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
@@ -894,13 +929,13 @@ class instance extends instance_skel {
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: this.rgb(255,255,255)
+					default: this.rgb(0,0,0)
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: this.rgb(255,0,0)
+					default: this.rgb(238,238,0)
 				},
 				{
 					type: 'dropdown',
@@ -947,6 +982,38 @@ class instance extends instance_skel {
 					id: 'key',
 					default: '0',
 					choices: this.CHOICES_DSKS.slice(0, this.model.DSKs)
+				}
+			]
+		};
+		feedbacks['dsk_source'] = {
+			label: 'Change colors from downstream keyer fill source',
+			description: 'If the input specified is in use by the DSK specified, change colors of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(238,238,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'key',
+					default: '0',
+					choices: this.CHOICES_DSKS.slice(0, this.model.DSKs)
+				},
+				{
+					type: 'dropdown',
+					label: 'Fill Source',
+					id: 'fill',
+					default: 1,
+					choices: this.CHOICES_MESOURCES
 				}
 			]
 		};
@@ -1196,7 +1263,7 @@ class instance extends instance_skel {
 							{
 								type: 'usk_source',
 								options: {
-									bg: this.rgb(255,255,0),
+									bg: this.rgb(238,238,0),
 									fg: this.rgb(255,255,255),
 									fill: input,
 									key: i,
@@ -1253,6 +1320,44 @@ class instance extends instance_skel {
 					}
 				]
 			});
+
+			for (var input in this.CHOICES_MESOURCES) {
+				var key = this.CHOICES_MESOURCES[input].id;
+
+				presets.push({
+					category: 'DSK ' + (i+1),
+					label: 'DSK ' + (i+1) +' source',
+					bank: {
+						style: 'text',
+						text: '$(attem:' + pstText + key + ')',
+						size: pstSize,
+						color: this.rgb(255,255,255),
+						bgcolor: 0
+					},
+					feedbacks: [
+						{
+							type: 'dsk_source',
+							options: {
+								bg: this.rgb(238,238,0),
+								fg: this.rgb(255,255,255),
+								fill: input,
+								key: i
+							}
+						}
+					],
+					actions: [
+						{
+							action: 'dskSource',
+							options: {
+								onair: 'toggle',
+								fill: input,
+								cut: 0,
+								key: i
+							}
+						}
+					]
+				});
+			}
 		}
 
 		// Macros
@@ -1393,7 +1498,7 @@ class instance extends instance_skel {
 			this.setVariable('pvw' + (i+1) + '_input', (this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName));
 
 			for (var k = 0; k < this.model.USKs; ++k) {
-				
+
 				variables.push({
 					label: 'Label of input active on M/E ' + (i+1) + ' Key ' + (k+1),
 					name: 'usk_' + (i+1) + '_' + (k+1) + '_input'
@@ -1403,6 +1508,19 @@ class instance extends instance_skel {
 				this.setVariable('usk_' + (i+1) + '_' + (k+1) + '_input', (this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName));
 
 			}
+		}
+
+		// DSKs
+		for (var k = 0; k < this.model.DSKs; ++k) {
+
+			variables.push({
+				label: 'Label of input active on DSK ' + (k+1),
+				name: 'dsk_' + (k+1) + '_input'
+			});
+
+			var id = this.getDSK(k).fillSource;
+			this.setVariable('dsk_' + (k+1) + '_input', (this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName));
+
 		}
 
 		// Input names
@@ -1463,8 +1581,11 @@ class instance extends instance_skel {
 			case 'DownstreamKeySourcesCommand':
 				this.updateDSK(state.downstreamKeyerId, state.properties);
 
+				var id = state.properties.fillSource;
+				this.setVariable('dsk_' + (state.downstreamKeyerId+1) + '_input', (this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName));
+
 				if (this.initDone === true) {
-					this.checkFeedbacks('dsk_bg');
+					this.checkFeedbacks('dsk_source');
 				}
 				break;
 
@@ -1486,6 +1607,7 @@ class instance extends instance_skel {
 				this.checkFeedbacks('preview_bg');
 				this.checkFeedbacks('program_bg');
 				this.checkFeedbacks('dsk_bg');
+				this.checkFeedbacks('dsk_source');
 				this.checkFeedbacks('usk_bg');
 				this.checkFeedbacks('usk_source');
 				this.checkFeedbacks('macro');
@@ -1509,12 +1631,14 @@ class instance extends instance_skel {
 				break;
 
 			case 'MixEffectKeyPropertiesGetCommand':
-				this.updateUSK(state.mixEffect, state.upstreamKeyerId, state.properties);
+				this.updateUSK(state.mixEffect, state.properties.upstreamKeyerId, state.properties);
+
+				var id = state.properties.fillSource;
+				this.setVariable('usk_' + (state.mixEffect+1) + '_' + (state.properties.upstreamKeyerId+1) + '_input', (this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName));
 
 				if (this.initDone === true) {
 					this.checkFeedbacks('usk_source');
 				}
-				
 				break;
 
 			case 'MacroPropertiesCommand':
