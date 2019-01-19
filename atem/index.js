@@ -116,15 +116,6 @@ class instance extends instance_skel {
 			{ id: 3, label: '4' }
 		];
 
-		this.ICONS = {
-			trans0:  'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAYAAAATBx+NAAABEUlEQVR4nO3XsYqDQBRG4ZthQDs73//57OwUxIQRHKIkni4EPF+36xbLj3uz5xERz9BXyWmuORDI749zztF1XTRNs309z3OM4xjLsvzfb/4j9QaVcfq+j5SOL9W6rjEMw21HqmuUN+c8zvYDKW3P7qousv9ZfdK2rQMJBioH+Ztpmm47Xx2ofFqVg3xWvlee3dXhP+n9Y36/OeXN8WPe1LjkkQYOBEwNYGoAUwOYGsAjDUwNYGoAUwOYGsAjDRwImBrA1ACmBjA1gEcamBrA1ACmBjA1gEcaOBAwNYCpAUwNYGoAjzQwNYCpAUwNYGoAjzRwIGBqAFMDmBrA1AAeaWBqAFMDmBrA1AAeaeBAVyLiBWXm8V8PJiWhAAAAAElFTkSuQmCC',
-			trans10: 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAYAAAATBx+NAAABk0lEQVR4nO2XP04CQRjFn4ZYbFg1NHqANdhgxwk0HkDPyQWMnoAOCk1Yem0wAqEwJGM+cCfs39eJYd5vs8ky3xabl8wbfkcOcBC1HCuaZhQQobU7XkYRRkmCj05n8/tiNsNNmqK9Wv2/L/8jfActoggv/T6+W7nMcLJe43Y4RBxoSH6LjZOkFI5hazYLFR9Qtq2qeG+YHToqaYIPyAq5jsuG2aHjA+pNp5tCLmJrNguV3D9pO8nGhWO+l6bBnmAoBiTKqKQJCogg1SBINQhSDYJUg6CSJkg1CFINglSDINUgqKQJCogg1SBINQhSDYJUg6CSJkg1CFINglSDINUgqKQJCogg1SBINQhSDYJUg6CSJkg1CFINglSDINUgqKQJCoiQC2hyBTwOgLOv7W3PthY01kF2v3Xhzj/hipet2Sx7L7TbB/QwKIeTXTYLNSB/itmWmp9W76X2EljEYe4zlTTBB3T3XP/i/dPev3N/ZHvt9bq+pG0WfEm735PMCjmeb297DvkEc7slLapRSRMUUBMAfgCe/BxFmDkyuQAAAABJRU5ErkJggg==',
-			trans30: 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAYAAAATBx+NAAABnUlEQVR4nO2XTUoDQRSESwkuhoxKNnqAEd3EXU6geAA9Zy4geoLskoWCk71uIiYhCwm0vMRp5r92RtL1NQ09/WYxFLx6UwcOcBCNHEqadiQQoZMvL6MI4yTBR6+3eT6bzXCdpuiuVv/vy/8I70GLKMLzYIDvTkEzHK3XuBmNEAcqkm+xSZJUxDHszmqh4gXK2qqO95baviOTJniBzJCbOG+p7TteoP50ujHkMnZntVAp/EnbJJuUxnw/TYOdYCgLJKrIpAkSiKCoQVDUIChqEBQ1CDJpgqIGQVGDoKhBUNQgyKQJEoigqEFQ1CAoahAUNQgyaYKiBkFRg6CoQVDUIMikCRKIUBDo7QJ4GAInX9ttZ7sLGvMg26+XcKefcOVld1bL3gtte4Huh1VxsmW1UAXyU8xaan5c30vdJbCIw+wzmTTBC3T71Pzi3ePOv3N3ZL32ctVs0lYL3qTd7yQzQ47n223nkCeYy5u0qEcmTZBABEUNRt6gFTVappiiBpliihr1yKQJihqMrNcUNYhJO0WNdpMW9cikCRKoDQA/aDI3GCpYlokAAAAASUVORK5CYII=',
-			trans50: 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAYAAAATBx+NAAABqUlEQVR4nO2XQUoDQRRESwkuBqOSjR5gRDdxlxMoHkDPmQuIniA7s1BwstdNxCRkIYGWnzjNZNLTtTOSrtc09PSfxVDw60/tOcBBNLIvaeJIIEKrWp5lGZ7zHB+dzvL5dDzGVVHgcD7/f1/+R3gPmmYZnno9fLfWNMPBYoHrwQDtREXyLTbM8w1xDLuzWqp4gcq2CvEeqe06MmmCF8gMuYmzSG3X8QJ1R6OlIdexO6ulytqftE2yYW3Md4si2QmGukBiE5k0QQIRFDUIihoERQ2CogZBJk1Q1CAoahAUNQiKGgSZNEECEdYEejsH7vvA8ddq29nuksY8yPbrBdzJJ1x92Z3VyvdS216gu/6mOOWyWqoC+SlmLTU5CvfS4QyYttPsM5k0wQt089j84u3D1r9ze5S99nLZbNJWS96k3e8kM0NuT1bbzilPMFc1aRFGJk2QQARFDUbVoBU1IlNMUYNMMUWNMDJpgqIGo+w1RQ1i0k5RI27SIoxMmiCBCIoajKpBK2pEppiiBpliihphZNIERQ1G2WuKGsSknaJG3KRFGJk0QQLFAPADXxxR6+1L46oAAAAASUVORK5CYII=',
-			trans70: 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAYAAAATBx+NAAABs0lEQVR4nO2XQUrDQBiFf6W4CI1KN3qAiG7qridQPICesxcQPUF37ULBdK+bim3pQgojf+sMk2Qyb2el874QSOfPIjz43+s7MCJGSCuHlCYOBQJ0/PEyy2RcFPLR621+n81mcl2W0l2t/t+X/xHOgxZZJs+DgXx3KprJ0XotN6OR5ImK5FZsUhQNcRQ901mqOIHsWoV4j8z2HZo0wAmkhtzGeWS27ziB+tPpxpDr6JnOUqXyT1qTbFKL+X5ZJptgUheINKFJAygQoCLQ24XIw1Dk5Gt767OeJY16kN6vl2JOP8XULz3TmX0vtdsJdD9simMvnaUqkEsxXan5cXiXukuRRZ7mntGkAU6g26f2F+8ed/6du8Pu2stVu0nrLHmTNr9Jpoacz7e3PqecYMY3aRKGJg2gQABWDYRv0KwakRRj1QApxqoRhiYNYNVA2F1j1QAmbVg14iZNwtCkARQIwKqB8A2aVSOSYqwaIMVYNcLQpAGsGgi7a6wawKQNq0bcpEkYmjSAAgFYNRC+QbNqRFKMVQOkGKtGGJo0gFUDYXeNVQOYtGHViJs0CUOTBlCgGCLyA4O6bL7/MAr3AAAAAElFTkSuQmCC',
-			trans90: 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAYAAAATBx+NAAABS0lEQVR4nO2XQUoDQRBFS9cm5hLBHERyAD1nLhByjwgeIiS6LyliD62pqb/Mot8bGoaZWQwf6hfvwc3cYJZHoqkhIMGfgD7XZu87s+fz9cR9PBua6KA4Hy/mq5P5/yuexbv23WhnCuhtdxtOu+LdqAFNWyxG6rLMZ+np2+xrMeacUdKCKaDXw/yH2/3d//N+tFk7buZLOt4NX9L+u8mikBeX64n7kTeY9yUNOZS0gIAEqIaiL2hUo9hiqIbYYqhGDiUtQDUUbdZQDVHSjmrUJQ05lLSAgASohqIvaFSj2GKohthiqEYOJS1ANRRt1lANUdKOatQlDTmUtICABKiGoi9oVKPYYqiG2GKoRg4lLUA1FG3WUA1R0o5q1CUNOZS0gIAEqIaiL2hUo9hiqIbYYqhGDiUtQDUUbdZQDVHSjmrUJQ05lLSAgCrM7AfWDIeR8gJXywAAAABJRU5ErkJggg=='
-		};
-
 		if (this.config.modelID !== undefined){
 			this.model = this.CONFIG_MODEL[this.config.modelID];
 		}
@@ -181,6 +172,39 @@ class instance extends instance_skel {
 						label: 'M/E',
 						default: 0,
 						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+					}
+				]
+			},
+			'uskSource': {
+				label: 'Set inputs on USK',
+				options: [
+					{
+						type: 'dropdown',
+						id: 'mixeffect',
+						label: 'M/E',
+						default: 0,
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+					},
+					{
+						type: 'dropdown',
+						label: 'Key',
+						id: 'key',
+						default: '0',
+						choices: this.CHOICES_USKS.slice(0, this.model.USKs)
+					},
+					{
+						 type: 'dropdown',
+						 label: 'Fill Source',
+						 id: 'fill',
+						 default: 1,
+						 choices: this.CHOICES_MESOURCES
+					},
+					{
+						 type: 'dropdown',
+						 label: 'Key Source',
+						 id: 'cut',
+						 default: 0,
+						 choices: this.CHOICES_MESOURCES
 					}
 				]
 			},
@@ -341,6 +365,10 @@ class instance extends instance_skel {
 			case 'preview':
 				this.atem.changePreviewInput(parseInt(opt.input), parseInt(opt.mixeffect));
 				break;
+			case 'uskSource':
+				this.atem.setUpstreamKeyerFillSource(parseInt(opt.fill), parseInt(opt.mixeffect), parseInt(opt.key));
+				this.atem.setUpstreamKeyerCutSource(parseInt(opt.cut), parseInt(opt.mixeffect), parseInt(opt.key));
+				break;
 			case 'aux':
 				this.atem.setAuxSource(parseInt(opt.input), parseInt(opt.aux));
 				break;
@@ -478,6 +506,11 @@ class instance extends instance_skel {
 		}
 		else if (feedback.type == 'usk_bg') {
 			if (this.getUSK(opt.mixeffect, opt.key).onAir) {
+				out = { color: opt.fg, bgcolor: opt.bg };
+			}
+		}
+		else if (feedback.type == 'usk_source') {
+			if (this.getUSK(opt.mixeffect, opt.key).fillSource == opt.fill) {
 				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
@@ -853,6 +886,45 @@ class instance extends instance_skel {
 				}
 			]
 		};
+		feedbacks['usk_source'] = {
+			label: 'Change colors from upstream keyer fill source',
+			description: 'If the input specified is in use by the USK specified, change colors of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(255,255,255)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,0,0)
+				},
+				{
+					type: 'dropdown',
+					id: 'mixeffect',
+					label: 'M/E',
+					default: 0,
+					choices: this.CHOICES_ME.slice(0, this.model.MEs)
+				},
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'key',
+					default: '0',
+					choices: this.CHOICES_USKS.slice(0, this.model.USKs)
+				},
+				{
+					type: 'dropdown',
+					label: 'Fill Source',
+					id: 'fill',
+					default: 1,
+					choices: this.CHOICES_MESOURCES
+				}
+			]
+		};
 		feedbacks['dsk_bg'] = {
 			label: 'Change colors from downstream keyer state',
 			description: 'If the specified downstream keyer is active, change color of the bank',
@@ -1106,6 +1178,46 @@ class instance extends instance_skel {
 						}
 					]
 				});
+
+				for (var input in this.CHOICES_MESOURCES) {
+					var key = this.CHOICES_MESOURCES[input].id;
+
+					presets.push({
+						category: 'M/E ' + (me+1) + ' Key ' + (i+1),
+						label: 'M/E ' + (me+1) + ' Key ' + (i+1) +' source',
+						bank: {
+							style: 'text',
+							text: '$(attem:' + pstText + key + ')',
+							size: pstSize,
+							color: this.rgb(255,255,255),
+							bgcolor: 0
+						},
+						feedbacks: [
+							{
+								type: 'usk_source',
+								options: {
+									bg: this.rgb(255,255,0),
+									fg: this.rgb(255,255,255),
+									fill: input,
+									key: i,
+									mixeffect: me
+								}
+							}
+						],
+						actions: [
+							{
+								action: 'uskSource',
+								options: {
+									onair: 'toggle',
+									fill: input,
+									cut: 0,
+									key: i,
+									mixeffect: me
+								}
+							}
+						]
+					});
+				}
 			}
 		}
 
@@ -1280,6 +1392,17 @@ class instance extends instance_skel {
 			var id = this.getME(i).pvwSrc;
 			this.setVariable('pvw' + (i+1) + '_input', (this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName));
 
+			for (var k = 0; k < this.model.USKs; ++k) {
+				
+				variables.push({
+					label: 'Label of input active on M/E ' + (i+1) + ' Key ' + (k+1),
+					name: 'usk_' + (i+1) + '_' + (k+1) + '_input'
+				});
+
+				var id = this.getUSK(i, k).fillSource;
+				this.setVariable('usk_' + (i+1) + '_' + (k+1) + '_input', (this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName));
+
+			}
 		}
 
 		// Input names
