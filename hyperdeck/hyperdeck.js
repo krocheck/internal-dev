@@ -86,7 +86,7 @@ instance.prototype.config_fields = function () {
 			id: 'info',
 			width: 12,
 			label: 'Custom Clip Record Naming',
-			value: 'Companion is able to initiate recordings where the file names can use a custom \'Reel-Clip\' naming convention.  The \'Reel\' is a custom name defined below.  \'Clip\' is a number that automatically increments.  <b>This naming is only used when starting records using the \'Record Custom Reel-Clip\' action.</b>'
+			value: 'Companion is able to initiate recordings where the file names use a custom \'Reel-Clip\' naming convention.  The \'Reel\' is a custom name defined below.  \'Clip\' is a number that automatically increments.  <b>This naming is only used when starting records using the \'Record (with custom Reel-Clip)\' action.</b>'
 		},
 		{
 			type: 'textinput',
@@ -180,7 +180,7 @@ instance.prototype.actions = function(system) {
 			]
 		},
 		'recCustom': {
-			label: 'Record Custom Reel-Clip'
+			label: 'Record (with custom Reel-Clip)'
 		},
 		'stop': {
 			label: 'Stop'
