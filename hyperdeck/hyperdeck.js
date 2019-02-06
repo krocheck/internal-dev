@@ -80,6 +80,29 @@ instance.prototype.config_fields = function () {
 			label: 'Target IP',
 			width: 6,
 			regex: self.REGEX_IP
+		},
+		{
+			type: 'text',
+			id: 'info',
+			width: 12,
+			label: 'Custom Clip Record Naming',
+			value: 'Companion is able to initiate recordings where the file names can use a custom \'Reel-Clip\' naming convention.  The \'Reel\' is a custom name defined below.  \'Clip\' is a number that automatically increments.  <b>This naming is only used when starting records using the \'Record Custom Reel-Clip\' action.</b>'
+		},
+		{
+			type: 'textinput',
+			id: 'reel',
+			label: 'Custom Reel',
+			width: 6,
+			default: 'A001',
+			regex: '/^([A-Za-z0-9_\-\s]*)$/'
+		},
+		{
+			type: 'textinput',
+			id: 'clip',
+			label: 'Custom Clip',
+			width: 3,
+			default: '1',
+			regex: '/^0*([0-9]|[1-8][0-9]|9[0-9]|[1-8][0-9]{2}|9[0-8][0-9]|99[0-9]|[1-8][0-9]{3}|9[0-8][0-9]{2}|99[0-8][0-9]|999[0-9])$/'
 		}
 	]
 };
@@ -155,6 +178,9 @@ instance.prototype.actions = function(system) {
 					regex: self.REGEX_SOMETHING
 				}
 			]
+		},
+		'recCustom': {
+			label: 'Record Custom Reel-Clip'
 		},
 		'stop': {
 			label: 'Stop'
@@ -339,6 +365,10 @@ instance.prototype.action = function(action) {
 			cmd = 'record: name: ' + opt.name;
 			break;
 
+		case 'recCustom':
+			cmd = 'record: name: ' + self.config.reel + '-' + self.config.clip;
+			break;
+
 		case 'goto':
 			cmd = 'goto: timecode: '+ opt.tc;
 			break;
@@ -386,7 +416,12 @@ instance.prototype.action = function(action) {
 
 		if (self.socket !== undefined && self.socket.connected) {
 			self.socket.send(cmd + "\n");
-			self.socket.send('notify: transport: true\n')
+			self.socket.send('notify: transport: true\n');
+
+			if (action.action == 'recCustom') {
+				self.config.clip = parseInt(self.config.clip)++;
+				self.saveConfig();
+			}
 		} else {
 			debug('Socket not connected :(');
 		}
