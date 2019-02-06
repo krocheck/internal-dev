@@ -450,7 +450,7 @@ class instance extends instance_skel {
 	/**
 	 * Creates the configuration fields for web config.
 	 *
-	 * @returns {Object[]} the config fields
+	 * @returns {Array} the config fields
 	 * @access public
 	 * @since 1.0.0
 	 */
