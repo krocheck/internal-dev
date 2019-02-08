@@ -10,6 +10,7 @@
 * Play loop (Speed %)
 * Record
 * Record (with name)
+* Record (with custom reel)
 * Stop
 * Goto (timecode)
 * Goto Clip (n)
