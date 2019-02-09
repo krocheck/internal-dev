@@ -19,7 +19,8 @@ instance.prototype.updateConfig = function(config) {
 	self.config = config;
 
 	self.actions();
-};
+}
+
 instance.prototype.init = function() {
 	var self = this;
 
@@ -27,7 +28,7 @@ instance.prototype.init = function() {
 
 	debug = self.debug;
 	log = self.log;
-};
+}
 
 // Return config fields for web config
 instance.prototype.config_fields = function () {
@@ -57,13 +58,21 @@ instance.prototype.destroy = function() {
 
 instance.prototype.actions = function(system) {
 	var self = this;
+	var urlLabel = 'URL';
+
+	if ( self.config.prefix !== undefined ) {
+		if ( self.config.prefix.length > 0 ) {
+			urlLabel = 'URI';
+		}
+	}
+
 	self.setActions({
 		'post': {
 			label: 'POST',
 			options: [
 				{
 					type: 'textinput',
-					label: (self.config.prefix.length > 0 : 'URI' ? 'URL'),
+					label: urlLabel,
 					id: 'url',
 					default: ''
 				}
@@ -74,7 +83,7 @@ instance.prototype.actions = function(system) {
 			options: [
 				{
 					type: 'textinput',
-					label: (self.config.prefix.length > 0 : 'URI' ? 'URL'),
+					label: urlLabel,
 					id: 'url',
 					default: '',
 				}
@@ -87,17 +96,21 @@ instance.prototype.action = function(action) {
 	var self = this;
 	var cmd;
 
-	if ( self.config.prefix.length > 0 && action.options.url.substring(0,4) == 'http' ) {
-		cmd = self.config.prefix + action.options.url;
+	if ( self.config.prefix !== undefined && action.options.url.substring(0,4) == 'http' ) {
+		if ( self.config.prefix.length > 0 ) {
+			cmd = self.config.prefix + action.options.url;
+		}
+		else {
+			cmd = action.options.url;
+		}
 	}
 	else {
-		cmd = action.options.url
+		cmd = action.options.url;
 	}
 
 	if (action.action == 'post') {
 
 		self.system.emit('rest', cmd, {}, function (err, result) {
-
 			if (err !== null) {
 				self.log('error', 'HTTP POST Request failed (' + result.error.code + ')');
 				self.status(self.STATUS_ERROR, result.error.code);
@@ -110,7 +123,6 @@ instance.prototype.action = function(action) {
 	else if (action.action == 'get') {
 
 		self.system.emit('rest_get', cmd, function (err, result) {
-
 			if (err !== null) {
 				self.log('error', 'HTTP GET Request failed (' + result.error.code + ')');
 				self.status(self.STATUS_ERROR, result.error.code);
@@ -120,7 +132,7 @@ instance.prototype.action = function(action) {
 			}
 		});
 	}
-};
+}
 
 instance_skel.extendedBy(instance);
 exports = module.exports = instance;
