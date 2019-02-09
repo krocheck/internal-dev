@@ -186,13 +186,13 @@ class instance extends instance_skel {
 
 		cmd = 'http://' + this.config.host + ':' + this.config.port + '/opt?auth=' + this.config.password + '&command=' + id;
 
+		cmd = encodeURI(cmd);
+
 		if (action.options.arg !== undefined) {
 			cmd += '&arg=' + encodeURIComponent(action.options.arg);
 		}
 
-		cmd = encodeURI(cmd);
-
-		this.system.emit('rest_get', cmd, function (err, result) {
+		this.system.emit('rest_get', cmd, (err, result) => {
 			if (err !== null) {
 				this.log('error', 'HTTP GET Request failed (' + result.error.code + ')');
 				this.status(this.STATUS_ERROR, result.error.code);

@@ -1,17 +1,19 @@
-## Blackmagic Design ATEM
-Should work with all models of Blackmagic Design ATEM mixers
+## RadioDJ REST API
+Make sure the 'Rest Server' plugin is enabled and functioning properly.
 
-**Available commands for Blackmagic Design ATEM**
+**Available commands for RadioDJ**
 
-* Set input on Program
-* Set input on Preview
-* Set inputs on Upstream KEY
-* Set inputs on Downstream KEY
-* Set AUX bus
-* Set Upstream KEY OnAir
-* CUT operation
-* AUTO transition operation
-* Run MACRO
-* Continue MACRO
-* Stop MACROS
-* Change MV window source
+* Play playlist track',
+* Remove playlist track
+* Stop player
+* Set pause state
+* Restart player
+* Play from intro
+* Clear playlist
+* Set Auto DJ state
+* Set Assisted state
+* Set event run state
+* Refresh events
+* Set input state
+* Play cart by number
+* Display message in RadioDJ
