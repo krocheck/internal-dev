@@ -2,12 +2,12 @@
 	"name": "radiodj-rest",
 	"version": "1.0.0",
 	"api_version": "1.0.0",
-	"description": "REST API",
+	"description": "",
 	"keywords": [
 		"Software"
 	],
 	"manufacturer": "RadioDJ",
-	"product": "RadioDJ",
+	"product": "REST API",
 	"shortname": "radiodj",
 	"homepage": "https://github.com/bitfocus/companion-module-radiodj-rest#readme",
 	"main": "index.js",

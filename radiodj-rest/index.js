@@ -13,7 +13,7 @@ var log;
 class instance extends instance_skel {
 
 	/**
-	 * Create an instance of an ATEM module.
+	 * Create an instance of a RadioDJ module.
 	 *
 	 * @param {EventEmitter} system - the brains of the operation
 	 * @param {string} id - the instance ID
@@ -44,7 +44,6 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	actions(system) {
-		this.setupSourceChoices();
 
 		this.setActions({
 			'PlayPlaylistTrack': {
@@ -193,13 +192,13 @@ class instance extends instance_skel {
 
 		cmd = encodeURI(cmd);
 
-		self.system.emit('rest_get', cmd, function (err, result) {
+		this.system.emit('rest_get', cmd, function (err, result) {
 			if (err !== null) {
-				self.log('error', 'HTTP GET Request failed (' + result.error.code + ')');
-				self.status(self.STATUS_ERROR, result.error.code);
+				this.log('error', 'HTTP GET Request failed (' + result.error.code + ')');
+				this.status(this.STATUS_ERROR, result.error.code);
 			}
 			else {
-				self.status(self.STATUS_OK);
+				this.status(this.STATUS_OK);
 			}
 		});
 	}
@@ -211,7 +210,7 @@ class instance extends instance_skel {
 	 * @access public
 	 * @since 1.0.0
 	 */
-	config_fields () {
+	config_fields() {
 
 		return [
 			{
@@ -235,7 +234,7 @@ class instance extends instance_skel {
 				label:   'Target Port',
 				width:   4,
 				default: '8080',
-				regex:   self.REGEX_PORT
+				regex:   this.REGEX_PORT
 			},
 			{
 				type:    'textinput',
@@ -268,7 +267,7 @@ class instance extends instance_skel {
 		debug = this.debug;
 		log = this.log;
 
-		this.status(this.STATE_UNKNOWN);
+		this.status(this.STATUS_UNKNOWN);
 	}
 
 	/**
