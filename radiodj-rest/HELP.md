@@ -3,7 +3,7 @@ Make sure the 'Rest Server' plugin is enabled and functioning properly.
 
 **Available commands for RadioDJ**
 
-* Play playlist track',
+* Play playlist track
 * Remove playlist track
 * Stop player
 * Set pause state

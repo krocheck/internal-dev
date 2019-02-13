@@ -188,8 +188,18 @@ class instance extends instance_skel {
 
 		cmd = encodeURI(cmd);
 
-		if (action.options.arg !== undefined) {
-			cmd += '&arg=' + encodeURIComponent(action.options.arg);
+		switch (action.action) {
+			case 'PlayPlaylistTrack':
+			case 'RemovePlaylistTrack':
+			case 'PausePlayer':
+			case 'EnableAutoDJ':
+			case 'EnableAssisted':
+			case 'EnableEvents':
+			case 'EnableInput':
+			case 'PlaycartByNumber':
+			case 'ShowMessage':
+				cmd += '&arg=' + encodeURIComponent(action.options.arg);
+				break;
 		}
 
 		this.system.emit('rest_get', cmd, (err, result) => {
