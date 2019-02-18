@@ -384,71 +384,66 @@ class instance extends instance_skel {
 		var cmd;
 		var opt = action.options;
 
-		if (this.atem !== undefined) {
-			switch (action.action) {
-				case 'program':
-					this.atem.changeProgramInput(parseInt(opt.input), parseInt(opt.mixeffect));
-					break;
-				case 'preview':
-					this.atem.changePreviewInput(parseInt(opt.input), parseInt(opt.mixeffect));
-					break;
-				case 'uskSource':
-					this.atem.setUpstreamKeyerFillSource(parseInt(opt.fill), parseInt(opt.mixeffect), parseInt(opt.key));
-					this.atem.setUpstreamKeyerCutSource(parseInt(opt.cut), parseInt(opt.mixeffect), parseInt(opt.key));
-					break;
-				case 'dskSource':
-					this.atem.setDownstreamKeyFillSource(parseInt(opt.fill), parseInt(opt.key));
-					this.atem.setDownstreamKeyCutSource(parseInt(opt.cut), parseInt(opt.key));
-					break;
-				case 'aux':
-					this.atem.setAuxSource(parseInt(opt.input), parseInt(opt.aux));
-					break;
-				case 'cut':
-					this.atem.cut(parseInt(opt.mixeffect));
-					break;
-				case 'usk':
-					if (opt.onair == 'toggle') {
-						this.atem.setUpstreamKeyerOnAir(!this.getUSK(opt.mixeffect,opt.key).onAir, parseInt(opt.mixeffect), parseInt(opt.key));
-					} else {
-						this.atem.setUpstreamKeyerOnAir(opt.onair == 'true', parseInt(opt.mixeffect), parseInt(opt.key));
-					}
-					break;
-				case 'dsk':
-					if (opt.onair == 'toggle') {
-						this.atem.setDownstreamKeyOnAir(!this.getDSK(opt.key).onAir, parseInt(opt.key));
-					} else {
-						this.atem.setDownstreamKeyOnAir(opt.onair == 'true', parseInt(opt.key));
-					}
-					break;
-				case 'auto':
-					this.atem.autoTransition(parseInt(opt.mixeffect));
-					break;
-				case 'macrorun':
-					if (opt.action == 'runContinue' && this.getMacro(parseInt(opt.macro)-1).isWaiting == 1) {
-						this.atem.macroContinue();
-					}
-					else if (this.getMacro(parseInt(opt.macro)-1).isRecording == 1) {
-						this.atem.macroStopRecord()
-					}
-					else {
-						this.atem.macroRun(parseInt(opt.macro)-1);
-					}
-					break;
-				case 'macrocontinue':
+		switch (action.action) {
+			case 'program':
+				this.atem.changeProgramInput(parseInt(opt.input), parseInt(opt.mixeffect));
+				break;
+			case 'preview':
+				this.atem.changePreviewInput(parseInt(opt.input), parseInt(opt.mixeffect));
+				break;
+			case 'uskSource':
+				this.atem.setUpstreamKeyerFillSource(parseInt(opt.fill), parseInt(opt.mixeffect), parseInt(opt.key));
+				this.atem.setUpstreamKeyerCutSource(parseInt(opt.cut), parseInt(opt.mixeffect), parseInt(opt.key));
+				break;
+			case 'dskSource':
+				this.atem.setDownstreamKeyFillSource(parseInt(opt.fill), parseInt(opt.key));
+				this.atem.setDownstreamKeyCutSource(parseInt(opt.cut), parseInt(opt.key));
+				break;
+			case 'aux':
+				this.atem.setAuxSource(parseInt(opt.input), parseInt(opt.aux));
+				break;
+			case 'cut':
+				this.atem.cut(parseInt(opt.mixeffect));
+				break;
+			case 'usk':
+				if (opt.onair == 'toggle') {
+					this.atem.setUpstreamKeyerOnAir(!this.getUSK(opt.mixeffect,opt.key).onAir, parseInt(opt.mixeffect), parseInt(opt.key));
+				} else {
+					this.atem.setUpstreamKeyerOnAir(opt.onair == 'true', parseInt(opt.mixeffect), parseInt(opt.key));
+				}
+				break;
+			case 'dsk':
+				if (opt.onair == 'toggle') {
+					this.atem.setDownstreamKeyOnAir(!this.getDSK(opt.key).onAir, parseInt(opt.key));
+				} else {
+					this.atem.setDownstreamKeyOnAir(opt.onair == 'true', parseInt(opt.key));
+				}
+				break;
+			case 'auto':
+				this.atem.autoTransition(parseInt(opt.mixeffect));
+				break;
+			case 'macrorun':
+				if (opt.action == 'runContinue' && this.getMacro(parseInt(opt.macro)-1).isWaiting == 1) {
 					this.atem.macroContinue();
-					break;
-				case 'macrostop':
-					this.atem.macroStop();
-					break;
-				case 'setMvSource':
-					this.atem.setMultiViewerSource( { 'windowIndex': opt.windowIndex, 'source': opt.source }, opt.multiViewerId);
-					break;
-				default:
-					debug('Unknown action: ' + action.action);
-			}
-		}
-		else {
-			this.status(this.STATUS_ERROR, 'atem-connection not initialized.  Could not execute action '+action.action);
+				}
+				else if (this.getMacro(parseInt(opt.macro)-1).isRecording == 1) {
+					this.atem.macroStopRecord()
+				}
+				else {
+					this.atem.macroRun(parseInt(opt.macro)-1);
+				}
+				break;
+			case 'macrocontinue':
+				this.atem.macroContinue();
+				break;
+			case 'macrostop':
+				this.atem.macroStop();
+				break;
+			case 'setMvSource':
+				this.atem.setMultiViewerSource( { 'windowIndex': opt.windowIndex, 'source': opt.source }, opt.multiViewerId);
+				break;
+			default:
+				debug('Unknown action: ' + action.action);
 		}
 	}
 
@@ -1841,24 +1836,23 @@ class instance extends instance_skel {
 	 */
 	setupAtemConnection() {
 
+		this.atem = new Atem({ externalLog: this.debug.bind(this) });
+
+		this.atem.on('connected', () => {
+			this.status(this.STATE_OK);
+		});
+		this.atem.on('error', (e) => {
+			this.status(this.STATUS_ERROR, e.message);
+		});
+		this.atem.on('disconnected', () => {
+			this.status(this.STATUS_UNKNOWN, 'Disconnected');
+			this.initDone = false;
+		});
+		this.atem.on('stateChanged', this.processStateChange.bind(this));
+
+
 		if (this.config.host !== undefined) {
-
-			this.atem = new Atem({ externalLog: this.debug.bind(this) });
-
-			this.atem.on('connected', () => {
-				this.status(this.STATE_OK);
-			});
-			this.atem.on('error', (e) => {
-				this.status(this.STATUS_ERROR, e.message);
-			});
-			this.atem.on('disconnected', () => {
-				this.status(this.STATUS_UNKNOWN, 'Disconnected');
-				this.initDone = false;
-			});
-
 			this.atem.connect(this.config.host);
-
-			this.atem.on('stateChanged', this.processStateChange.bind(this));
 		}
 	}
 
@@ -1960,12 +1954,7 @@ class instance extends instance_skel {
 				} catch (e) {}
 			}
 
-			if (this.atem !== undefined) {
-				this.atem.connect(this.config.host);
-			}
-			else {
-				this.setupAtemConnection();
-			}
+			this.atem.connect(this.config.host);
 		}
 	}
 
