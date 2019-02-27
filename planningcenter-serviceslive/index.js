@@ -21,7 +21,8 @@ function instance(system, id, config) {
 
 instance.prototype.currentState = {
 	internal: {},
-	dynamicVariables: {}
+	dynamicVariables: {},
+	dynamicVariableDefinitions: {}
 };
 
 instance.prototype.init = function () {
@@ -51,12 +52,19 @@ instance.prototype.updateConfig = function (config) {
 instance.prototype.init_pcoserviceslive = function () {
 	var self = this;
 
-	let services_url = `${baseAPIUrl}/service_types?per_page=10`;
+	let services_url = `${baseAPIUrl}/service_types`;
+	
+	if (self.config.parentfolder !== '')
+	{
+		services_url += `?where[parent_id]=${self.config.parentfolder}`;
+	}
 
 	self.doRest('GET', services_url, {})
 	.then(function (result) {
-		self.currentState.internal.plans_list = [];
-		self.processServicesData(result.data);
+		if (result.data.length > 0) {
+			self.currentState.internal.plans_list = [];
+			self.processServicesData(result.data);
+		}
 	})
 	.catch(function (message) {
 		self.log('error', message);
@@ -97,11 +105,9 @@ instance.prototype.processPlansData = function (result) {
 		planListObj.id = result[j].id;
 		planListObj.serviceTypeId = result[j].relationships.service_type.data.id;
 		let serviceObj = services.find(s => s.id === planListObj.serviceTypeId);
-		planListObj.label = serviceObj.attributes.name + ' - ' + result[j].attributes.dates;
+		planListObj.label = `${serviceObj.attributes.name} - ${result[j].attributes.dates} (${result[j].id})`;
 		self.currentState.internal.plans_list.push(planListObj);
 	}
-
-	self.status(self.STATUS_OK);
 
 	self.actions();
 };
@@ -112,26 +118,39 @@ instance.prototype.config_fields = function () {
 
 	return [
 		{
+			type: 'text',
+			id: 'info',
+			width: 12,
+			label: 'Information',
+			value: 'You will need to setup a Personal Access Token in your PCO account.'
+		},
+		{
 			type: 'textinput',
 			id: 'applicationid',
 			label: 'Application ID',
-			width: 20
+			width: 12
 		},
 		{
 			type: 'textinput',
 			id: 'secretkey',
 			label: 'Secret Key',
-			width: 20
+			width: 12
+		},
+		{
+			type: 'textinput',
+			id: 'parentfolder',
+			label: 'Parent Folder within PCO to limit service type choices for this instance.',
+			width: 12
 		}
 	]
-};
+}
 
 // When module gets deleted
 instance.prototype.destroy = function () {
 	var self = this;
 
 	debug('destroy', self.id);
-};
+}
 
 // Set up Feedbacks
 instance.prototype.initFeedbacks = function () {
@@ -142,7 +161,7 @@ instance.prototype.initFeedbacks = function () {
 	};
 
 	//self.setFeedbackDefinitions(feedbacks);
-};
+}
 
 // Set up available variables
 instance.prototype.initVariables = function () {
@@ -150,8 +169,16 @@ instance.prototype.initVariables = function () {
 
 	var variables = [
 		{
-			label: 'Plans Live Data',
-			id: 'plans_live'
+			label: 'Plan Index',
+			name:  'plan_index'
+		},
+		{
+			label: 'Plan Length',
+			name:  'plan_length'
+		},
+		{
+			label: 'Plan Current Item',
+			name:  'plan_currentitem'
 		}
 	];
 
@@ -159,7 +186,7 @@ instance.prototype.initVariables = function () {
 
 	// Initialize the current state and update Companion with the variables.
 	self.emptyCurrentState();
-};
+}
 
 /**
  * Updates the dynamic variable and records the internal state of that variable.
@@ -168,15 +195,17 @@ instance.prototype.initVariables = function () {
  */
 instance.prototype.updateVariable = function (name, value) {
 	var self = this;
+	
+	console.log("updating variable: " + name + ":" + value);
 
 	if (self.currentState.dynamicVariables[name] === undefined) {
 		self.log('warn', 'Variable ' + name + 'does not exist');
-		return;
+		//return;
 	}
 
 	self.currentState.dynamicVariables[name] = value;
 	self.setVariable(name, value);
-};
+}
 
 /**
  * Updates all Companion variables at once.
@@ -187,8 +216,7 @@ instance.prototype.updateAllVariables = function () {
 	Object.keys(self.currentState.dynamicVariables).forEach(function (key) {
 		self.updateVariable(key, self.currentState.dynamicVariables[key]);
 	});
-
-};
+}
 
 /**
  * Initialize an empty current variable state.
@@ -210,22 +238,23 @@ instance.prototype.emptyCurrentState = function () {
 
 	// The dynamic variable exposed to Companion
 	self.currentState.dynamicVariables = {
-		plans_live: [] //list of plans this instance is controlling, and their last known item
+		plan_index: '',
+		plan_length: '',
+		plan_currentitem: ''
 	};
 
 	// Update Companion with the default state of each dynamic variable.
 	Object.keys(self.currentState.dynamicVariables).forEach(function (key) {
 		self.updateVariable(key, self.currentState.dynamicVariables[key]);
 	});
-
-};
+}
 
 instance.prototype.init_presets = function () {
 	var self = this;
 	var presets = [];
 
 	self.setPresetDefinitions(presets);
-};
+}
 
 instance.prototype.actions = function (system) {
 	var self = this;
@@ -255,6 +284,40 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
+		'nextitem_specific': {
+			label: 'Go to Next Item of a Specific Plan',
+			options: [
+				{
+					type: 'textinput',
+					label: 'PCO Service Type Id',
+					id: 'servicetypeid',
+					tooltip: 'PCO Service Type Id.'
+				},
+				{
+					type: 'textinput',
+					label: 'PCO Plan Id',
+					id: 'planid',
+					tooltip: 'PCO Plan Id.'
+				}
+			]
+		},
+		'previousitem_specific': {
+			label: 'Go to Previous Item of a Specific Plan',
+			options: [
+				{
+					type: 'textinput',
+					label: 'PCO Service Type Id',
+					id: 'servicetypeid',
+					tooltip: 'PCO Service Type Id to control.'
+				},
+				{
+					type: 'textinput',
+					label: 'PCO Plan Id',
+					id: 'planid',
+					tooltip: 'PCO Plan Id to control.'
+				}
+			]
+		},
 		'takecontrol': {
 			label: 'Take Control',
 			options: [
@@ -278,6 +341,40 @@ instance.prototype.actions = function (system) {
 					tooltip: 'PCO Service Plan to control.'
 				}
 			]
+		},
+		'takecontrol_specific': {
+			label: 'Take Control of a Specific Plan',
+			options: [
+				{
+					type: 'textinput',
+					label: 'PCO Service Type Id',
+					id: 'servicetypeid',
+					tooltip: 'PCO Service Type Id to control.'
+				},
+				{
+					type: 'textinput',
+					label: 'PCO Plan Id',
+					id: 'planid',
+					tooltip: 'PCO Plan Id to control.'
+				}
+			]
+		},
+		'releasecontrol_specific': {
+			label: 'Release Control of a Specific Plan',
+			options: [
+				{
+					type: 'textinput',
+					label: 'PCO Service Type Id',
+					id: 'servicetypeid',
+					tooltip: 'PCO Service Type Id to control.'
+				},
+				{
+					type: 'textinput',
+					label: 'PCO Plan Id',
+					id: 'planid',
+					tooltip: 'PCO Plan Id to control.'
+				}
+			]
 		}
 	});
 }
@@ -295,6 +392,7 @@ instance.prototype.action = function (action) {
 			case 'nextitem':
 				self.takeControl(serviceTypeId, planId)
 				.then(function (result) {
+					self.status(self.STATUS_OK);
 					self.controlLive(serviceTypeId, planId, 'next');
 				})
 				.catch(function (message) {
@@ -305,7 +403,30 @@ instance.prototype.action = function (action) {
 			case 'previousitem':
 				self.takeControl(serviceTypeId, planId)
 				.then(function (result) {
+					self.status(self.STATUS_OK);
 					self.controlLive(serviceTypeId, planId, 'previous');
+				})
+				.catch(function (message) {
+					self.log('error', message);
+					self.status(self.STATUS_ERROR, message);
+				});
+				break;
+			case 'nextitem_specific':
+				self.takeControl(options.servicetypeid, planId)
+				.then(function (result) {
+					self.status(self.STATUS_OK);
+					self.controlLive(options.servicetypeid, planId, 'next');
+				})
+				.catch(function (message) {
+					self.log('error', message);
+					self.status(self.STATUS_ERROR, message);
+				});
+				break;
+			case 'previousitem_specific':
+				self.takeControl(options.servicetypeid, planId)
+				.then(function (result) {
+					self.status(self.STATUS_OK);
+					self.controlLive(options.servicetypeid, planId, 'previous');
 				})
 				.catch(function (message) {
 					self.log('error', message);
@@ -315,6 +436,7 @@ instance.prototype.action = function (action) {
 			case 'takecontrol':
 				self.takeControl(serviceTypeId, planId)
 				.then(function (result) {
+					self.status(self.STATUS_OK);
 				})
 				.catch(function (message) {
 					self.log('error', message);
@@ -324,14 +446,36 @@ instance.prototype.action = function (action) {
 			case 'releasecontrol':
 				self.releaseControl(serviceTypeId, planId)
 				.then(function (result) {
+					self.status(self.STATUS_OK);
 				})
 				.catch(function (message) {
 					self.log('error', message);
 					self.status(self.STATUS_ERROR, message);
 				});
+				break;
+			case 'takecontrol_specific':
+				self.takeControl(options.servicetypeid, planId)
+				.then(function (result) {
+					self.status(self.STATUS_OK);
+				})
+				.catch(function (message) {
+					self.log('error', message);
+					self.status(self.STATUS_ERROR, message);
+				});
+				break;
+			case 'releasecontrol_specific':
+				self.releaseControl(options.servicetypeid, planId)
+				.then(function (result) {
+					self.status(self.STATUS_OK);
+				})
+				.catch(function (message) {
+					self.log('error', message);
+					self.status(self.STATUS_ERROR, message);
+				});
+				break;
 		}
 	}
-};
+}
 
 instance.prototype.doRest = function (method, url, body) {
 	var self = this;
@@ -351,8 +495,8 @@ instance.prototype.doRest = function (method, url, body) {
 						reject('Unable to parse JSON.');
 					}
 				}
-				resolve(objJson);
 
+				resolve(objJson);
 			}
 			else {
 				// Failure. Reject the promise.
@@ -406,10 +550,8 @@ instance.prototype.doRest = function (method, url, body) {
 					break;
 			}
 		}
-
 	});
-
-};
+}
 
 /* Takes control of the PCO plan which is needed before the plan can be changed. */
 instance.prototype.takeControl = function (serviceTypeId, planId) {
@@ -464,9 +606,8 @@ instance.prototype.takeControl = function (serviceTypeId, planId) {
 			self.log('error', message);
 			self.status(self.STATUS_ERROR, message);
 		});
-
 	});
-};
+}
 
 instance.prototype.releaseControl = function (serviceTypeId, planId) {
 	var self = this;
@@ -476,26 +617,25 @@ instance.prototype.releaseControl = function (serviceTypeId, planId) {
 
 	return new Promise(function (resolve, reject) {
 		self.doRest('GET', live_url, {})
-				.then(function (result) {
-					if (result.data.links.controller !== null) {
-						//let's release control
-						self.doRest('POST', toggle_url, {})
-						.then(function (result) {
-							resolve(result);
-						})
-						.catch(function (message) {
-							self.log('error', message);
-							self.status(self.STATUS_ERROR, message);
-						});
-					}
-				})
-				.catch(function (message) {
-					self.log('error', message);
-					self.status(self.STATUS_ERROR, message);
-				});
-
+			.then(function (result) {
+				if (result.data.links.controller !== null) {
+					//let's release control
+					self.doRest('POST', toggle_url, {})
+					.then(function (result) {
+						resolve(result);
+					})
+					.catch(function (message) {
+						self.log('error', message);
+						self.status(self.STATUS_ERROR, message);
+					});
+				}
+			})
+			.catch(function (message) {
+				self.log('error', message);
+				self.status(self.STATUS_ERROR, message);
+			});
 	});
-};
+}
 
 instance.prototype.controlLive = function (serviceTypeId, planId, direction) {
 	var self = this;
@@ -514,15 +654,15 @@ instance.prototype.controlLive = function (serviceTypeId, planId, direction) {
 	}
 
 	self.doRest('POST', url, {})
-			.then(function (result) {
-				//plan was moved, let's process the results
-				self.processLiveData(result);
-			})
-			.catch(function (message) {
-				self.log('error', message);
-				self.status(self.STATUS_ERROR, message);
-			});
-};
+		.then(function (result) {
+			//plan was moved, let's process the results
+			self.processLiveData(result);
+		})
+		.catch(function (message) {
+			self.log('error', message);
+			self.status(self.STATUS_ERROR, message);
+		});
+}
 
 instance.prototype.processLiveData = function (result) {
 	var self = this;
@@ -539,32 +679,44 @@ instance.prototype.processLiveData = function (result) {
 		if (currentItemId) {
 			let index = items.findIndex((i) => i.id === currentItemId);
 			let item = items.find(i => i.id === currentItemId);
-
-			let found = false;
-
-			for (let i = 0; i < self.currentState.dynamicVariables.plans_live.length; i++) {
-				if (self.currentState.dynamicVariables.plans_live[i].planId === result.data.id) {
-					//this is our plan, so update the current plan item
-					self.currentState.dynamicVariables.plans_live[i].index = index;
-					self.currentState.dynamicVariables.plans_live[i].length = items.length;
-					self.currentState.dynamicVariables.plans_live[i].currentItem = item.attributes.title;
-					found = true;
-					break;
-				}
+			
+			console.log(item.attributes.title);
+			/*
+			if (self.currentState.dynamicVariableDefinitions['plan_index_' + result.data.id] === undefined)
+			{
+				let variableObj = {};
+				variableObj.label = 'Plan ' + result.data.id + ' Current Index';
+				variableObj.name = 'plan_index_' + result.data.id;
+				self.currentState.dynamicVariableDefinitions.push(variableObj);
 			}
-
-			if (!found) {
-				let planObj = {};
-				planObj.index = index;
-				planObj.length = items.length;
-				planObj.currentItem = item.attributes.title;
-				self.currentState.dynamicVariables.plans_live.push(planObj);
+			
+			if (self.currentState.dynamicVariableDefinitions['plan_length_' + result.data.id] === undefined)
+			{
+				let variableObj = {};
+				variableObj.label = 'Plan ' + result.data.id + ' Length';
+				variableObj.name = 'plan_length_' + result.data.id;
+				self.currentState.dynamicVariableDefinitions.push(variableObj);
 			}
-
-			self.updateAllVariables();
+			
+			if (self.currentState.dynamicVariableDefinitions['plan_currentitem_' + result.data.id] === undefined)
+			{
+				let variableObj = {};
+				variableObj.label = 'Plan ' + result.data.id + ' Current Item';
+				variableObj.name = 'plan_currentitem_' + result.data.id;
+				self.currentState.dynamicVariableDefinitions.push(variableObj);
+			}
+			
+			self.setVariableDefinitions(self.currentState.dynamicVariableDefinitions);
+			
+			//console.log(self.currentState.dynamicVariableDefinitions);
+			*/
+		   
+			self.updateVariable('plan_index', index);
+			self.updateVariable('plan_length', items.length);
+			self.updateVariable('plan_currentitem', item.attributes.title);
 		}
 	}
-};
+}
 
 instance_skel.extendedBy(instance);
 exports = module.exports = instance;
