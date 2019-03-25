@@ -196,8 +196,6 @@ class instance extends instance_skel {
 					cmd = "VIDEO OUTPUT ROUTING:\n"+opt.destination+" "+opt.source+"\n\n";
 				}
 				break;
-				cmd = "VIDEO OUTPUT ROUTING:\n"+this.selected+" "+opt.source+"\n\n";
-				break;
 		}
 
 		if (cmd !== undefined) {
@@ -627,14 +625,21 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	updateConfig(config) {
-		this.config = config;
+		
+		if (this.config.host != config.host)
+		{
+			this.config = config;
+			this.init_tcp();
+		}
+		else
+		{
+			this.config = config;
+		}
 
 		this.inputCount      = parseInt(this.config.inputCount);
 		this.outputCount     = parseInt(this.config.outputCount);
 		this.monitoringCount = parseInt(this.config.monitoringCount);
 		this.serialCount     = parseInt(this.config.serialCount);
-
-		this.init_tcp();
 	}
 
 	/**
@@ -741,7 +746,7 @@ class instance extends instance_skel {
 			var parsethis = object[key];
 			var a = parsethis.split(/ /);
 			var dest = parseInt(a.shift());
-			var src = a.join(" ");
+			var src = parseInt(a.join(" "));
 
 			switch (labeltype) {
 				case 'VIDEO MONITORING OUTPUT ROUTING':
