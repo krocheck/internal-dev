@@ -404,7 +404,7 @@ class instance extends instance_skel {
 				label:      (id+1) + ': Serial ' + (id+1),
 				name:       'Serial ' + (id+1),
 				route:      id,
-				status:     'BNC',
+				status:     'RS422',
 				lock:       'U',
 				directions: 'auto'
 			};
@@ -789,21 +789,23 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	updateConfig(config) {
+		var resetConnection = false;
 		
 		if (this.config.host != config.host)
 		{
-			this.config = config;
-			this.init_tcp();
+			resetConnection = true;
 		}
-		else
-		{
-			this.config = config;
-		}
+
+		this.config = config;
 
 		this.inputCount      = parseInt(this.config.inputCount);
 		this.outputCount     = parseInt(this.config.outputCount);
 		this.monitoringCount = parseInt(this.config.monitoringCount);
 		this.serialCount     = parseInt(this.config.serialCount);
+
+		if (resetConnection === true || this.socket === undefined) {
+			this.init_tcp();
+		}
 	}
 
 	/**
@@ -897,6 +899,35 @@ class instance extends instance_skel {
 	}
 
 	/**
+	 * INTERNAL: Updates lock states based on data from the Videohub
+	 *
+	 * @param {string} labeltype - the command/data type being passed
+	 * @param {Object} object - the collected data
+	 * @access protected
+	 * @since 1.1.0
+	 */
+	updateLocks(labeltype, object) {
+
+		for (var key in object) {
+			var parsethis = object[key];
+			var a = parsethis.split(/ /);
+			var num = parseInt(a.shift());
+			var label = a.join(" ");
+
+			switch (labeltype) {
+				case 'MONITORING OUTPUT LOCKS':
+					num = num + this.outputCount;
+				case 'VIDEO OUTPUT LOCKS':
+					this.getOutput(num).lock = label;
+					break;
+				case 'SERIAL PORT LOCKS':
+					this.getSerial(num).lock = label;
+					break;
+			}
+		}
+	}
+
+	/**
 	 * INTERNAL: Updates routing table based on data from the Videohub
 	 *
 	 * @param {string} labeltype - the command/data type being passed
@@ -957,7 +988,7 @@ class instance extends instance_skel {
 	 * @param {string} labeltype - the command/data type being passed
 	 * @param {Object} object - the collected data
 	 * @access protected
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 */
 	updateStatus(labeltype, object) {
 
