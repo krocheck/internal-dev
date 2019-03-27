@@ -519,13 +519,13 @@ class instance extends instance_skel {
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: this.rgb(255,255,255)
+					default: this.rgb(0,0,0)
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: this.rgb(255,0,0)
+					default: this.rgb(255,255,0)
 				},
 				{
 					type: 'dropdown',
@@ -600,7 +600,7 @@ class instance extends instance_skel {
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: this.rgb(255,255,0)
+					default: this.rgb(255,255,255)
 				},
 				{
 					type: 'dropdown',
@@ -716,6 +716,7 @@ class instance extends instance_skel {
 		if (key.match(/(INPUT|OUTPUT|MONITORING OUTPUT|SERIAL PORT) LABELS/)) {
 			this.updateLabels(key,data);
 			this.actions();
+			this.initFeedbacks();
 		}
 		else if (key.match(/(VIDEO OUTPUT|VIDEO MONITORING OUTPUT|SERIAL PORT) ROUTING/)) {
 			this.updateRouting(key,data);
@@ -729,6 +730,7 @@ class instance extends instance_skel {
 		else if (key.match(/(VIDEO INPUT|VIDEO OUTPUT|SERIAL PORT) STATUS/)) {
 			this.updateStatus(key,data);
 			this.actions();
+			this.initFeedbacks();
 		}
 		else if (key == 'SERIAL PORT DIRECTIONS') {
 			this.updateSerialDirections(key,data);
