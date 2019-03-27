@@ -39,17 +39,15 @@ class instance extends instance_skel {
 		this.outputs = {};
 		this.serials = {};
 
-		this.CHOICES_SOURCES      = [];
-		this.CHOICES_DESTINATIONS = [];
-		this.CHOICES_SERIALPORTS  = [];
+		this.CHOICES_INPUTS  = [];
+		this.CHOICES_OUTPUTS = [];
+		this.CHOICES_SERIALS = [];
 
 		this.CHOICES_SERIALDIRECTIONS = [
 			{ id: 'auto',    label: 'Automatic'        },
 			{ id: 'control', label: 'In (Workstation)' },
 			{ id: 'slave',   label: 'Out (Deck)'       }
 		];
-
-		this.setupChoices();
 
 		this.actions(); // export actions
 	}
@@ -62,88 +60,138 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	actions(system) {
+		var actions = {};
 
-		this.setActions({
-			'rename_destination': {
-				label: 'Rename destination',
+		this.setupChoices();
+
+		actions['rename_destination'] = {
+			label: 'Rename destination',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Destination',
+					id: 'destination',
+					default: '0',
+					choices: this.CHOICES_OUTPUTS
+				},
+				{
+					type: 'textinput',
+					label: 'New label',
+					id: 'label',
+					default: "Dest name"
+				}
+			]
+		};
+
+		actions['rename_source'] ={
+			label: 'Rename source',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					default: '0',
+					choices: this.CHOICES_INPUTS
+				},
+				{
+					type: 'textinput',
+					label: 'New label',
+					id: 'label',
+					default: "Src name"
+				},
+			]
+		};
+
+		if (this.serialCount > 0) {
+			actions['rename_serial'] ={
+				label: 'Rename serial port',
 				options: [
 					{
 						type: 'dropdown',
-						label: 'Destination',
-						id: 'destination',
+						label: 'Serial Port',
+						id: 'serial',
 						default: '0',
-						choices: this.CHOICES_DESTINATIONS
+						choices: this.CHOICES_SERIALS
 					},
 					{
 						type: 'textinput',
 						label: 'New label',
 						id: 'label',
-						default: "Dest name"
-					}
+						default: "Serial name"
+					},
 				]
-			},
-			'rename_source': {
-				label: 'Rename source',
+			};
+		}
+
+		actions['route'] = {
+			label: 'Route',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					default: '0',
+					choices: this.CHOICES_INPUTS
+				},
+				{
+					type: 'dropdown',
+					label: 'Destination',
+					id: 'destination',
+					default: '0',
+					choices: this.CHOICES_OUTPUTS
+				}
+			]
+		};
+
+		if (this.serialCount > 0) {
+			actions['route_serial'] = {
+				label: 'Route serial port',
 				options: [
 					{
 						type: 'dropdown',
 						label: 'Source',
 						id: 'source',
 						default: '0',
-						choices: this.CHOICES_SOURCES
-					},
-					{
-						type: 'textinput',
-						label: 'New label',
-						id: 'label',
-						default: "Src name"
-					},
-				]
-			},
-			'route': {
-				label: 'Route',
-				options: [
-					{
-						type: 'dropdown',
-						label: 'Source',
-						id: 'source',
-						default: '0',
-						choices: this.CHOICES_SOURCES
+						choices: this.CHOICES_SERIALS
 					},
 					{
 						type: 'dropdown',
 						label: 'Destination',
 						id: 'destination',
-						default: '0',
-						choices: this.CHOICES_DESTINATIONS
+						default: '1',
+						choices: this.CHOICES_SERIALS
 					}
 				]
-			},
-			'select_destination': {
-				label: 'Select destination',
-				options: [
-					{
-						type: 'dropdown',
-						label: 'Destination',
-						id: 'destination',
-						default: '0',
-						choices: this.CHOICES_DESTINATIONS
-					}
-				]
-			},
-			'route_source': {
-				label: 'Route source to selected destination',
-				options: [
-					{
-						type: 'dropdown',
-						label: 'Source',
-						id: 'source',
-						default: '0',
-						choices: this.CHOICES_SOURCES
-					}
-				]
-			}
-		});
+			};
+		}
+
+		actions['select_destination'] = {
+			label: 'Select destination',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Destination',
+					id: 'destination',
+					default: '0',
+					choices: this.CHOICES_OUTPUTS
+				}
+			]
+		};
+
+		actions['route_source'] = {
+			label: 'Route source to selected destination',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					default: '0',
+					choices: this.CHOICES_INPUTS
+				}
+			]
+		};
+
+		this.setActions(actions);
 	}
 
 	/**
@@ -168,6 +216,9 @@ class instance extends instance_skel {
 					cmd = "VIDEO OUTPUT ROUTING:\n"+opt.destination+" "+opt.source+"\n\n";
 				}
 				break;
+			case 'route_serial':
+				cmd = "SERIAL PORT ROUTING:\n"+opt.destination+" "+opt.source+"\n\n";
+				break;
 			case 'rename_source':
 				cmd = "INPUT LABELS:\n"+opt.source+" "+opt.label+"\n\n";
 				break;
@@ -181,19 +232,22 @@ class instance extends instance_skel {
 					cmd = "OUTPUT LABELS:\n"+opt.destination+" "+opt.label+"\n\n";
 				}
 				break;
+			case 'rename_serial':
+				cmd = "SERIAL PORT LABELS:\n"+opt.serial+" "+opt.label+"\n\n";
+				break;
 			case 'select_destination':
 				this.selected = parseInt(opt.destination);
 				this.checkFeedbacks('selected_destination');
 				this.checkFeedbacks('selected_source');
 				break;
 			case 'route_source':
-				if (this.selected) >= this.outputCount)
+				if (this.selected >= this.outputCount)
 				{
 					cmd = "VIDEO MONITORING OUTPUT ROUTING:\n"+(this.selected-this.outputCount)+" "+opt.source+"\n\n";
 				}
 				else
 				{
-					cmd = "VIDEO OUTPUT ROUTING:\n"+opt.destination+" "+opt.source+"\n\n";
+					cmd = "VIDEO OUTPUT ROUTING:\n"+this.selected+" "+opt.source+"\n\n";
 				}
 				break;
 		}
@@ -291,24 +345,72 @@ class instance extends instance_skel {
 	}
 
 	/**
-	 * Processes a feedback state.
+	 * INTERNAL: returns the desired input object.
 	 *
-	 * @param {Object} feedback - the feedback type to process
-	 * @param {Object} bank - the bank this feedback is associated with
-	 * @returns {Object} feedback information for the bank
-	 * @access public
-	 * @since 1.0.0
+	 * @param {number} id - the input to fetch
+	 * @returns {Object} the desired input object
+	 * @access protected
+	 * @since 1.1.0
 	 */
-	feedback(feedback, bank) {
+	getInput(id) {
 
-		if (feedback.type == 'input_bg') {
-			if (this.routing[parseInt(feedback.options.output)] == parseInt(feedback.options.input)) {
-				return {
-					color: feedback.options.fg,
-					bgcolor: feedback.options.bg
-				};
-			}
+		if (this.inputs[id] === undefined) {
+			this.inputs[id] = {
+				label:      (id+1) + ': Input ' + (id+1),
+				name:       'Input ' + (id+1),
+				status:     'BNC',
+				lock:       'U'
+			};
 		}
+
+		return this.inputs[id];
+	}
+
+	/**
+	 * INTERNAL: returns the desired output object.
+	 *
+	 * @param {number} id - the output to fetch
+	 * @returns {Object} the desired output object
+	 * @access protected
+	 * @since 1.1.0
+	 */
+	getOutput(id) {
+
+		if (this.outputs[id] === undefined) {
+			this.outputs[id] = {
+				label:      (id+1) + ': Output ' + (id+1),
+				name:       'Output ' + (id+1),
+				route:      id,
+				status:     'BNC',
+				lock:       'U'
+			};
+		}
+
+		return this.outputs[id];
+	}
+
+	/**
+	 * INTERNAL: returns the desired serial port object.
+	 *
+	 * @param {number} id - the serial port to fetch
+	 * @returns {Object} the desired serial port object
+	 * @access protected
+	 * @since 1.1.0
+	 */
+	getSerial(id) {
+
+		if (this.serials[id] === undefined) {
+			this.serials[id] = {
+				label:      (id+1) + ': Serial ' + (id+1),
+				name:       'Serial ' + (id+1),
+				route:      id,
+				status:     'BNC',
+				lock:       'U',
+				directions: 'auto'
+			};
+		}
+
+		return this.serials[id];
 	}
 
 	/**
@@ -430,16 +532,24 @@ class instance extends instance_skel {
 					label: 'Input',
 					id: 'input',
 					default: '0',
-					choices: this.CHOICES_SOURCES
+					choices: this.CHOICES_INPUTS
 				},
 				{
 					type: 'dropdown',
 					label: 'Output',
 					id: 'output',
 					default: '0',
-					choices: this.CHOICES_DESTINATIONS
+					choices: this.CHOICES_OUTPUTS
 				}
-			]
+			],
+			callback: (feedback, bank) => {
+				if (this.getOutput(parseInt(feedback.options.output)).route == parseInt(feedback.options.input)) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
 		};
 
 		feedbacks['selected_destination'] = {
@@ -463,9 +573,17 @@ class instance extends instance_skel {
 					label: 'Output',
 					id: 'output',
 					default: '0',
-					choices: this.CHOICES_DESTINATIONS
+					choices: this.CHOICES_OUTPUTS
 				}
-			]
+			],
+			callback: (feedback, bank) => {
+				if (parseInt(feedback.options.output) == this.selected) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
 		};
 
 		feedbacks['selected_source'] = {
@@ -489,9 +607,17 @@ class instance extends instance_skel {
 					label: 'Input',
 					id: 'input',
 					default: '0',
-					choices: this.CHOICES_SOURCES
+					choices: this.CHOICES_INPUTS
 				}
-			]
+			],
+			callback: (feedback, bank) => {
+				if (this.getOutput(this.selected).route == parseInt(feedback.options.input)) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
 		};
 
 		this.setFeedbackDefinitions(feedbacks);
@@ -589,7 +715,7 @@ class instance extends instance_skel {
 
 		if (key.match(/(INPUT|OUTPUT|MONITORING OUTPUT|SERIAL PORT) LABELS/)) {
 			this.updateLabels(key,data);
-			this.setupChoices();
+			this.actions();
 		}
 		else if (key.match(/(VIDEO OUTPUT|VIDEO MONITORING OUTPUT|SERIAL PORT) ROUTING/)) {
 			this.updateRouting(key,data);
@@ -600,20 +726,58 @@ class instance extends instance_skel {
 		else if (key.match(/(VIDEO OUTPUT|VIDEO MONITORING OUTPUT|SERIAL PORT) LOCKS/)) {
 			this.updateLocks(key,data);
 		}
-		else if (key.match(/(VIDEO INTPUT|VIDEO OUTPUT|SERIAL PORT) STATUS/)) {
+		else if (key.match(/(VIDEO INPUT|VIDEO OUTPUT|SERIAL PORT) STATUS/)) {
 			this.updateStatus(key,data);
+			this.actions();
 		}
 		else if (key == 'SERIAL PORT DIRECTIONS') {
 			this.updateSerialDirections(key,data);
 		}
 		else if (key == 'VIDEOHUB DEVICE') {
 			this.updateDevice(key,data);
-			this.setupChoices();
+			this.actions();
 			this.initVariables();
 			this.initFeedbacks();
 		}
 		else {
 			// TODO: find out more about the video hub from stuff that comes in here
+		}
+	}
+
+	/**
+	 * INTERNAL: use model data to define the choices for the dropdowns.
+	 *
+	 * @access protected
+	 * @since 1.1.0
+	 */
+	setupChoices() {
+
+		this.CHOICES_INPUTS  = [];
+		this.CHOICES_OUTPUTS = [];
+		this.CHOICES_SERIALS = [];
+
+		if (this.inputCount > 0) {
+			for(var key = 0; key < this.inputCount; key++) {
+				if (this.getInput(key).status != 'None') {
+					this.CHOICES_INPUTS.push( { id: key, label: this.getInput(key).label } );
+				}
+			}
+		}
+
+		if (this.outputCount > 0) {
+			for(var key = 0; key < (this.outputCount + this.monitoringCount); key++) {
+				if (this.getOutput(key).status != 'None') {
+					this.CHOICES_OUTPUTS.push( { id: key, label: this.getOutput(key).label } );
+				}
+			}
+		}
+
+		if (this.serialCount > 0) {
+			for(var key = 0; key < this.serialCount; key++) {
+				if (this.getSerial(key).status != 'None') {
+					this.CHOICES_SERIALS.push( { id: key, label: this.getSerial(key).label } );
+				}
+			}
 		}
 	}
 
@@ -758,6 +922,60 @@ class instance extends instance_skel {
 				case 'SERIAL PORT ROUTING':
 					this.getSerial(dest).route = src
 					this.setVariable('serial_' + (dest+1) + '_route', this.getSerial(src).name);
+					break;
+			}
+		}
+	}
+
+	/**
+	 * INTERNAL: Updates serial port directions based on data from the Videohub
+	 *
+	 * @param {string} labeltype - the command/data type being passed
+	 * @param {Object} object - the collected data
+	 * @access protected
+	 * @since 1.1.0
+	 */
+	updateSerialDirections(labeltype, object) {
+
+		for (var key in object) {
+			var parsethis = object[key];
+			var a = parsethis.split(/ /);
+			var num = parseInt(a.shift());
+			var type = a.join(" ");
+
+			switch (labeltype) {
+				case 'SERIAL PORT DIRECTIONS':
+					this.getSerial(num).direction = type;
+					break;
+			}
+		}
+	}
+
+	/**
+	 * INTERNAL: Updates variables based on data from the Videohub
+	 *
+	 * @param {string} labeltype - the command/data type being passed
+	 * @param {Object} object - the collected data
+	 * @access protected
+	 * @since 1.0.0
+	 */
+	updateStatus(labeltype, object) {
+
+		for (var key in object) {
+			var parsethis = object[key];
+			var a = parsethis.split(/ /);
+			var num = parseInt(a.shift());
+			var label = a.join(" ");
+
+			switch (labeltype) {
+				case 'VIDEO INPUT STATUS':
+					this.getInput(num).status = label;
+					break;
+				case 'VIDEO OUTPUT STATUS':
+					this.getOutput(num).status = label;
+					break;
+				case 'SERIAL PORT STATUS':
+					this.getSerial(num).status = label;
 					break;
 			}
 		}
