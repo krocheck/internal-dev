@@ -27,15 +27,14 @@ function instance(system, id, config) {
 	self.actions();
 
 	return self;
-};
-
+}
 
 /**
  * The user updated the config.
  *
  * @param config         The new config object
  */
-instance.prototype.updateConfig = function (config) {
+instance.prototype.updateConfig = function(config) {
 	let self = this;
 
 	// Reconnect to Pandoras Box if the IP changed
@@ -49,22 +48,21 @@ instance.prototype.updateConfig = function (config) {
 
 	// Build actions
 	self.actions();
-};
+}
 
 /**
  * Initialize module & connect
  */
-instance.prototype.init = function () {
+instance.prototype.init = function() {
 	let self = this;
 
 	debug = self.debug;
 	log = self.log;
 
 	self.init_tcp();
+}
 
-};
-
-instance.prototype.init_tcp = function () {
+instance.prototype.init_tcp = function() {
 	var self = this;
 
 	if (self.socket !== undefined) {
@@ -75,32 +73,33 @@ instance.prototype.init_tcp = function () {
 	if (self.config.host) {
 		self.socket = new tcp(self.config.host, 6211);
 
-		self.socket.on('status_change', function (status, message) {
+		self.socket.on('status_change', function(status, message) {
 			self.status(status, message);
 		});
 
-		self.socket.on('error', function (err) {
+		self.socket.on('error', function(err) {
 			debug("Network error", err);
 			self.status(self.STATE_ERROR, err);
 			self.log('error',"Network error: " + err.message);
 		});
 
-		self.socket.on('connect', function () {
+		self.socket.on('connect', function() {
 			self.status(self.STATE_OK);
 			debug("Connected");
 		})
 
-		self.socket.on('data', function (data) {});
+		self.socket.on('data', function(data) {});
 	}
-};
+}
 
 /**
  *
  * @param cmd {Buffer}
  * @returns {boolean}
  */
-instance.prototype.send = function (cmd) {
+instance.prototype.send = function(cmd) {
 	let self = this;
+
 	if (self.isConnected()) {
 		debug('sending', cmd, 'to', self.config.host);
 		return self.socket.send(cmd);
@@ -109,25 +108,25 @@ instance.prototype.send = function (cmd) {
 	}
 
 	return false;
-
-};
+}
 
 /**
  * Returns if the socket is connected.
  *
  * @returns If the socket is connected {boolean}
  */
-instance.prototype.isConnected = function () {
+instance.prototype.isConnected = function() {
 	let self = this;
+
 	return self.socket !== undefined && self.socket.connected;
-};
+}
 
 /**
  * Return config fields for web config.
  *
  * @returns      The config fields for the module {Object}
  */
-instance.prototype.config_fields = function () {
+instance.prototype.config_fields = function() {
 	let self = this;
 	return [
 		{
@@ -151,34 +150,32 @@ instance.prototype.config_fields = function () {
 			label: 'Domain',
 			value: "0",
 			regex: self.REGEX_NUMBER
-		},
-	]
-};
-
+		}
+	];
+}
 
 /**
  * Cleanup when the module gets deleted.
  */
-instance.prototype.destroy = function () {
+instance.prototype.destroy = function() {
 	let self = this;
+
 	debug('destroy', self.id);
 
 	if (self.socket !== undefined) {
 		self.socket.destroy();
 		delete self.socket;
 	}
-
-};
-
+}
 
 /**
  * Creates the actions for this module.
  */
-instance.prototype.actions = function (system) {
+instance.prototype.actions = function(system) {
 	let self = this;
 
 	self.setActions({
-		'seq_transport'    : {
+		'seq_transport': {
 			label: 'Sequence Transport',
 			options: [
 				{
@@ -201,7 +198,7 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'seq_to_cue'       : {
+		'seq_to_cue': {
 			label: 'Goto Cue',
 			options: [
 				{
@@ -220,7 +217,7 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'seq_nextlast_cue' : {
+		'seq_nextlast_cue': {
 			label: 'Goto Next/Last Cue',
 			options: [
 				{
@@ -264,7 +261,7 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'seq_selection'    : {
+		'seq_selection': {
 			label: 'Select Editing Sequence',
 			options: [
 				{
@@ -276,7 +273,7 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'recall_view'      : {
+		'recall_view': {
 			label: 'Recall GUI View',
 			options: [
 				{
@@ -288,7 +285,7 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'save_project'     : { label: 'Save PandorasBox Project' },
+		'save_project': { label: 'Save PandorasBox Project' },
 		'toggle_fullscreenbyid': {
 			label: 'Toggle Fullscreen by SiteID',
 			options: [
@@ -301,7 +298,7 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'set_SiteIPbyid'   : {
+		'set_SiteIPbyid': {
 			label: 'Set the IP Adress of a Site (Client) by its ID',
 			options: [
 				{
@@ -320,8 +317,8 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'clear_allactive'  : { label: 'Clear ALL Active Values' },
-		'store_allactive'  : {
+		'clear_allactive': { label: 'Clear ALL Active Values' },
+		'store_allactive': {
 			label: 'Store ALL Active Values to Sequence',
 			options: [
 				{
@@ -333,18 +330,17 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'clear_selection'  : { label: 'Clear Device Selection' },
-		'reset_all'        : { label: 'Reset All Values to Defaults' }
+		'clear_selection': { label: 'Clear Device Selection' },
+		'reset_all': { label: 'Reset All Values to Defaults' }
 	});
-};
-
+}
 
 /**
  * Executes the action and sends the TCP packet to Pandoras Box
  *
  * @param action      The action to perform
  */
-instance.prototype.action = function (action) {
+instance.prototype.action = function(action) {
 	let self = this;
 	var opt = action.options;
 
@@ -431,46 +427,47 @@ instance.prototype.action = function (action) {
 			message = self.shortToBytes(self.CMD_RESET_ALL);
 			buf = Buffer.from(self.prependHeader(message));
 			break;
-
 		}
 
 	if (buf !== undefined) {
 		self.send(buf);
 	}
+}
 
-};
-
-instance.prototype.intToBytes = function (int) {
+instance.prototype.intToBytes = function(int) {
 	return [
 		(int & 0xFF000000) >> 24,
 		(int & 0x00FF0000) >> 16,
 		(int & 0x0000FF00) >>  8,
 		(int & 0x000000FF),
 	];
-};
+}
 
-instance.prototype.shortToBytes = function (int) {
+instance.prototype.shortToBytes = function(int) {
 	return [
 		(int & 0xFF00) >>  8,
 		(int & 0x00FF),
 	];
-};
+}
 
-instance.prototype.StrNarrowToBytes = function (str) {
+instance.prototype.StrNarrowToBytes = function(str) {
 	var ch, st, re = [];
+
 	for (var i = 0; i < str.length; i++ ) {
 		ch = str.charCodeAt(i);  
 		st = [];
+
 		do {
 			st.push( ch & 0xFF );  
 			ch = ch >> 8;
 		}
 		while ( ch );
+
 		re = re.concat( st.reverse() );
 	}
-	return re;
-};
 
+	return re;
+}
 
 /**
  * Prepends TCP header and returns complete message
@@ -478,7 +475,7 @@ instance.prototype.StrNarrowToBytes = function (str) {
  * @param {Array}
  * @returns {Array}
  */
-instance.prototype.prependHeader = function (body) {
+instance.prototype.prependHeader = function(body) {
 	let self = this;
 
 	let magic = [80, 66, 65, 85]; // PBAU
@@ -496,8 +493,7 @@ instance.prototype.prependHeader = function (body) {
 	let checksum = header.reduce((p, c) => p + c, 0) % 256;
 
 	return magic.concat(header).concat([checksum]).concat(body);
-};
-
+}
 
 instance_skel.extendedBy(instance);
 exports = module.exports = instance;
