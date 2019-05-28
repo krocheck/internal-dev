@@ -1,6 +1,6 @@
 var instance_skel = require('../../instance_skel');
 
-var instance_api  = require('./instanceAPI');
+var instance_api  = require('./internalAPI');
 var feedback      = require('./feedback');
 var presets       = require('./presets');
 var variables     = require('./variables');

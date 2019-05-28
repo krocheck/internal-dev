@@ -56,7 +56,9 @@ module.exports = {
 		}
 
 		// Input names
-		for (var key in this.sources) {
+		var sources = this.api.getSources();
+
+		for (var key in sources) {
 			variables.push({
 				label: 'Long name of input id ' + key,
 				name: 'long_' + key
