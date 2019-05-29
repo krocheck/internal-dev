@@ -485,30 +485,30 @@ class instance extends instance_skel {
 		for (var i in this.CHOICES_KEYCODE) {
 			presets.push({
 				category: 'Front Panel Buttons',
-				label: 'Toggle downstream KEY' + (i+1),
+				label: this.CHOICES_KEYCODE[i].label,
 				bank: {
 					style: 'text',
-					text: ,
-					size: 'auto',
+					text: this.CHOICES_KEYCODE[i].label,
+					size: '18',
 					color: this.rgb(255,255,255),
 					bgcolor: 0
 				},
-				feedbacks: [
+				/**feedbacks: [
 					{
 						type: 'keyState',
 						options: {
 							bg: this.rgb(255,0,0),
 							fg: this.rgb(255,255,255),
-							key: i
+							key: this.CHOICES_KEYCODE[i].id
 						}
 					}
-				],
+				],**/
 				actions: [
 					{
 						action: 'keyPress',
 						options: {
-							keyCode: i.id,
-							keyEventType: 'keyPress'
+							keyCode: this.CHOICES_KEYCODE[i].id,
+							keyEventType: 'KeyPress'
 						}
 					}
 				],
@@ -516,8 +516,8 @@ class instance extends instance_skel {
 					{
 						action: 'keyPress',
 						options: {
-							keyCode: i.id,
-							keyEventType: 'keyRelease'
+							keyCode: this.CHOICES_KEYCODE[i].id,
+							keyEventType: 'KeyRelease'
 						}
 					}
 				]
@@ -613,6 +613,7 @@ class instance extends instance_skel {
 		}
 		else {
 			this.status(this.STATUS_OK);
+
 
 			if ( Array.isArray(result) ) {
 				for (var key in result) {

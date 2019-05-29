@@ -62,6 +62,8 @@ class instance extends videohub {
 		this.setupChoices();
 		var actions = this.getActions();
 
+		// Handle some renames needed from videohub
+
 		actions['rename_destination'].label = 'Rename view';
 		actions['rename_destination'].options[0].label = 'View';
 		actions['rename_destination'].options[1].default = 'View name';
@@ -72,6 +74,8 @@ class instance extends videohub {
 		actions['select_destination'].options[0].label = 'View';
 
 		actions['route_source'].label = 'Route source to selected view';
+
+		//----
 
 		actions['route_solo'] = {
 			label: 'Select SOLO source',
@@ -122,7 +126,7 @@ class instance extends videohub {
 			]
 		};
 		actions['set_format'] = {
-			label: 'Set format',
+			label: 'Set output format',
 			options: [
 				{
 					type: 'dropdown',
@@ -205,27 +209,12 @@ class instance extends videohub {
 	 * @since 1.0.0
 	 */
 	action(action) {
+		super(action);
 		var cmd;
 		var opt = action.options;
 
+		// Note that main routing/naming actions are handled upstream in videohub
 		switch (action.action) {
-			case 'route':
-				cmd = "VIDEO OUTPUT ROUTING:\n"+opt.destination+" "+opt.source+"\n\n";
-				break;
-			case 'rename_source':
-				cmd = "INPUT LABELS:\n"+opt.source+" "+opt.label+"\n\n";
-				break;
-			case 'rename_destination':
-				cmd = "OUTPUT LABELS:\n"+opt.destination+" "+opt.label+"\n\n";
-				break;
-			case 'select_destination':
-				this.selected = parseInt(opt.destination);
-				this.checkFeedbacks('selected_destination');
-				this.checkFeedbacks('selected_source');
-				break;
-			case 'route_source':
-				cmd = "VIDEO OUTPUT ROUTING:\n"+this.selected+" "+opt.source+"\n\n";
-				break;
 			case 'route_solo':
 				cmd = "VIDEO OUTPUT ROUTING:\n"+this.outputCount+" "+opt.source+"\n\n";
 				break;
@@ -387,16 +376,88 @@ class instance extends videohub {
 		// feedbacks
 		var feedbacks = this.getFeedbacks();
 
+		// Handle some renames needed from videohub
+
 		feedbacks['input_bg'].label = 'Change background color by destination';
 		feedbacks['input_bg'].description = 'If the input specified is in use by the view specified, change background color of the bank';
 		feedbacks['input_bg'].options[3].label = 'View';
 
-		feedbacks['selected_destination'].label = 'Change background color by selected view''
+		feedbacks['selected_destination'].label = 'Change background color by selected view';
 		feedbacks['selected_destination'].description = 'If the input specified is in use by the selected view specified, change background color of the bank';
 		feedbacks['selected_destination'].options[2].label = 'View';
 
 		feedbacks['selected_source'].label = 'Change background color by route to selected view';
 		feedbacks['selected_source'].description = 'If the input specified is in use by the selected view specified, change background color of the bank';
+
+		//----
+
+		feedbacks['solo_source'] = {
+			label: 'Change background color by solo source',
+			description: 'If the input specified is the solo source, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,255)
+				},
+				{
+					type: 'dropdown',
+					label: 'Input',
+					id: 'input',
+					default: '0',
+					choices: this.CHOICES_INPUTS
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.getOutput(this.outputCount).route == parseInt(feedback.options.input)) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		feedbacks['audio_source'] = {
+			label: 'Change background color by audio source',
+			description: 'If the input specified is the audio source, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,255)
+				},
+				{
+					type: 'dropdown',
+					label: 'Input',
+					id: 'input',
+					default: '0',
+					choices: this.CHOICES_INPUTS
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.getOutput(this.outputCount+1).route == parseInt(feedback.options.input)) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
 
 		feedbacks['layout'] = {
 			label: 'Change background color by layout',
@@ -682,34 +743,16 @@ class instance extends videohub {
 	 * @since 1.0.0
 	 */
 	processVideohubInformation(key,data) {
+		super(key,data);
 
-		if (key.match(/(INPUT|OUTPUT) LABELS/)) {
-			this.updateLabels(key,data);
-			this.actions();
-			this.initFeedbacks();
-		}
-		else if (key.match(/VIDEO OUTPUT ROUTING/)) {
-			this.updateRouting(key,data);
-
-			this.checkFeedbacks('input_bg');
-			this.checkFeedbacks('selected_source');
-		}
-		else if (key.match(/VIDEO OUTPUT LOCKS/)) {
-			this.updateLocks(key,data);
-		}
-		else if (key.match(/(VIDEO INPUT|VIDEO OUTPUT) STATUS/)) {
-			this.updateStatus(key,data);
-			this.actions();
-			this.initFeedbacks();
+		// Note that main processing is handled upstream in videohub
+		if (key == 'VIDEO OUTPUT ROUTING') {
+			// Processing handled upstream
+			this.checkFeedbacks('solo_source');
+			this.checkFeedbacks('audio_source');
 		}
 		else if (key == 'CONFIGURATION') {
 			this.updateDeviceConfig(key,data);
-		}
-		else if (key == 'VIDEOHUB DEVICE') {
-			this.updateDevice(key,data);
-			this.actions();
-			this.initVariables();
-			this.initFeedbacks();
 		}
 		else {
 			// TODO: find out more about the video hub from stuff that comes in here
