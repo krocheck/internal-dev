@@ -352,6 +352,171 @@ class instance extends instance_skel {
 	}
 
 	/**
+	 * Get the available feedbacks.  Utilized by bmd-multiview.
+	 *
+	 * @returns {Object[]} the available feedbacks
+	 * @access public
+	 * @since 1.0.0
+	 */
+	getFeedbacks(system) {
+		var feedbacks = {};
+
+		feedbacks['input_bg'] = {
+			label: 'Change background color by destination',
+			description: 'If the input specified is in use by the output specified, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'Input',
+					id: 'input',
+					default: '0',
+					choices: this.CHOICES_INPUTS
+				},
+				{
+					type: 'dropdown',
+					label: 'Output',
+					id: 'output',
+					default: '0',
+					choices: this.CHOICES_OUTPUTS
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.getOutput(parseInt(feedback.options.output)).route == parseInt(feedback.options.input)) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		if (this.serialCount > 0) {
+			feedbacks['serial_bg'] = {
+				label: 'Change background color by serial route',
+				description: 'If the input specified is in use by the output specified, change background color of the bank',
+				options: [
+					{
+						type: 'colorpicker',
+						label: 'Foreground color',
+						id: 'fg',
+						default: this.rgb(0,0,0)
+					},
+					{
+						type: 'colorpicker',
+						label: 'Background color',
+						id: 'bg',
+						default: this.rgb(255,255,0)
+					},
+					{
+						type: 'dropdown',
+						label: 'Input',
+						id: 'input',
+						default: '0',
+						choices: this.CHOICES_SERIALS
+					},
+					{
+						type: 'dropdown',
+						label: 'Output',
+						id: 'output',
+						default: '0',
+						choices: this.CHOICES_SERIALS
+					}
+				],
+				callback: (feedback, bank) => {
+					if (this.getSerial(parseInt(feedback.options.output)).route == parseInt(feedback.options.input)) {
+						return {
+							color: feedback.options.fg,
+							bgcolor: feedback.options.bg
+						};
+					}
+				}
+			};
+		}
+
+		feedbacks['selected_destination'] = {
+			label: 'Change background color by selected destination',
+			description: 'If the input specified is in use by the selected output specified, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'Output',
+					id: 'output',
+					default: '0',
+					choices: this.CHOICES_OUTPUTS
+				}
+			],
+			callback: (feedback, bank) => {
+				if (parseInt(feedback.options.output) == this.selected) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		feedbacks['selected_source'] = {
+			label: 'Change background color by route to selected destination',
+			description: 'If the input specified is in use by the selected output specified, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,255)
+				},
+				{
+					type: 'dropdown',
+					label: 'Input',
+					id: 'input',
+					default: '0',
+					choices: this.CHOICES_INPUTS
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.getOutput(this.selected).route == parseInt(feedback.options.input)) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		return feedbacks;
+	}
+
+	/**
 	 * INTERNAL: returns the desired input object.
 	 *
 	 * @param {number} id - the input to fetch
@@ -518,159 +683,7 @@ class instance extends instance_skel {
 	 */
 	initFeedbacks() {
 		// feedbacks
-		var feedbacks = {};
-
-		feedbacks['input_bg'] = {
-			label: 'Change background color by destination',
-			description: 'If the input specified is in use by the output specified, change background color of the bank',
-			options: [
-				{
-					type: 'colorpicker',
-					label: 'Foreground color',
-					id: 'fg',
-					default: this.rgb(0,0,0)
-				},
-				{
-					type: 'colorpicker',
-					label: 'Background color',
-					id: 'bg',
-					default: this.rgb(255,255,0)
-				},
-				{
-					type: 'dropdown',
-					label: 'Input',
-					id: 'input',
-					default: '0',
-					choices: this.CHOICES_INPUTS
-				},
-				{
-					type: 'dropdown',
-					label: 'Output',
-					id: 'output',
-					default: '0',
-					choices: this.CHOICES_OUTPUTS
-				}
-			],
-			callback: (feedback, bank) => {
-				if (this.getOutput(parseInt(feedback.options.output)).route == parseInt(feedback.options.input)) {
-					return {
-						color: feedback.options.fg,
-						bgcolor: feedback.options.bg
-					};
-				}
-			}
-		};
-
-		if (this.serialCount > 0) {
-			feedbacks['serial_bg'] = {
-				label: 'Change background color by serial route',
-				description: 'If the input specified is in use by the output specified, change background color of the bank',
-				options: [
-					{
-						type: 'colorpicker',
-						label: 'Foreground color',
-						id: 'fg',
-						default: this.rgb(0,0,0)
-					},
-					{
-						type: 'colorpicker',
-						label: 'Background color',
-						id: 'bg',
-						default: this.rgb(255,255,0)
-					},
-					{
-						type: 'dropdown',
-						label: 'Input',
-						id: 'input',
-						default: '0',
-						choices: this.CHOICES_SERIALS
-					},
-					{
-						type: 'dropdown',
-						label: 'Output',
-						id: 'output',
-						default: '0',
-						choices: this.CHOICES_SERIALS
-					}
-				],
-				callback: (feedback, bank) => {
-					if (this.getSerial(parseInt(feedback.options.output)).route == parseInt(feedback.options.input)) {
-						return {
-							color: feedback.options.fg,
-							bgcolor: feedback.options.bg
-						};
-					}
-				}
-			};
-		}
-
-		feedbacks['selected_destination'] = {
-			label: 'Change background color by selected destination',
-			description: 'If the input specified is in use by the selected output specified, change background color of the bank',
-			options: [
-				{
-					type: 'colorpicker',
-					label: 'Foreground color',
-					id: 'fg',
-					default: this.rgb(0,0,0)
-				},
-				{
-					type: 'colorpicker',
-					label: 'Background color',
-					id: 'bg',
-					default: this.rgb(255,255,0)
-				},
-				{
-					type: 'dropdown',
-					label: 'Output',
-					id: 'output',
-					default: '0',
-					choices: this.CHOICES_OUTPUTS
-				}
-			],
-			callback: (feedback, bank) => {
-				if (parseInt(feedback.options.output) == this.selected) {
-					return {
-						color: feedback.options.fg,
-						bgcolor: feedback.options.bg
-					};
-				}
-			}
-		};
-
-		feedbacks['selected_source'] = {
-			label: 'Change background color by route to selected destination',
-			description: 'If the input specified is in use by the selected output specified, change background color of the bank',
-			options: [
-				{
-					type: 'colorpicker',
-					label: 'Foreground color',
-					id: 'fg',
-					default: this.rgb(0,0,0)
-				},
-				{
-					type: 'colorpicker',
-					label: 'Background color',
-					id: 'bg',
-					default: this.rgb(255,255,255)
-				},
-				{
-					type: 'dropdown',
-					label: 'Input',
-					id: 'input',
-					default: '0',
-					choices: this.CHOICES_INPUTS
-				}
-			],
-			callback: (feedback, bank) => {
-				if (this.getOutput(this.selected).route == parseInt(feedback.options.input)) {
-					return {
-						color: feedback.options.fg,
-						bgcolor: feedback.options.bg
-					};
-				}
-			}
-		};
+		var feedbacks = this.getFeedbacks();
 
 		this.setFeedbackDefinitions(feedbacks);
 	}
@@ -692,7 +705,7 @@ class instance extends instance_skel {
 				bank: {
 					style: 'text',
 					text: '$(videohub:output_' + (i+1) + ')',
-					size: 18,
+					size: '18',
 					color: this.rgb(255,255,255),
 					bgcolor: this.rgb(0,0,0)
 				},
@@ -725,7 +738,7 @@ class instance extends instance_skel {
 				bank: {
 					style: 'text',
 					text: '$(videohub:input_' + (i+1) + ')',
-					size: 18,
+					size: '18',
 					color: this.rgb(255,255,255),
 					bgcolor: this.rgb(0,0,0)
 				},
@@ -759,7 +772,7 @@ class instance extends instance_skel {
 					bank: {
 						style: 'text',
 						text: '$(videohub:input_' + (i+1) + ')',
-						size: 18,
+						size: '18',
 						color: this.rgb(255,255,255),
 						bgcolor: this.rgb(0,0,0)
 					},
@@ -800,7 +813,7 @@ class instance extends instance_skel {
 						bank: {
 							style: 'text',
 							text: '$(videohub:serial_' + (i+1) + ')',
-							size: 18,
+							size: '18',
 							color: this.rgb(255,255,255),
 							bgcolor: this.rgb(0,0,0)
 						},
