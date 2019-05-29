@@ -8,7 +8,7 @@ var log;
  * This class is extended for the BMD Multiview module.
  *
  * @extends instance_skel
- * @version 1.1.0
+ * @version 1.1.2
  * @since 1.0.0
  * @author William Viker <william@bitfocus.io>
  * @author Keith Rocheck <keith.rocheck@gmail.com>
@@ -124,7 +124,7 @@ class instance extends instance_skel {
 				this.socket.send(cmd);
 			}
 			else {
-				debug('Socket not connected :(');
+				this.debug('Socket not connected :(');
 			}
 		}
 	}
@@ -207,7 +207,7 @@ class instance extends instance_skel {
 			this.socket.destroy();
 		}
 
-		debug("destroy", this.id);
+		this.debug("destroy", this.id);
 	}
 
 	/**
@@ -630,12 +630,12 @@ class instance extends instance_skel {
 			});
 
 			this.socket.on('error', (err) => {
-				debug("Network error", err);
+				this.debug("Network error", err);
 				this.log('error',"Network error: " + err.message);
 			});
 
 			this.socket.on('connect', () => {
-				debug("Connected");
+				this.debug("Connected");
 			});
 
 			// separate buffered stream into lines with responses
@@ -669,7 +669,7 @@ class instance extends instance_skel {
 					this.command = null;
 				}
 				else {
-					debug("weird response from videohub", line, line.length);
+					this.debug("weird response from videohub", line, line.length);
 				}
 			});
 		}

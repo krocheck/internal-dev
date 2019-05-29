@@ -253,7 +253,7 @@ class instance extends videohub {
 				this.socket.send(cmd);
 			}
 			else {
-				debug('Socket not connected :(');
+				this.debug('Socket not connected :(');
 			}
 		}
 	}
@@ -296,7 +296,7 @@ class instance extends videohub {
 			this.socket.destroy();
 		}
 
-		debug("destroy", this.id);
+		this.debug("destroy", this.id);
 	}
 
 	/**
