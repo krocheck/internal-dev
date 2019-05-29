@@ -209,7 +209,7 @@ class instance extends videohub {
 	 * @since 1.0.0
 	 */
 	action(action) {
-		super(action);
+		super.action(action);
 		var cmd;
 		var opt = action.options;
 
@@ -743,7 +743,7 @@ class instance extends videohub {
 	 * @since 1.0.0
 	 */
 	processVideohubInformation(key,data) {
-		super(key,data);
+		super.processVideohubInformation(key,data);
 
 		// Note that main processing is handled upstream in videohub
 		if (key == 'VIDEO OUTPUT ROUTING') {
