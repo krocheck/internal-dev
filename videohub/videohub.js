@@ -1017,7 +1017,7 @@ class instance extends instance_skel {
 	 */
 	updateConfig(config) {
 		var resetConnection = false;
-		
+
 		if (this.config.host != config.host)
 		{
 			resetConnection = true;

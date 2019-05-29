@@ -5,7 +5,7 @@ var debug;
 var log;
 
 /**
- * Companion instance class for the Blackmagic VideoHub Routers.
+ * Companion instance class for the Blackmagic MultiView 16.
  *
  * @extends videohub
  * @version 1.0.0
@@ -283,20 +283,6 @@ class instance extends videohub {
 				regex: this.REGEX_IP
 			}
 		]
-	}
-
-	/**
-	 * Clean up the instance before it is destroyed.
-	 *
-	 * @access public
-	 * @since 1.0.0
-	 */
-	destroy() {
-		if (this.socket !== undefined) {
-			this.socket.destroy();
-		}
-
-		this.debug("destroy", this.id);
 	}
 
 	/**
