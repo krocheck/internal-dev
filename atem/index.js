@@ -1594,6 +1594,38 @@ class instance extends instance_skel {
 				}
 			]
 		};
+		feedbacks['ssrc_box_source'] = {
+			label: 'Change colors from SuperSorce box source',
+			description: 'If the specified SuperSource box is set to the specified source, change color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type:    'dropdown',
+					id:      'boxIndex',
+					label:   'Box #',
+					default: 2,
+					choices: this.CHOICES_MVWINDOW
+				},
+				{
+					type:    'dropdown',
+					id:      'source',
+					label:   'Source',
+					default: 0,
+					choices: this.CHOICES_MESOURCES
+				}
+			]
+		};
 
 		this.setFeedbackDefinitions(feedbacks);
 	}
@@ -1974,7 +2006,7 @@ class instance extends instance_skel {
 		//Future loop for multiple SSRC
 		for (var i = 0; i < 1; i++) {
 
-			for (var j = 0; j < 3; j++) {
+			for (var j = 0; j < 4; j++) {
 
 				for (var k in this.CHOICES_MESOURCES) {
 
