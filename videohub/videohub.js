@@ -447,7 +447,7 @@ class instance extends instance_skel {
 
 		feedbacks['selected_destination'] = {
 			label: 'Change background color by selected destination',
-			description: 'If the input specified is in use by the selected output specified, change background color of the bank',
+			description: 'If the output specified is selected, change background color of the bank',
 			options: [
 				{
 					type: 'colorpicker',
@@ -481,7 +481,7 @@ class instance extends instance_skel {
 
 		feedbacks['selected_source'] = {
 			label: 'Change background color by route to selected destination',
-			description: 'If the input specified is in use by the selected output specified, change background color of the bank',
+			description: 'If the input specified is in use by the selected output, change background color of the bank',
 			options: [
 				{
 					type: 'colorpicker',

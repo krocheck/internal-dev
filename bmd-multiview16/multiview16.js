@@ -364,16 +364,16 @@ class instance extends videohub {
 
 		// Handle some renames needed from videohub
 
-		feedbacks['input_bg'].label = 'Change background color by destination';
+		feedbacks['input_bg'].label = 'Change background color by view';
 		feedbacks['input_bg'].description = 'If the input specified is in use by the view specified, change background color of the bank';
 		feedbacks['input_bg'].options[3].label = 'View';
 
 		feedbacks['selected_destination'].label = 'Change background color by selected view';
-		feedbacks['selected_destination'].description = 'If the input specified is in use by the selected view specified, change background color of the bank';
+		feedbacks['selected_destination'].description = 'If the view specified is selected, change background color of the bank';
 		feedbacks['selected_destination'].options[2].label = 'View';
 
 		feedbacks['selected_source'].label = 'Change background color by route to selected view';
-		feedbacks['selected_source'].description = 'If the input specified is in use by the selected view specified, change background color of the bank';
+		feedbacks['selected_source'].description = 'If the input specified is in use by the selected view, change background color of the bank';
 
 		//----
 
@@ -718,6 +718,121 @@ class instance extends videohub {
 		};
 
 		this.setFeedbackDefinitions(feedbacks);
+	}
+
+	/**
+	 * INTERNAL: initialize presets.
+	 *
+	 * @access protected
+	 * @since 1.1.0
+	 */
+	initPresets () {
+		var presets = [];
+
+		for (var i = 0; i < (this.outputCount + this.monitoringCount); i++) {
+
+			presets.push({
+				category: 'Select View',
+				label: 'Selection view button for ' + this.getOutput(i).name,
+				bank: {
+					style: 'text',
+					text: '$(videohub:output_' + (i+1) + ')',
+					size: '18',
+					color: this.rgb(255,255,255),
+					bgcolor: this.rgb(0,0,0)
+				},
+				feedbacks: [
+					{
+						type: 'selected_destination',
+						options: {
+							bg: this.rgb(255,255,0),
+							fg: this.rgb(0,0,0),
+							output: i
+						}
+					}
+				],
+				actions: [
+					{
+						action: 'select_destination',
+						options: {
+							destination: i
+						}
+					}
+				]
+			});
+		}
+
+		for (var i = 0; i < this.inputCount; i++) {
+
+			presets.push({
+				category: 'Route Source',
+				label: 'Route ' + this.getInput(i).name + ' to selected view',
+				bank: {
+					style: 'text',
+					text: '$(videohub:input_' + (i+1) + ')',
+					size: '18',
+					color: this.rgb(255,255,255),
+					bgcolor: this.rgb(0,0,0)
+				},
+				feedbacks: [
+					{
+						type: 'selected_source',
+						options: {
+							bg: this.rgb(255,255,255),
+							fg: this.rgb(0,0,0),
+							input: i
+						}
+					}
+				],
+				actions: [
+					{
+						action: 'route_source',
+						options: {
+							source: i
+						}
+					}
+				]
+			});
+		}
+
+		for (var out = 0; out < (this.outputCount + this.monitoringCount); out++) {
+			for (var i = 0; i < this.inputCount; i++) {
+
+				presets.push({
+					category: 'View ' + (out+1),
+					label: 'View ' + (out+1) + ' button for ' + this.getInput(i).name,
+					bank: {
+						style: 'text',
+						text: '$(videohub:input_' + (i+1) + ')',
+						size: '18',
+						color: this.rgb(255,255,255),
+						bgcolor: this.rgb(0,0,0)
+					},
+					feedbacks: [
+						{
+							type: 'input_bg',
+							options: {
+								bg: this.rgb(255,255,0),
+								fg: this.rgb(0,0,0),
+								input: i,
+								output: out
+							}
+						}
+					],
+					actions: [
+						{
+							action: 'route',
+							options: {
+								source: i,
+								destination: out
+							}
+						}
+					]
+				});
+			}
+		}
+
+		this.setPresetDefinitions(presets);
 	}
 
 	/**

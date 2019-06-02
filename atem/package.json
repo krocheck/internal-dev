@@ -1,6 +1,6 @@
 {
 	"name": "atem",
-	"version": "1.1.6",
+	"version": "1.1.7",
 	"api_version": "1.0.0",
 	"description": "Blackmagic Design",
 	"keywords": [
@@ -24,6 +24,6 @@
 		"url": "https://github.com/bitfocus/companion-module-atem/issues"
 	},
 	"dependencies": {
-		"atem-connection": "0.8.2"
+		"atem-connection": "0.10.0"
 	}
 }
