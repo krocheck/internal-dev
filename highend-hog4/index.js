@@ -153,18 +153,24 @@ class instance extends instance_skel {
 				label: 'Go on Cue in Cuelist',
 				options: [
 					{
-						type:     'textinput',
-						label:    'Cuelist',
-						id:       'qlId',
-						default:  '1',
-						regex:    this.REGEX_NUMBER
+						type:    'number',
+						label:   'Cuelist',
+						id:      'qlId',
+						default:  1,
+						min:      1,
+						max:      1000,
+						required: true,
+						range:    false
 					},
 					{
-						type:     'textinput',
-						label:    'Cue',
-						id:       'qId',
-						default:  '1',
-						regex:    this.REGEX_NUMBER
+						type:    'number',
+						label:   'Cue',
+						id:      'qId',
+						default:  1,
+						min:      1,
+						max:      1000,
+						required: true,
+						range:    false
 					},
 					{
 						type:    'dropdown',
@@ -187,11 +193,14 @@ class instance extends instance_skel {
 						default: '0'
 					},
 					{
-						type:    'textinput',
+						type:    'number',
 						label:   'Number',
 						id:      'num',
-						default: '1',
-						regex:   this.REGEX_NUMBER
+						default:  1,
+						min:      1,
+						max:      1000,
+						required: true,
+						range:    false
 					},
 					{
 						type:    'dropdown',
@@ -214,11 +223,14 @@ class instance extends instance_skel {
 						default: '0'
 					},
 					{
-						type:    'textinput',
+						type:    'number',
 						label:   'Number',
 						id:      'num',
-						default: '1',
-						regex:   this.REGEX_NUMBER
+						default:  1,
+						min:      1,
+						max:      1000,
+						required: true,
+						range:    false
 					},
 					{
 						type:    'dropdown',
@@ -241,11 +253,14 @@ class instance extends instance_skel {
 						default: '0'
 					},
 					{
-						type:    'textinput',
+						type:    'number',
 						label:   'Number',
 						id:      'num',
-						default: '1',
-						regex:   this.REGEX_NUMBER
+						default:  1,
+						min:      1,
+						max:      1000,
+						required: true,
+						range:    false
 					},
 					{
 						type:    'dropdown',
@@ -268,11 +283,14 @@ class instance extends instance_skel {
 						default: '0'
 					},
 					{
-						type:    'textinput',
+						type:    'number',
 						label:   'Number',
 						id:      'num',
-						default: '1',
-						regex:   this.REGEX_NUMBER
+						default:  1,
+						min:      1,
+						max:      1000,
+						required: true,
+						range:    false
 					},
 					{
 						type:    'dropdown',
@@ -288,11 +306,14 @@ class instance extends instance_skel {
 				label: 'Master Key',
 				options: [
 					{
-						type:    'textinput',
-						label:   'Master Number (1-90)',
-						id:      'mId',
-						default: '1',
-						regex:   '/^([0]?[1-9]|[1-8][0-9]|90)$/'
+						type:     'number',
+						label:    'Master Number (1-90)',
+						id:       'mId',
+						default:  1,
+						min:      0,
+						max:      90,
+						required: true,
+						range:    false
 					},
 					{
 						type:    'dropdown',
@@ -315,11 +336,14 @@ class instance extends instance_skel {
 				label: 'Master Fader Level',
 				options: [
 					{
-						type:    'textinput',
-						label:   'Master Number (0 = GM, 1-90)',
-						id:      'mId',
-						default: '1',
-						regex:   '/^([0]?[0-9]|[1-8][0-9]|90)$/'
+						type:     'number',
+						label:    'Master Number (0 = GM, 1-90)',
+						id:       'mId',
+						default:  1,
+						min:      0,
+						max:      90,
+						required: true,
+						range:    false
 					},
 					{
 						type:    'number',
@@ -358,11 +382,13 @@ class instance extends instance_skel {
 				label: 'H Key',
 				options: [
 					{
-						type:    'textinput',
-						label:   'H Key Number',
-						id:      'hId',
-						default: '1',
-						regex:   this.REGEX_NUMBER
+						type:     'number',
+						label:    'H Key Number',
+						id:       'hId',
+						default:  1,
+						min:      1,
+						required: true,
+						range:    false
 					},
 					{
 						type:    'dropdown',
@@ -574,7 +600,7 @@ class instance extends instance_skel {
 	 */
 	init() {
 		this.status(this.STATE_OK); // status ok!
-		this.init_presets();
+		this.initPresets();
 		debug = this.debug;
 		log = this.log;
 	}
