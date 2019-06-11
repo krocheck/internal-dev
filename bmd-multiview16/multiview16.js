@@ -729,7 +729,7 @@ class instance extends videohub {
 	initPresets () {
 		var presets = [];
 
-		for (var i = 0; i < (this.outputCount + this.monitoringCount); i++) {
+		for (var i = 0; i < this.outputCount; i++) {
 
 			presets.push({
 				category: 'Select View',
@@ -795,7 +795,7 @@ class instance extends videohub {
 			});
 		}
 
-		for (var out = 0; out < (this.outputCount + this.monitoringCount); out++) {
+		for (var out = 0; out < this.outputCount; out++) {
 			for (var i = 0; i < this.inputCount; i++) {
 
 				presets.push({
@@ -856,7 +856,7 @@ class instance extends videohub {
 			}
 		}
 
-		for (var i = 0; i < (this.outputCount + this.monitoringCount); i++) {
+		for (var i = 0; i < this.outputCount; i++) {
 
 			if (this.getOutput(i).status != 'None') {
 
