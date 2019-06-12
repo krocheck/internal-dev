@@ -9,7 +9,7 @@
 	"product": "Multiview 16",
 	"shortname": "mv16",
 	"description": "",
-	"main": "multiview16.js",
+	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},

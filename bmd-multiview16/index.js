@@ -1,6 +1,6 @@
 var tcp = require('../../tcp');
 var instance_skel = require('../../instance_skel');
-var videohub = require('../videohub/videohub.js');
+var videohub = require('../videohub/videohub');
 var debug;
 var log;
 
@@ -216,10 +216,22 @@ class instance extends videohub {
 		// Note that main routing/naming actions are handled upstream in videohub
 		switch (action.action) {
 			case 'route_solo':
-				cmd = "VIDEO OUTPUT ROUTING:\n"+this.outputCount+" "+opt.source+"\n\n";
+				if (this.config.take === true) {
+					this.queue = "VIDEO OUTPUT ROUTING:\n"+this.outputCount+" "+opt.source+"\n\n";
+					this.checkFeedbacks('take');
+				}
+				else {
+					cmd = "VIDEO OUTPUT ROUTING:\n"+this.outputCount+" "+opt.source+"\n\n";
+				}
 				break;
 			case 'route_audio':
-				cmd = "VIDEO OUTPUT ROUTING:\n"+(this.outputCount+1)+" "+opt.source+"\n\n";
+				if (this.config.take === true) {
+					this.queue = "VIDEO OUTPUT ROUTING:\n"+(this.outputCount+1)+" "+opt.source+"\n\n";
+					this.checkFeedbacks('take');
+				}
+				else {
+					cmd = "VIDEO OUTPUT ROUTING:\n"+(this.outputCount+1)+" "+opt.source+"\n\n";
+				}
 				break;
 			case 'set_solo':
 				cmd = "CONFIGURATION:\n"+"Solo enabled: "+opt.setting+"\n\n";
@@ -281,6 +293,13 @@ class instance extends videohub {
 				label: 'MultiView IP',
 				width: 6,
 				regex: this.REGEX_IP
+			},
+			{
+				type: 'checkbox',
+				id: 'take',
+				label: 'Enable Take?',
+				width: 6,
+				default: false,
 			}
 		]
 	}
@@ -331,25 +350,6 @@ class instance extends videohub {
 		}
 
 		return this.outputs[id];
-	}
-
-	/**
-	 * Main initialization function called once the module
-	 * is OK to start doing things.
-	 *
-	 * @access public
-	 * @since 1.0.0
-	 */
-	init() {
-		debug = this.debug;
-		log = this.log;
-
-		this.initVariables();
-		this.initFeedbacks();
-		this.initPresets();
-		this.checkFeedbacks('selected_destination');
-
-		this.init_tcp();
 	}
 
 	/**

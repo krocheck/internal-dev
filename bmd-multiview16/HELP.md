@@ -9,6 +9,8 @@ This module will connect to any BlackmagicDesign MultiView 16 Device.
 * Route
 * Select view
 * Route source to selected view
+* Take (when enabled)
+* Clear (when enabled)
 * Select SOLO source
 * Select AUDIO source
 * Display SOLO
