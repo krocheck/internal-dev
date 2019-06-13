@@ -191,6 +191,121 @@ module.exports = {
 			}
 		};
 
-		this.setFeedbackDefinitions(feedbacks);
+		feedbacks['take_tally_source'] = {
+			label: 'Change background color if the selected source is queued in take',
+			description: 'If the selected source is queued for take, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(255,255,255)
+
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,0,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'Input',
+					id: 'input',
+					default: '0',
+					choices: this.CHOICES_INPUTS
+				}
+			],
+			callback: (feedback, bank) => {
+				if (parseInt(feedback.options.input) == this.queuedSource) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		feedbacks['take_tally_dest'] = {
+			label: 'Change background color if the selected destination is queued in take',
+			description: 'If the selected destination is queued for take, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(255,255,255)
+
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,0,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'Output',
+					id: 'output',
+					default: '0',
+					choices: this.CHOICES_OUTPUTS
+				}
+			],
+			callback: (feedback, bank) => {
+				if (parseInt(feedback.options.output) == this.queuedDest) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		feedbacks['take_tally_route'] = {
+			label: 'Change background color if the route is queued in take',
+			description: 'If the selected route is queued for take, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(255,255,255)
+
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,0,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'Input',
+					id: 'input',
+					default: '0',
+					choices: this.CHOICES_INPUTS
+				},
+				{
+					type: 'dropdown',
+					label: 'Output',
+					id: 'output',
+					default: '0',
+					choices: this.CHOICES_OUTPUTS
+				}
+			],
+			callback: (feedback, bank) => {
+				if (parseInt(feedback.options.output) == this.queuedDest && parseInt(feedback.options.input) == this.queuedSource) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		return feedbacks;
+	}
+
+		return feedbacks;
 	}
 }

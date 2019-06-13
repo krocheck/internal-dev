@@ -81,6 +81,14 @@ module.exports = {
 							fg: this.rgb(0,0,0),
 							output: i
 						}
+					},
+					{
+						type: 'take_tally_dest',
+						options: {
+							bg: this.rgb(255,255,255),
+							fg: this.rgb(255,0,0),
+							output: i
+						}
 					}
 				],
 				actions: [
@@ -112,6 +120,14 @@ module.exports = {
 						options: {
 							bg: this.rgb(255,255,255),
 							fg: this.rgb(0,0,0),
+							input: i
+						}
+					},
+					{
+						type: 'take_tally_source',
+						options: {
+							bg: this.rgb(255,255,255),
+							fg: this.rgb(255,0,0),
 							input: i
 						}
 					}
@@ -149,7 +165,16 @@ module.exports = {
 								input: i,
 								output: out
 							}
+						},
+					{
+						type: 'take_tally_route',
+						options: {
+							bg: this.rgb(255,255,255),
+							fg: this.rgb(255,0,0),
+								input: i,
+								output: out
 						}
+					}
 					],
 					actions: [
 						{

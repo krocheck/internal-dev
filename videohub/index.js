@@ -38,6 +38,8 @@ class instance extends instance_skel {
 		this.selected   = 0;
 		this.deviceName = '';
 		this.queue      = '';
+		this.queuedDest = -1;
+		this.queuedSource = -1;
 
 		Object.assign(this, {
 			...actions,
@@ -98,7 +100,12 @@ class instance extends instance_skel {
 				if (parseInt(opt.destination) >= this.outputCount) {
 					if (this.config.take === true) {
 						this.queue = "VIDEO MONITORING OUTPUT ROUTING:\n"+(parseInt(opt.destination)-this.outputCount)+" "+opt.source+"\n\n";
+						this.queuedDest = (parseInt(opt.destination)-this.outputCount);
+						this.queuedSource = parseInt(opt.source);
 						this.checkFeedbacks('take');
+						this.checkFeedbacks('take_tally_source');
+						this.checkFeedbacks('take_tally_dest');
+						this.checkFeedbacks('take_tally_route');
 					}
 					else {
 						cmd = "VIDEO MONITORING OUTPUT ROUTING:\n"+(parseInt(opt.destination)-this.outputCount)+" "+opt.source+"\n\n";
@@ -107,7 +114,12 @@ class instance extends instance_skel {
 				else {
 					if (this.config.take === true) {
 						this.queue = "VIDEO OUTPUT ROUTING:\n"+opt.destination+" "+opt.source+"\n\n";
+						this.queuedDest = parseInt(opt.destination);
+						this.queuedSource = parseInt(opt.source);
 						this.checkFeedbacks('take');
+						this.checkFeedbacks('take_tally_source');
+						this.checkFeedbacks('take_tally_dest');
+						this.checkFeedbacks('take_tally_route');
 					}
 					else {
 						cmd = "VIDEO OUTPUT ROUTING:\n"+opt.destination+" "+opt.source+"\n\n";
@@ -140,7 +152,12 @@ class instance extends instance_skel {
 				if (this.selected >= this.outputCount) {
 					if (this.config.take === true) {
 						this.queue = "VIDEO MONITORING OUTPUT ROUTING:\n"+(this.selected-this.outputCount)+" "+opt.source+"\n\n";
+						this.queuedDest = (this.selected-this.outputCount);
+						this.queuedSource = parseInt(opt.source);
 						this.checkFeedbacks('take');
+						this.checkFeedbacks('take_tally_source');
+						this.checkFeedbacks('take_tally_dest');
+						this.checkFeedbacks('take_tally_route');
 					}
 					else {
 						cmd = "VIDEO MONITORING OUTPUT ROUTING:\n"+(this.selected-this.outputCount)+" "+opt.source+"\n\n";
@@ -149,7 +166,12 @@ class instance extends instance_skel {
 				else {
 					if (this.config.take === true) {
 						this.queue = "VIDEO OUTPUT ROUTING:\n"+this.selected+" "+opt.source+"\n\n";
+						this.queuedDest = this.selected;
+						this.queuedSource = parseInt(opt.source);
 						this.checkFeedbacks('take');
+						this.checkFeedbacks('take_tally_source');
+						this.checkFeedbacks('take_tally_dest');
+						this.checkFeedbacks('take_tally_route');
 					}
 					else {
 						cmd = "VIDEO OUTPUT ROUTING:\n"+this.selected+" "+opt.source+"\n\n";
@@ -159,10 +181,20 @@ class instance extends instance_skel {
 			case 'take':
 				cmd = this.queue;
 				this.queue = '';
+				this.queuedDest = -1;
+				this.queuedSource = -1;
 				this.checkFeedbacks('take');
+				this.checkFeedbacks('take_tally_source');
+				this.checkFeedbacks('take_tally_dest');
+				this.checkFeedbacks('take_tally_route');
 			case 'clear':
 				this.queue = '';
+				this.queuedDest = -1;
+				this.queuedSource = -1;
 				this.checkFeedbacks('take');
+				this.checkFeedbacks('take_tally_source');
+				this.checkFeedbacks('take_tally_dest');
+				this.checkFeedbacks('take_tally_route');
 		}
 
 		if (cmd !== undefined) {
@@ -291,6 +323,7 @@ class instance extends instance_skel {
 		this.initFeedbacks();
 		this.initPresets();
 		this.checkFeedbacks('selected_destination');
+		this.checkFeedbacks('selected_source');
 
 		this.init_tcp();
 	}
