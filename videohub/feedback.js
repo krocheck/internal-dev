@@ -217,7 +217,7 @@ module.exports = {
 				}
 			],
 			callback: (feedback, bank) => {
-				if (parseInt(feedback.options.input) == this.queuedSource) {
+				if (parseInt(feedback.options.input) == this.queuedSource && this.selected == this.queuedDest) {
 					return {
 						color: feedback.options.fg,
 						bgcolor: feedback.options.bg
@@ -302,9 +302,6 @@ module.exports = {
 				}
 			}
 		};
-
-		return feedbacks;
-	}
 
 		return feedbacks;
 	}

@@ -85,8 +85,8 @@ module.exports = {
 					{
 						type: 'take_tally_dest',
 						options: {
-							bg: this.rgb(255,255,255),
-							fg: this.rgb(255,0,0),
+							bg: this.rgb(255,0,0),
+							fg: this.rgb(255,255,255),
 							output: i
 						}
 					}
@@ -126,8 +126,8 @@ module.exports = {
 					{
 						type: 'take_tally_source',
 						options: {
-							bg: this.rgb(255,255,255),
-							fg: this.rgb(255,0,0),
+							bg: this.rgb(255,0,0),
+							fg: this.rgb(255,255,255),
 							input: i
 						}
 					}
@@ -169,8 +169,8 @@ module.exports = {
 					{
 						type: 'take_tally_route',
 						options: {
-							bg: this.rgb(255,255,255),
-							fg: this.rgb(255,0,0),
+							bg: this.rgb(255,0,0),
+							fg: this.rgb(255,255,255),
 								input: i,
 								output: out
 						}
