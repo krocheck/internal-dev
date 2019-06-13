@@ -33,12 +33,12 @@ class instance extends instance_skel {
 	constructor(system, id, config) {
 		super(system, id, config);
 
-		this.stash      = [];
-		this.command    = null;
-		this.selected   = 0;
-		this.deviceName = '';
-		this.queue      = '';
-		this.queuedDest = -1;
+		this.stash        = [];
+		this.command      = null;
+		this.selected     = 0;
+		this.deviceName   = '';
+		this.queue        = '';
+		this.queuedDest   = -1;
 		this.queuedSource = -1;
 
 		Object.assign(this, {
@@ -98,32 +98,10 @@ class instance extends instance_skel {
 		switch (action.action) {
 			case 'route':
 				if (parseInt(opt.destination) >= this.outputCount) {
-					if (this.config.take === true) {
-						this.queue = "VIDEO MONITORING OUTPUT ROUTING:\n"+(parseInt(opt.destination)-this.outputCount)+" "+opt.source+"\n\n";
-						this.queuedDest = (parseInt(opt.destination)-this.outputCount);
-						this.queuedSource = parseInt(opt.source);
-						this.checkFeedbacks('take');
-						this.checkFeedbacks('take_tally_source');
-						this.checkFeedbacks('take_tally_dest');
-						this.checkFeedbacks('take_tally_route');
-					}
-					else {
-						cmd = "VIDEO MONITORING OUTPUT ROUTING:\n"+(parseInt(opt.destination)-this.outputCount)+" "+opt.source+"\n\n";
-					}
+					cmd = "VIDEO MONITORING OUTPUT ROUTING:\n"+(parseInt(opt.destination)-this.outputCount)+" "+opt.source+"\n\n";
 				}
 				else {
-					if (this.config.take === true) {
-						this.queue = "VIDEO OUTPUT ROUTING:\n"+opt.destination+" "+opt.source+"\n\n";
-						this.queuedDest = parseInt(opt.destination);
-						this.queuedSource = parseInt(opt.source);
-						this.checkFeedbacks('take');
-						this.checkFeedbacks('take_tally_source');
-						this.checkFeedbacks('take_tally_dest');
-						this.checkFeedbacks('take_tally_route');
-					}
-					else {
-						cmd = "VIDEO OUTPUT ROUTING:\n"+opt.destination+" "+opt.source+"\n\n";
-					}
+					cmd = "VIDEO OUTPUT ROUTING:\n"+opt.destination+" "+opt.source+"\n\n";
 				}
 				break;
 			case 'route_serial':
@@ -146,6 +124,7 @@ class instance extends instance_skel {
 			case 'select_destination':
 				this.selected = parseInt(opt.destination);
 				this.checkFeedbacks('selected_destination');
+				this.checkFeedbacks('take_tally_source');
 				this.checkFeedbacks('selected_source');
 				break;
 			case 'route_source':
@@ -236,7 +215,7 @@ class instance extends instance_skel {
 			{
 				type: 'checkbox',
 				id: 'take',
-				label: 'Enable Take?',
+				label: 'Enable Take? (XY only)',
 				width: 6,
 				default: false,
 			},
