@@ -87,25 +87,25 @@ module.exports = {
 
 			switch (attribute) {
 				case 'Model name':
-					this.instance.deviceName = value;
+					this.deviceName = value;
 					this.log('info', 'Connected to a ' + this.deviceName);
 					break;
 				case 'Video inputs':
-					this.instance.config.inputCount = value;
+					this.config.inputCount = value;
 					break;
 				case 'Video outputs':
-					this.instance.config.outputCount = value;
+					this.config.outputCount = value;
 					break;
 				case 'Video monitoring outputs':
-					this.instance.config.monitoringCount = value;
+					this.config.monitoringCount = value;
 					break;
 				case 'Serial ports':
-					this.instance.config.serialCount = value;
+					this.config.serialCount = value;
 					break;
 			}
 		}
 
-		this.instance.saveConfig();
+		this.saveConfig();
 	},
 
 	/**
@@ -128,34 +128,34 @@ module.exports = {
 				case 'INPUT LABELS':
 					this.getInput(num).name  = label;
 					this.getInput(num).label = (num+1).toString() + ': ' + label;
-					this.instance.setVariable('input_' + (num+1), label);
+					this.setVariable('input_' + (num+1), label);
 					break;
 				case 'MONITORING OUTPUT LABELS':
 					num = num + this.outputCount;
 				case 'OUTPUT LABELS':
 					this.getOutput(num).name  = label;
 					this.getOutput(num).label = (num+1).toString() + ': ' + label;
-					this.instance.setVariable('output_' + (num+1), label);
+					this.setVariable('output_' + (num+1), label);
 					break;
 				case 'SERIAL PORT LABELS':
 					this.getSerial(num).name  = label;
 					this.getSerial(num).label = (num+1).toString() + ': ' + label;
-					this.instance.setVariable('serial_' + (num+1), label);
+					this.setVariable('serial_' + (num+1), label);
 					break;
 			}
 		}
 
 		if (labeltype == 'INPUT LABELS') {
 
-			for (var i = 0; i < (this.instance.outputCount + this.instance.monitoringCount); i++) {
+			for (var i = 0; i < (this.outputCount + this.monitoringCount); i++) {
 
 				if (this.getOutput(i).status != 'None') {
 
-					this.instance.setVariable('output_' + (i+1) + '_input',  this.getInput(this.getOutput(i).route).name);
+					this.setVariable('output_' + (i+1) + '_input',  this.getInput(this.getOutput(i).route).name);
 				}
 			}
 
-			this.instance.setVariable('selected_source', this.getInput(this.getOutput(this.selected).route).name);
+			this.setVariable('selected_source', this.getInput(this.getOutput(this.selected).route).name);
 		}
 	},
 
@@ -177,7 +177,7 @@ module.exports = {
 
 			switch (labeltype) {
 				case 'MONITORING OUTPUT LOCKS':
-					num = num + this.instance.outputCount;
+					num = num + this.outputCount;
 				case 'VIDEO OUTPUT LOCKS':
 					this.getOutput(num).lock = label;
 					break;
@@ -206,14 +206,14 @@ module.exports = {
 
 			switch (labeltype) {
 				case 'VIDEO MONITORING OUTPUT ROUTING':
-					dest = dest + this.instance.outputCount;
+					dest = dest + this.outputCount;
 				case 'VIDEO OUTPUT ROUTING':
 					this.getOutput(dest).route = src;
-					this.instance.setVariable('output_' + (dest+1) + '_input',  this.getInput(src).name);
+					this.setVariable('output_' + (dest+1) + '_input',  this.getInput(src).name);
 					break;
 				case 'SERIAL PORT ROUTING':
 					this.getSerial(dest).route = src
-					this.instance.setVariable('serial_' + (dest+1) + '_route', this.getSerial(src).name);
+					this.setVariable('serial_' + (dest+1) + '_route', this.getSerial(src).name);
 					break;
 			}
 		}
