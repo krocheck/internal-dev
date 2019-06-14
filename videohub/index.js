@@ -12,7 +12,8 @@ var log;
 
 /**
  * Companion instance class for the Blackmagic VideoHub Routers.
- * This class is extended for the BMD Multiview16 module.
+ * 
+ * !!! This class is being used by the bmd-multiview16 module, be careful !!!
  *
  * @extends instance_skel
  * @version 1.2.0
@@ -81,7 +82,7 @@ class instance extends instance_skel {
 	actions(system) {
 
 		this.setupChoices();
-		this.setActions(this.getActions(system));
+		this.setActions(this.getActions());
 	}
 
 	/**
