@@ -45,8 +45,19 @@ class instance extends videohub {
 		];
 
 		this.CHOICES_TRUEFALSE = [
-			{ id: 'true', label: 'True' },
-			{ id: 'false', label: 'False' }
+			{ id: 'true',  label: 'True',  preset: 'On' },
+			{ id: 'false', label: 'False', preset: 'Off' }
+		];
+
+		this.PRESETS_SETTIGS = [
+			{ action: 'set_solo',          feedback: 'solo_enabled',   label: 'Display SOLO ',   choices: this.CHOICES_TRUEFALSE    },
+			{ action: 'set_layout',        feedback: 'layout',         label: 'Layout ',         choices: this.CHOICES_LAYOUT       },
+			{ action: 'set_format',        feedback: 'output_format',  label: 'Output Format: ', choices: this.CHOICES_OUTPUTFORMAT },
+			{ action: 'set_border',        feedback: 'display_border', label: 'Borders ',        choices: this.CHOICES_TRUEFALSE    },
+			{ action: 'set_labels',        feedback: 'display_labels', label: 'Labels ',         choices: this.CHOICES_TRUEFALSE    },
+			{ action: 'set_meters',        feedback: 'display_meters', label: 'Audio Meters ',   choices: this.CHOICES_TRUEFALSE    },
+			{ action: 'set_tally',         feedback: 'display_tally',  label: 'Tally ',          choices: this.CHOICES_TRUEFALSE    },
+			{ action: 'set_widescreen_sd', feedback: 'widescreen_sd',  label: 'Widescreen SD ',  choices: this.CHOICES_TRUEFALSE    }
 		];
 	}
 
@@ -216,22 +227,10 @@ class instance extends videohub {
 		// Note that main routing/naming actions are handled upstream in videohub
 		switch (action.action) {
 			case 'route_solo':
-				if (this.config.take === true) {
-					this.queue = "VIDEO OUTPUT ROUTING:\n"+this.outputCount+" "+opt.source+"\n\n";
-					this.checkFeedbacks('take');
-				}
-				else {
-					cmd = "VIDEO OUTPUT ROUTING:\n"+this.outputCount+" "+opt.source+"\n\n";
-				}
+				cmd = "VIDEO OUTPUT ROUTING:\n"+this.outputCount+" "+opt.source+"\n\n";
 				break;
 			case 'route_audio':
-				if (this.config.take === true) {
-					this.queue = "VIDEO OUTPUT ROUTING:\n"+(this.outputCount+1)+" "+opt.source+"\n\n";
-					this.checkFeedbacks('take');
-				}
-				else {
-					cmd = "VIDEO OUTPUT ROUTING:\n"+(this.outputCount+1)+" "+opt.source+"\n\n";
-				}
+				cmd = "VIDEO OUTPUT ROUTING:\n"+(this.outputCount+1)+" "+opt.source+"\n\n";
 				break;
 			case 'set_solo':
 				cmd = "CONFIGURATION:\n"+"Solo enabled: "+opt.setting+"\n\n";
@@ -780,6 +779,41 @@ class instance extends videohub {
 				}
 			]
 		});
+
+		for (var type in this.PRESETS_SETTIGS) {
+			for (var choice in this.PRESETS_SETTIGS[type][choices]) {
+
+				presets.push({
+					category: 'Settings',
+					label: this.PRESETS_SETTIGS[type].label + this.PRESETS_SETTIGS[type][choice].label,
+					bank: {
+						style: 'text',
+						text: this.PRESETS_SETTIGS[type].label + this.PRESETS_SETTIGS[type][choice].label,
+						size: '14',
+						color: this.rgb(255,255,255),
+						bgcolor: this.rgb(0,0,0)
+					},
+					feedbacks: [
+						{
+							type: this.PRESETS_SETTIGS[type].feedback,
+							options: {
+								bg: this.rgb(255,255,0),
+								fg: this.rgb(0,0,0),
+								setting: this.PRESETS_SETTIGS[type][choice].id
+							}
+						}
+					],
+					actions: [
+						{
+							action: this.PRESETS_SETTIGS[type].action,
+							options: {
+								setting: this.PRESETS_SETTIGS[type][choice].id
+							}
+						}
+					]
+				});
+			}
+		}
 
 		for (var i = 0; i < this.outputCount; i++) {
 
