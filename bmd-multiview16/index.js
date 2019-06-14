@@ -1,12 +1,6 @@
 var tcp = require('../../tcp');
 var instance_skel = require('../../instance_skel');
 var videohub = require('../videohub/videohub');
-
-var actions       = require('./actions');
-var feedback      = require('./feedback');
-var presets       = require('./presets');
-var variables     = require('./variables');
-
 var debug;
 var log;
 
@@ -31,13 +25,6 @@ class instance extends videohub {
 	 */
 	constructor(system, id, config) {
 		super(system, id, config);
-
-		Object.assign(this, {
-			...actions,
-			...feedback,
-			...presets,
-			...variables
-		});
 
 		this.inputCount = 16;
 		this.outputCount = 16;
@@ -73,7 +60,145 @@ class instance extends videohub {
 	actions(system) {
 
 		this.setupChoices();
-		this.setActions(this.getActions());
+		var actions = super.getActions();
+
+		// Handle some renames needed from videohub
+
+		actions['rename_destination'].label = 'Rename view';
+		actions['rename_destination'].options[0].label = 'View';
+		actions['rename_destination'].options[1].default = 'View name';
+
+		actions['route'].options[1].label = 'View';
+
+		actions['select_destination'].label = 'Select view';
+		actions['select_destination'].options[0].label = 'View';
+
+		actions['route_source'].label = 'Route source to selected view';
+
+		//----
+
+		actions['route_solo'] = {
+			label: 'Select SOLO source',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					default: '0',
+					choices: this.CHOICES_INPUTS
+				}
+			]
+		};
+		actions['route_audio'] = {
+			label: 'Select AUDIO source',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Source',
+					id: 'source',
+					default: '0',
+					choices: this.CHOICES_INPUTS
+				}
+			]
+		};
+		actions['set_solo'] = {
+			label: 'Display SOLO',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Value',
+					id: 'setting',
+					default: 'true',
+					choices: this.CHOICES_TRUEFALSE
+				}
+			]
+		};
+		actions['set_layout'] = {
+			label: 'Set layout',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Layout',
+					id: 'setting',
+					default: '2x2',
+					choices: this.CHOICES_LAYOUT
+				}
+			]
+		};
+		actions['set_format'] = {
+			label: 'Set output format',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Format',
+					id: 'setting',
+					default: '60p',
+					choices: this.CHOICES_OUTPUTFORMAT
+				}
+			]
+		};
+		actions['set_border'] = {
+			label: 'Display border',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Value',
+					id: 'setting',
+					default: 'true',
+					choices: this.CHOICES_TRUEFALSE
+				}
+			]
+		};
+		actions['set_labels'] = {
+			label: 'Display labels',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Value',
+					id: 'setting',
+					default: 'true',
+					choices: this.CHOICES_TRUEFALSE
+				}
+			]
+		};
+		actions['set_meters'] = {
+			label: 'Display audio meters',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Value',
+					id: 'setting',
+					default: 'true',
+					choices: this.CHOICES_TRUEFALSE
+				}
+			]
+		};
+		actions['set_tally'] = {
+			label: 'Display SDI tally',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Value',
+					id: 'setting',
+					default: 'true',
+					choices: this.CHOICES_TRUEFALSE
+				}
+			]
+		};
+		actions['set_widescreen_sd'] = {
+			label: 'Widescreen SD enable',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Value',
+					id: 'setting',
+					default: 'true',
+					choices: this.CHOICES_TRUEFALSE
+				}
+			]
+		};
+
+		this.setActions(actions);
 	}
 
 	/**
@@ -235,9 +360,633 @@ class instance extends videohub {
 	 */
 	initFeedbacks() {
 		// feedbacks
-		var feedbacks = this.getFeedbacks();
+		var feedbacks = super.getFeedbacks();
+
+		// Handle some renames needed from videohub
+
+		feedbacks['input_bg'].label = 'Change background color by view';
+		feedbacks['input_bg'].description = 'If the input specified is in use by the view specified, change background color of the bank';
+		feedbacks['input_bg'].options[3].label = 'View';
+
+		feedbacks['selected_destination'].label = 'Change background color by selected view';
+		feedbacks['selected_destination'].description = 'If the view specified is selected, change background color of the bank';
+		feedbacks['selected_destination'].options[2].label = 'View';
+
+		feedbacks['selected_source'].label = 'Change background color by route to selected view';
+		feedbacks['selected_source'].description = 'If the input specified is in use by the selected view, change background color of the bank';
+
+		//----
+
+		feedbacks['solo_source'] = {
+			label: 'Change background color by solo source',
+			description: 'If the input specified is the solo source, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,255)
+				},
+				{
+					type: 'dropdown',
+					label: 'Input',
+					id: 'input',
+					default: '0',
+					choices: this.CHOICES_INPUTS
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.getOutput(this.outputCount).route == parseInt(feedback.options.input)) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		feedbacks['audio_source'] = {
+			label: 'Change background color by audio source',
+			description: 'If the input specified is the audio source, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,255)
+				},
+				{
+					type: 'dropdown',
+					label: 'Input',
+					id: 'input',
+					default: '0',
+					choices: this.CHOICES_INPUTS
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.getOutput(this.outputCount+1).route == parseInt(feedback.options.input)) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		feedbacks['layout'] = {
+			label: 'Change background color by layout',
+			description: 'If the layout specified is in use, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'View',
+					id: 'setting',
+					default: '0',
+					choices: this.CHOICES_LAYOUT
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.getConfig().layout == feedback.options.setting) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		feedbacks['output_format'] = {
+			label: 'Change background color by output format',
+			description: 'If the output format specified is in use, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'Format',
+					id: 'setting',
+					default: '0',
+					choices: this.CHOICES_OUTPUTFORMAT
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.getConfig().outputFormat == feedback.options.setting) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		feedbacks['solo_enabled'] = {
+			label: 'Change background color by solo enable state',
+			description: 'If the solo enable state specified is active, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'Value',
+					id: 'setting',
+					default: '0',
+					choices: this.CHOICES_TRUEFALSE
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.getConfig().soloEnabled == feedback.options.setting) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		feedbacks['widescreen_sd'] = {
+			label: 'Change background color by widescreen SD enable state',
+			description: 'If the widescreen SD enable state specified is active, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'Value',
+					id: 'setting',
+					default: '0',
+					choices: this.CHOICES_TRUEFALSE
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.getConfig().widescreenSD == feedback.options.setting) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		feedbacks['display_border'] = {
+			label: 'Change background color by display border state',
+			description: 'If the display border state specified is active, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'Value',
+					id: 'setting',
+					default: '0',
+					choices: this.CHOICES_TRUEFALSE
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.getConfig().displayBorder == feedback.options.setting) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		feedbacks['display_labels'] = {
+			label: 'Change background color by display labels state',
+			description: 'If the display labels state specified is active, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'Value',
+					id: 'setting',
+					default: '0',
+					choices: this.CHOICES_TRUEFALSE
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.getConfig().displayLabels == feedback.options.setting) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		feedbacks['display_meters'] = {
+			label: 'Change background color by display audio meters state',
+			description: 'If the display audio meters state specified is active, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'Value',
+					id: 'setting',
+					default: '0',
+					choices: this.CHOICES_TRUEFALSE
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.getConfig().displayMeters == feedback.options.setting) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		feedbacks['display_tally'] = {
+			label: 'Change background color by display SDI tally state',
+			description: 'If the display SDI tally state specified is active, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'Value',
+					id: 'setting',
+					default: '0',
+					choices: this.CHOICES_TRUEFALSE
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.getConfig().displayTally == feedback.options.setting) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
 
 		this.setFeedbackDefinitions(feedbacks);
+	}
+
+	/**
+	 * INTERNAL: initialize presets.
+	 *
+	 * @access protected
+	 * @since 1.1.0
+	 */
+	initPresets () {
+		var presets = [];
+
+		presets.push({
+			category: 'Actions\n(XY only)',
+			label: 'Take',
+			bank: {
+				style: 'text',
+				text: 'Take',
+				size: '18',
+				color: this.rgb(255,255,255),
+				bgcolor: this.rgb(0,0,0)
+			},
+			feedbacks: [
+				{
+					type: 'take',
+					options: {
+						bg: this.rgb(255,0,0),
+						fg: this.rgb(255,255,255)
+					}
+				}
+			],
+			actions: [
+				{
+					action: 'take'
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Actions\n(XY only)',
+			label: 'Clear',
+			bank: {
+				style: 'text',
+				text: 'Clear',
+				size: '18',
+				color: this.rgb(128,128,128),
+				bgcolor: this.rgb(0,0,0)
+			},
+			feedbacks: [
+				{
+					type: 'take',
+					options: {
+						bg: this.rgb(0,0,0),
+						fg: this.rgb(255,255,255)
+					}
+				}
+			],
+			actions: [
+				{
+					action: 'clear'
+				}
+			]
+		});
+
+		for (var i = 0; i < this.outputCount; i++) {
+
+			presets.push({
+				category: 'Select View (X)',
+				label: 'Selection view button for ' + this.getOutput(i).name,
+				bank: {
+					style: 'text',
+					text: '$(videohub:output_' + (i+1) + ')',
+					size: '18',
+					color: this.rgb(255,255,255),
+					bgcolor: this.rgb(0,0,0)
+				},
+				feedbacks: [
+					{
+						type: 'selected_destination',
+						options: {
+							bg: this.rgb(255,255,0),
+							fg: this.rgb(0,0,0),
+							output: i
+						}
+					},
+					{
+						type: 'take_tally_dest',
+						options: {
+							bg: this.rgb(255,0,0),
+							fg: this.rgb(255,255,255),
+							output: i
+						}
+					}
+				],
+				actions: [
+					{
+						action: 'select_destination',
+						options: {
+							destination: i
+						}
+					}
+				]
+			});
+		}
+
+		for (var i = 0; i < this.inputCount; i++) {
+
+			presets.push({
+				category: 'Route Source (Y)',
+				label: 'Route ' + this.getInput(i).name + ' to selected view',
+				bank: {
+					style: 'text',
+					text: '$(videohub:input_' + (i+1) + ')',
+					size: '18',
+					color: this.rgb(255,255,255),
+					bgcolor: this.rgb(0,0,0)
+				},
+				feedbacks: [
+					{
+						type: 'selected_source',
+						options: {
+							bg: this.rgb(255,255,255),
+							fg: this.rgb(0,0,0),
+							input: i
+						}
+					},
+					{
+						type: 'take_tally_source',
+						options: {
+							bg: this.rgb(255,0,0),
+							fg: this.rgb(255,255,255),
+							input: i
+						}
+					}
+				],
+				actions: [
+					{
+						action: 'route_source',
+						options: {
+							source: i
+						}
+					}
+				]
+			});
+		}
+
+		for (var out = 0; out < this.outputCount; out++) {
+			for (var i = 0; i < this.inputCount; i++) {
+
+				presets.push({
+					category: 'View ' + (out+1),
+					label: 'View ' + (out+1) + ' button for ' + this.getInput(i).name,
+					bank: {
+						style: 'text',
+						text: '$(videohub:input_' + (i+1) + ')',
+						size: '18',
+						color: this.rgb(255,255,255),
+						bgcolor: this.rgb(0,0,0)
+					},
+					feedbacks: [
+						{
+							type: 'input_bg',
+							options: {
+								bg: this.rgb(255,255,0),
+								fg: this.rgb(0,0,0),
+								input: i,
+								output: out
+							}
+						}
+					],
+					actions: [
+						{
+							action: 'route',
+							options: {
+								source: i,
+								destination: out
+							}
+						}
+					]
+				});
+			}
+		}
+
+		this.setPresetDefinitions(presets);
+	}
+
+	/**
+	 * INTERNAL: initialize variables.
+	 *
+	 * @access protected
+	 * @since 1.0.0
+	 */
+	initVariables() {
+		var variables = [];
+
+		for (var i = 0; i < this.inputCount; i++) {
+
+			if (this.getInput(i).status != 'None') {
+				variables.push({
+					label: 'Label of input ' + (i+1),
+					name: 'input_' + (i+1)
+				});
+
+				this.setVariable('input_' + (i+1), this.getInput(i).name);
+			}
+		}
+
+		for (var i = 0; i < this.outputCount; i++) {
+
+			if (this.getOutput(i).status != 'None') {
+
+				variables.push({
+					label: 'Label of view ' + (i+1),
+					name: 'output_' + (i+1)
+				});
+
+				this.setVariable('output_' + (i+1), this.getOutput(i).name);
+
+				variables.push({
+					label: 'Label of input routed to view ' + (i+1),
+					name: 'output_' + (i+1) + '_input'
+				});
+
+				this.setVariable('output_' + (i+1) + '_input',  this.getInput(this.getOutput(i).route).name);
+			}
+		}
+
+		variables.push({
+			label: 'Label of SOLO',
+			name: 'solo'
+		});
+
+		this.setVariable('solo', this.getOutput(this.outputCount).name);
+
+		variables.push({
+			label: 'Label of input routed to SOLO',
+			name: 'solo_input'
+		});
+
+		this.setVariable('solo_input',  this.getInput(this.getOutput(this.outputCount).route).name);
+
+		variables.push({
+			label: 'Label of AUDIO',
+			name: 'audio'
+		});
+
+		this.setVariable('audio', this.getOutput(this.outputCount+1).name);
+
+		variables.push({
+			label: 'Label of input routed to AUDIO',
+			name: 'solo_audio'
+		});
+
+		this.setVariable('solo_audio',  this.getInput(this.getOutput(this.outputCount+1).route).name);
+
+		variables.push({
+			label: 'Label of selected view',
+			name: 'selected_destination'
+		});
+
+		this.setVariable('selected_destination', this.getOutput(this.selected).name);
+
+		variables.push({
+			label: 'Label of input routed to selection',
+			name: 'selected_source'
+		});
+
+		this.setVariable('selected_source', this.getInput(this.getOutput(this.selected).route).name);
+
+		this.setVariableDefinitions(variables);
 	}
 
 	/**
