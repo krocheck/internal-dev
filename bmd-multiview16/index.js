@@ -32,16 +32,16 @@ class instance extends videohub {
 		this.serialCount = 0;
 
 		this.CHOICES_LAYOUT = [
-			{ id: '2x2', label: '2x2' },
-			{ id: '3x3', label: '3x3' },
-			{ id: '4x4', label: '4x4' }
+			{ id: '2x2', label: '2x2',  preset: '2x2' },
+			{ id: '3x3', label: '3x3',  preset: '3x3' },
+			{ id: '4x4', label: '4x4',  preset: '4x4' }
 		];
 
 		this.CHOICES_OUTPUTFORMAT = [
-			{ id: '50i', label: '50i' },
-			{ id: '50p', label: '50p' },
-			{ id: '60i', label: '60i' },
-			{ id: '60p', label: '60p' }
+			{ id: '50i', label: '50i',  preset: '50i' },
+			{ id: '50p', label: '50p',  preset: '50p' },
+			{ id: '60i', label: '60i',  preset: '60i' },
+			{ id: '60p', label: '60p',  preset: '60p' }
 		];
 
 		this.CHOICES_TRUEFALSE = [
@@ -781,14 +781,14 @@ class instance extends videohub {
 		});
 
 		for (var type in this.PRESETS_SETTIGS) {
-			for (var choice in this.PRESETS_SETTIGS[type][choices]) {
+			for (var choice in this.PRESETS_SETTIGS[type].choices) {
 
 				presets.push({
 					category: 'Settings',
-					label: this.PRESETS_SETTIGS[type].label + this.PRESETS_SETTIGS[type][choice].label,
+					label: this.PRESETS_SETTIGS[type].label + this.PRESETS_SETTIGS[type].choices[choice].preset,
 					bank: {
 						style: 'text',
-						text: this.PRESETS_SETTIGS[type].label + this.PRESETS_SETTIGS[type][choice].label,
+						text: this.PRESETS_SETTIGS[type].label + this.PRESETS_SETTIGS[type].choices[choice].preset,
 						size: '14',
 						color: this.rgb(255,255,255),
 						bgcolor: this.rgb(0,0,0)
@@ -799,7 +799,7 @@ class instance extends videohub {
 							options: {
 								bg: this.rgb(255,255,0),
 								fg: this.rgb(0,0,0),
-								setting: this.PRESETS_SETTIGS[type][choice].id
+								setting: this.PRESETS_SETTIGS[type].choices[choice].id
 							}
 						}
 					],
@@ -807,7 +807,7 @@ class instance extends videohub {
 						{
 							action: this.PRESETS_SETTIGS[type].action,
 							options: {
-								setting: this.PRESETS_SETTIGS[type][choice].id
+								setting: this.PRESETS_SETTIGS[type].choices[choice].id
 							}
 						}
 					]
