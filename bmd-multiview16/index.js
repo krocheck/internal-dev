@@ -10,7 +10,6 @@ var log;
  * @extends videohub
  * @version 1.0.0
  * @since 1.0.0
- * @author William Viker <william@bitfocus.io>
  * @author Keith Rocheck <keith.rocheck@gmail.com>
  */
 class instance extends videohub {
@@ -314,7 +313,7 @@ class instance extends videohub {
 
 		if (this.configuration === undefined) {
 			this.configuration = {
-				layout:        '2x2',
+				layout:        '4x4',
 				outputFormat:  '60i',
 				soloEnabled:   'false',
 				widescreenSD:  'true',
@@ -1040,6 +1039,13 @@ class instance extends videohub {
 			this.checkFeedbacks('solo_source');
 			this.checkFeedbacks('audio_source');
 		}
+		else if (key == 'MULTIVIEW DEVICE') {
+			this.updateDevice(key,data);
+			this.actions();
+			this.initVariables();
+			this.initFeedbacks();
+			this.initPresets();
+		}
 		else if (key == 'CONFIGURATION') {
 			this.updateDeviceConfig(key,data);
 		}
@@ -1071,6 +1077,31 @@ class instance extends videohub {
 
 		if (resetConnection === true || this.socket === undefined) {
 			this.init_tcp();
+		}
+	}
+
+	/**
+	 * INTERNAL: Updates device data from the Videohub
+	 *
+	 * @param {string} labeltype - the command/data type being passed
+	 * @param {Object} object - the collected data
+	 * @access protected
+	 * @since 1.0.0
+	 */
+	updateDevice(labeltype, object) {
+
+		for (var key in object) {
+			var parsethis = object[key];
+			var a = parsethis.split(/: /);
+			var attribute = a.shift();
+			var value = a.join(" ");
+
+			switch (attribute) {
+				case 'Model name':
+					this.deviceName = value;
+					this.log('info', 'Connected to a ' + this.deviceName);
+					break;
+			}
 		}
 	}
 

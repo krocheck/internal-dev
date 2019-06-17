@@ -47,15 +47,15 @@ class instance extends instance_skel {
 		this.api = new instance_api(this);
 
 		this.CONFIG_MODEL = {
-			1: { id: 1, label: 'TV Studio',             inputs: 8,  auxes: 1,  MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
-			2: { id: 2, label: '1 ME Production',       inputs: 8,  auxes: 3,  MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
-			3: { id: 3, label: '2 ME Production',       inputs: 16, auxes: 6,  MEs: 2, USKs: 4, DSKs: 2, MPs: 2, MVs: 2, SSrc: 1, macros: 100 },
-			4: { id: 4, label: 'Production Studio 4K',  inputs: 8,  auxes: 1,  MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
-			5: { id: 5, label: '1 ME Production 4K',    inputs: 10, auxes: 3,  MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
-			6: { id: 6, label: '2 ME Production 4K',    inputs: 20, auxes: 6,  MEs: 2, USKs: 2, DSKs: 2, MPs: 2, MVs: 2, SSrc: 1, macros: 100 },
-			7: { id: 7, label: '4 ME Broadcast 4K',     inputs: 20, auxes: 6,  MEs: 4, USKs: 4, DSKs: 2, MPs: 4, MVs: 2, SSrc: 1, macros: 100 },
-			8: { id: 8, label: 'TV Studio HD',          inputs: 8,  auxes: 1,  MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
-			9: { id: 9, label: '4 ME Constellation 8K', inputs: 40, auxes: 24, MEs: 4, USKs: 4, DSKs: 4, MPs: 4, MVs: 4, SSrc: 2, macros: 100 }
+			1:  { id: 1,  label: 'TV Studio',            inputs: 8,  auxes: 1,  MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
+			2:  { id: 2,  label: '1 ME Production',      inputs: 8,  auxes: 3,  MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
+			3:  { id: 3,  label: '2 ME Production',      inputs: 16, auxes: 6,  MEs: 2, USKs: 4, DSKs: 2, MPs: 2, MVs: 2, SSrc: 1, macros: 100 },
+			4:  { id: 4,  label: 'Production Studio 4K', inputs: 8,  auxes: 1,  MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
+			5:  { id: 5,  label: '1 ME Production 4K',   inputs: 10, auxes: 3,  MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
+			6:  { id: 6,  label: '2 ME Production 4K',   inputs: 20, auxes: 6,  MEs: 2, USKs: 2, DSKs: 2, MPs: 2, MVs: 2, SSrc: 1, macros: 100 },
+			7:  { id: 7,  label: '4 ME Broadcast 4K',    inputs: 20, auxes: 6,  MEs: 4, USKs: 4, DSKs: 2, MPs: 4, MVs: 2, SSrc: 1, macros: 100 },
+			8:  { id: 8,  label: 'TV Studio HD',         inputs: 8,  auxes: 1,  MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
+			11: { id: 11, label: 'Constellation 8K',     inputs: 40, auxes: 24, MEs: 4, USKs: 4, DSKs: 4, MPs: 4, MVs: 4, SSrc: 2, macros: 100 }
 		};
 
 		this.CHOICES_AUXES = [];
