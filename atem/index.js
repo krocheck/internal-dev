@@ -55,6 +55,8 @@ class instance extends instance_skel {
 			6:  { id: 6,  label: '2 ME Production 4K',   inputs: 20, auxes: 6,  MEs: 2, USKs: 2, DSKs: 2, MPs: 2, MVs: 2, SSrc: 1, macros: 100 },
 			7:  { id: 7,  label: '4 ME Broadcast 4K',    inputs: 20, auxes: 6,  MEs: 4, USKs: 4, DSKs: 2, MPs: 4, MVs: 2, SSrc: 1, macros: 100 },
 			8:  { id: 8,  label: 'TV Studio HD',         inputs: 8,  auxes: 1,  MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
+			9:  { id: 9,  label: 'TV Studio Pro HD',     inputs: 8,  auxes: 1,  MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
+			10: { id: 10, label: 'TV Studio Pro 4K',     inputs: 8,  auxes: 1,  MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
 			11: { id: 11, label: 'Constellation 8K',     inputs: 40, auxes: 24, MEs: 4, USKs: 4, DSKs: 4, MPs: 4, MVs: 4, SSrc: 2, macros: 100 }
 		};
 
@@ -129,7 +131,7 @@ class instance extends instance_skel {
 			{ id: 3, label: '4' }
 		];
 
-		if (this.config.modelID !== undefined){
+		if (this.config.modelID !== undefined && this.config.modelID > 0){
 			this.model = this.CONFIG_MODEL[this.config.modelID];
 		}
 		else {
@@ -522,6 +524,10 @@ class instance extends instance_skel {
 				if (this.initDone === true) {
 					this.checkFeedbacks('trans_mods');
 				}
+				break;
+
+			case 'VersionCommand':
+				this.log('info', 'ATEM API Version: ' + state.properties.major + "." state.properties.minor);
 				break;
 		}
 	}

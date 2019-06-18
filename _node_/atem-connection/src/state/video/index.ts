@@ -154,12 +154,21 @@ export interface SuperSourceProperties {
 	borderLightSourceAltitude: number
 }
 
+export class SuperSource {
+	index: number
+	boxes: { [index: string]: SuperSourceBox } = {}
+	properties: SuperSourceProperties
+
+	constructor(index: number) {
+		this.index = index
+	}
+}
+
 export class AtemVideoState {
 	ME: { [index: string]: MixEffect } = {}
 	downstreamKeyers: { [index: string]: DownstreamKeyer } = {}
 	auxilliaries: { [index: string]: number } = {}
-	superSourceBoxes: { [index: string]: SuperSourceBox } = {}
-	superSourceProperties: SuperSourceProperties
+	superSources: { [index: string]: SuperSource } = {}
 
 	getMe (index: number) {
 		if (!this.ME[index]) {
@@ -175,5 +184,13 @@ export class AtemVideoState {
 		}
 
 		return this.downstreamKeyers[index]
+	}
+
+	getSuperSource(index: number) {
+		if (!this.superSources[index]) {
+			this.superSources[index] = new SuperSource(index)
+		}
+
+		return this.superSources[index]
 	}
 }

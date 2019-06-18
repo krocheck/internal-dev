@@ -18,6 +18,7 @@ export class SuperSourceBoxParametersCommand extends AbstractCommand {
 	}
 
 	rawName = 'SSBP'
+	ssrcId: number
 	boxId: number
 	properties: SuperSourceBox
 
@@ -26,40 +27,42 @@ export class SuperSourceBoxParametersCommand extends AbstractCommand {
 	}
 
 	deserialize (rawCommand: Buffer) {
-		this.boxId = rawCommand[0]
+		this.ssrcId = rawCommand[0]
+		this.boxId = rawCommand[1]
 		this.properties = {
-			enabled: rawCommand[1] === 1,
-			source: rawCommand.readUInt16BE(2),
-			x: Util.parseNumberBetween(rawCommand.readInt16BE(4), -4800, 4800),
-			y: Util.parseNumberBetween(rawCommand.readInt16BE(6), -3400, 3400),
-			size: Util.parseNumberBetween(rawCommand.readUInt16BE(8), 70, 1000),
-			cropped: rawCommand[10] === 1,
-			cropTop: Util.parseNumberBetween(rawCommand.readUInt16BE(12), 0, 18000),
-			cropBottom: Util.parseNumberBetween(rawCommand.readUInt16BE(14), 0, 18000),
-			cropLeft: Util.parseNumberBetween(rawCommand.readUInt16BE(16), 0, 32000),
-			cropRight: Util.parseNumberBetween(rawCommand.readUInt16BE(18), 0, 32000)
+			enabled: rawCommand[2] === 1,
+			source: rawCommand.readUInt16BE(3),
+			x: Util.parseNumberBetween(rawCommand.readInt16BE(5), -4800, 4800),
+			y: Util.parseNumberBetween(rawCommand.readInt16BE(7), -3400, 3400),
+			size: Util.parseNumberBetween(rawCommand.readUInt16BE(9), 70, 1000),
+			cropped: rawCommand[11] === 1,
+			cropTop: Util.parseNumberBetween(rawCommand.readUInt16BE(13), 0, 18000),
+			cropBottom: Util.parseNumberBetween(rawCommand.readUInt16BE(15), 0, 18000),
+			cropLeft: Util.parseNumberBetween(rawCommand.readUInt16BE(17), 0, 32000),
+			cropRight: Util.parseNumberBetween(rawCommand.readUInt16BE(19), 0, 32000)
 		}
 	}
 
 	serialize () {
 		const buffer = Buffer.alloc(24)
 		buffer.writeUInt16BE(this.flag, 0)
-		buffer.writeUInt8(this.boxId, 2)
-		buffer.writeUInt8(this.properties.enabled ? 1 : 0, 3)
-		buffer.writeUInt16BE(this.properties.source, 4)
-		buffer.writeInt16BE(this.properties.x, 6)
-		buffer.writeInt16BE(this.properties.y, 8)
-		buffer.writeUInt16BE(this.properties.size, 10)
-		buffer.writeUInt8(this.properties.cropped ? 1 : 0, 12)
-		buffer.writeUInt16BE(this.properties.cropTop, 14)
-		buffer.writeUInt16BE(this.properties.cropBottom, 16)
-		buffer.writeUInt16BE(this.properties.cropLeft, 18)
-		buffer.writeUInt16BE(this.properties.cropRight, 20)
+		buffer.writeUInt8(this.ssrcId,2)
+		buffer.writeUInt8(this.boxId, 3)
+		buffer.writeUInt8(this.properties.enabled ? 1 : 0, 4)
+		buffer.writeUInt16BE(this.properties.source, 5)
+		buffer.writeInt16BE(this.properties.x, 7)
+		buffer.writeInt16BE(this.properties.y, 9)
+		buffer.writeUInt16BE(this.properties.size, 11)
+		buffer.writeUInt8(this.properties.cropped ? 1 : 0, 13)
+		buffer.writeUInt16BE(this.properties.cropTop, 15)
+		buffer.writeUInt16BE(this.properties.cropBottom, 17)
+		buffer.writeUInt16BE(this.properties.cropLeft, 19)
+		buffer.writeUInt16BE(this.properties.cropRight, 21)
 		return Buffer.concat([Buffer.from('CSBP', 'ascii'), buffer])
 	}
 
 	applyToState (state: AtemState) {
-		state.video.superSourceBoxes[this.boxId] = {
+		state.video.getSuperSource(this.ssrcId).boxes[this.boxId] = {
 			...this.properties
 		}
 	}
