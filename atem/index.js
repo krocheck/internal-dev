@@ -122,6 +122,13 @@ class instance extends instance_skel {
 			{ id: 1, label: 'Long Names' }
 		];
 
+		this.CHOICES_SSRCBOXES = [
+			{ id: 0, label: 'Box 1' },
+			{ id: 1, label: 'Box 2' },
+			{ id: 2, label: 'Box 3' },
+			{ id: 3, label: 'Box 4' }
+		];
+
 		this.CHOICES_SUPERSOURCES = [
 			{ id: 0, label: 'SuperSource 1' },
 			{ id: 1, label: 'SuperSource 2' }

@@ -32,14 +32,14 @@ export class SuperSourceBoxParametersCommand extends AbstractCommand {
 		this.properties = {
 			enabled: rawCommand[2] === 1,
 			source: rawCommand.readUInt16BE(3),
-			x: Util.parseNumberBetween(rawCommand.readInt16BE(5), -4800, 4800),
-			y: Util.parseNumberBetween(rawCommand.readInt16BE(7), -3400, 3400),
-			size: Util.parseNumberBetween(rawCommand.readUInt16BE(9), 70, 1000),
-			cropped: rawCommand[11] === 1,
-			cropTop: Util.parseNumberBetween(rawCommand.readUInt16BE(13), 0, 18000),
-			cropBottom: Util.parseNumberBetween(rawCommand.readUInt16BE(15), 0, 18000),
-			cropLeft: Util.parseNumberBetween(rawCommand.readUInt16BE(17), 0, 32000),
-			cropRight: Util.parseNumberBetween(rawCommand.readUInt16BE(19), 0, 32000)
+			x: Util.parseNumberBetween(rawCommand.readInt16BE(6), -4800, 4800),
+			y: Util.parseNumberBetween(rawCommand.readInt16BE(8), -3400, 3400),
+			size: Util.parseNumberBetween(rawCommand.readUInt16BE(10), 70, 1000),
+			cropped: rawCommand[12] === 1,
+			cropTop: Util.parseNumberBetween(rawCommand.readUInt16BE(14), 0, 18000),
+			cropBottom: Util.parseNumberBetween(rawCommand.readUInt16BE(16), 0, 18000),
+			cropLeft: Util.parseNumberBetween(rawCommand.readUInt16BE(18), 0, 32000),
+			cropRight: Util.parseNumberBetween(rawCommand.readUInt16BE(20), 0, 32000)
 		}
 	}
 
