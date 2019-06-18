@@ -242,6 +242,21 @@ module.exports = {
 				}
 			]
 		};
+
+		if (this.model.SSrc > 1) {
+			actions['setSsrcCascade'] = {
+				label: 'Set SuperSource cascade',
+				options: [
+					{
+						type:    'checkbox',
+						id:      'enable',
+						label:   'Enable Cascade?',
+						default: false
+					}
+				]
+			};
+		}
+
 		actions['setSsrcBoxSource'] = {
 			label: 'Change SuperSource box source',
 			options: [

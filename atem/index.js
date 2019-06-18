@@ -99,12 +99,10 @@ class instance extends instance_skel {
 		];
 
 		this.CHOICES_MODEL = Object.values(this.CONFIG_MODEL);
-		// Sort alphabetical but leave index 0 at the top (Auto Detect)
+		// Sort alphabetical
 		this.CHOICES_MODEL.sort(function(a, b){
 			var x = a.label.toLowerCase();
 			var y = b.label.toLowerCase();
-			if (a.id == 0) {return -1;}
-			if (b.id == 0) {return 1;}
 			if (x < y) {return -1;}
 			if (x > y) {return 1;}
 			return 0;
@@ -225,6 +223,9 @@ class instance extends instance_skel {
 			case 'setMvSource':
 				this.atem.setMultiViewerSource( { 'windowIndex': opt.windowIndex, 'source': opt.source }, opt.multiViewerId);
 				break;
+			case 'setSsrcCascade':
+				this.atem.setSuperSourceCascade(opt.enable);
+				break;
 			case 'setSsrcBoxSource':
 				this.atem.setSuperSourceBoxSettings( { 'source': opt.source }, opt.boxIndex);
 				break;
@@ -251,7 +252,7 @@ class instance extends instance_skel {
 				id:      'info',
 				width:   12,
 				label:   'Information',
-				value:   'Should work with all models of Blackmagic Design ATEM mixers.<br />In general this should be left in \'Auto Detect\', however a specific model can be selected below for offline programming.'
+				value:   'Should work with all models of Blackmagic Design ATEM mixers.'
 			},
 			{
 				type:    'textinput',
@@ -494,6 +495,14 @@ class instance extends instance_skel {
 				}
 				break;
 
+			case 'SuperSourceCascadeCommand':
+				this.api.getSuperSourceCascade(state.properties.enabled)
+
+				if (this.initDone === true) {
+					this.checkFeedbacks('ssrc_cascade');
+				}
+				break;
+
 			case 'SuperSourcePropertiesCommand':
 				this.api.updateSuperSource(0, state.properties)
 
@@ -527,7 +536,7 @@ class instance extends instance_skel {
 				break;
 
 			case 'VersionCommand':
-				this.log('info', 'ATEM API Version: ' + state.properties.major + "." state.properties.minor);
+				this.log('info', 'ATEM API Version: ' + state.properties.major + "." + state.properties.minor);
 				break;
 		}
 	}

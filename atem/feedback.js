@@ -809,6 +809,42 @@ module.exports = {
 				}
 			}
 		};
+
+		if (this.model.SSrc > 1) {
+			actions['ssrc_cascade'] = {
+				label: 'Change colors from SuperSorce cascade state',
+				description: 'If the SuperSource cascade is set to the specific state, change color of the bank',
+				options: [
+					{
+						type: 'colorpicker',
+						label: 'Foreground color',
+						id: 'fg',
+						default: this.rgb(0,0,0)
+					},
+					{
+						type: 'colorpicker',
+						label: 'Background color',
+						id: 'bg',
+						default: this.rgb(255,255,0)
+					},
+					{
+						type:    'checkbox',
+						id:      'enabled',
+						label:   'Cascade enabled?',
+						default: false
+					}
+				],
+				callback: (feedback, bank) => {
+					if (this.api.getSuperSourceCascade() === opt.enabled) {
+						return {
+							color: feedback.options.fg,
+							bgcolor: feedback.options.bg
+						};
+					}
+				}
+			};
+		}
+
 		feedbacks['ssrc_box_source'] = {
 			label: 'Change colors from SuperSorce box source',
 			description: 'If the specified SuperSource box is set to the specified source, change color of the bank',

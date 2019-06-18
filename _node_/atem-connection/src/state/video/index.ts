@@ -169,6 +169,7 @@ export class AtemVideoState {
 	downstreamKeyers: { [index: string]: DownstreamKeyer } = {}
 	auxilliaries: { [index: string]: number } = {}
 	superSources: { [index: string]: SuperSource } = {}
+	superSourceCadcade: boolean
 
 	getMe (index: number) {
 		if (!this.ME[index]) {

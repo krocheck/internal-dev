@@ -249,6 +249,24 @@ class instance_api {
 	}
 
 	/**
+	 * INTERNAL: returns the SuperSource cascade state.
+	 *
+	 * @returns {boolean} the desired ssrc object
+	 * @access protected
+	 * @since 1.2.0
+	 */
+	getSuperSourceCascade() {
+
+		if (this.states['ssrc_cascade'] === undefined) {
+			this.states['ssrc_cascade'] = {
+				enabled: false
+			};
+		}
+
+		return this.states['ssrc_cascade'].enabled;
+	}
+
+	/**
 	 * INTERNAL: returns the desired SuperSource box object.
 	 *
 	 * @param {number} box - the ssrc box to fetch

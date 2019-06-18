@@ -324,6 +324,12 @@ export class Atem extends EventEmitter {
 		return this.sendCommand(command)
 	}
 
+	setSuperSourceCascade(enable: boolean) {
+		const command = new Commands.SuperSourceCascadeCommand()
+		command.updateProps({ enabled: enable })
+		return this.sendCommand(command)
+	}
+
 	setSuperSourceProperties (newProps: Partial<SuperSourceProperties>) {
 		const command = new Commands.SuperSourcePropertiesCommand()
 		command.updateProps(newProps)
