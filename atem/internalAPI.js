@@ -279,7 +279,7 @@ class instance_api {
 
 		if (this.states['ssrc' + id + 'box' + box] === undefined) {
 			this.states['ssrc' + id + 'box' + box] = {
-				enabled:    0,
+				enabled:    false,
 				source:     0,
 				x:          0,
 				y:          0,

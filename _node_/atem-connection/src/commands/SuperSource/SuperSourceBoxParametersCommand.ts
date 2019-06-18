@@ -31,7 +31,7 @@ export class SuperSourceBoxParametersCommand extends AbstractCommand {
 		this.boxId = rawCommand[1]
 		this.properties = {
 			enabled: rawCommand[2] === 1,
-			source: rawCommand.readUInt16BE(3),
+			source: rawCommand.readUInt16BE(4),
 			x: Util.parseNumberBetween(rawCommand.readInt16BE(6), -4800, 4800),
 			y: Util.parseNumberBetween(rawCommand.readInt16BE(8), -3400, 3400),
 			size: Util.parseNumberBetween(rawCommand.readUInt16BE(10), 70, 1000),

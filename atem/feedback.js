@@ -925,7 +925,7 @@ module.exports = {
 					},
 					{
 						type:    'checkbox',
-						id:      'enable',
+						id:      'enabled',
 						label:   'Box enabled?',
 						default: false
 					}

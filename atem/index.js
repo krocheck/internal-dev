@@ -485,7 +485,7 @@ class instance extends instance_skel {
 				}
 				break;
 
-			case 'SuperSourceBoxPropertiesCommand':
+			case 'SuperSourceBoxParametersCommand':
 				this.api.updateSuperSourceBox(state.boxId, state.ssrcId, state.properties);
 
 				if (this.initDone === true) {
