@@ -1,8 +1,11 @@
-export interface MultiViewerWindowState {
-	windowIndex: number
-	source: number
+export interface MultiViewerWindowState extends MultiViewerSourceState {
 	safeTitle: boolean
 	audioMeter: boolean
+}
+
+export interface MultiViewerSourceState {
+	windowIndex: number
+	source: number
 }
 
 export class MultiViewer {

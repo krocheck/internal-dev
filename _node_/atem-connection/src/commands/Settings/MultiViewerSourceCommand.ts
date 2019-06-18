@@ -1,15 +1,15 @@
 import AbstractCommand from '../AbstractCommand'
 import { AtemState } from '../../state'
-import { MultiViewerWindowState } from '../../state/settings'
+import { MultiViewerSourceState } from '../../state/settings'
 
 export class MultiViewerSourceCommand extends AbstractCommand {
 	rawName = 'MvIn'
 	multiViewerId: number
 	index: number
 
-	properties: MultiViewerWindowState
+	properties: MultiViewerSourceState
 
-	updateProps (newProps: Partial<MultiViewerWindowState>) {
+	updateProps (newProps: Partial<MultiViewerSourceState>) {
 		this._updateProps(newProps)
 	}
 
@@ -38,8 +38,8 @@ export class MultiViewerSourceCommand extends AbstractCommand {
 		const obj: { [key: string]: MultiViewerSourceState } = {}
 		obj[this.index] = this.properties
 
-		state.settings.multiViewers[this.multiViewerId] = {
-			...state.settings.multiViewers[this.multiViewerId],
+		state.settings.getMultiViewer(this.multiViewerId).windows[this.index] = {
+			...state.settings.getMultiViewer(this.multiViewerId).windows[this.index],
 			...obj
 		}
 	}
