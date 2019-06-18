@@ -39,27 +39,27 @@ export class SuperSourcePropertiesCommand extends AbstractCommand {
 	deserialize (rawCommand: Buffer) {
 		this.ssrcId = rawCommand[0]
 		this.properties = {
-			artFillSource: rawCommand.readUInt16BE(1),
-			artCutSource: rawCommand.readUInt16BE(3),
-			artOption: Util.parseEnum<Enums.SuperSourceArtOption>(rawCommand.readUInt8(5), Enums.SuperSourceArtOption),
-			artPreMultiplied: rawCommand[6] === 1,
-			artClip: Util.parseNumberBetween(rawCommand.readUInt16BE(7), 0, 1000),
-			artGain: Util.parseNumberBetween(rawCommand.readUInt16BE(9), 0, 1000),
-			artInvertKey: rawCommand[11] === 1,
+			artFillSource: rawCommand.readUInt16BE(2),
+			artCutSource: rawCommand.readUInt16BE(4),
+			artOption: Util.parseEnum<Enums.SuperSourceArtOption>(rawCommand.readUInt8(6), Enums.SuperSourceArtOption),
+			artPreMultiplied: rawCommand[7] === 1,
+			artClip: Util.parseNumberBetween(rawCommand.readUInt16BE(8), 0, 1000),
+			artGain: Util.parseNumberBetween(rawCommand.readUInt16BE(10), 0, 1000),
+			artInvertKey: rawCommand[12] === 1,
 
-			borderEnabled: rawCommand[12] === 1,
-			borderBevel: Util.parseEnum<Enums.BorderBevel>(rawCommand.readUInt8(13), Enums.BorderBevel),
-			borderOuterWidth: Util.parseNumberBetween(rawCommand.readUInt16BE(15), 0, 1600),
-			borderInnerWidth: Util.parseNumberBetween(rawCommand.readUInt16BE(17), 0, 1600),
-			borderOuterSoftness: Util.parseNumberBetween(rawCommand.readUInt8(19), 0, 100),
-			borderInnerSoftness: Util.parseNumberBetween(rawCommand.readUInt8(20), 0, 100),
-			borderBevelSoftness: Util.parseNumberBetween(rawCommand.readUInt8(21), 0, 100),
-			borderBevelPosition: Util.parseNumberBetween(rawCommand.readUInt8(22), 0, 100),
-			borderHue: Util.parseNumberBetween(rawCommand.readUInt16BE(23), 0, 3599),
-			borderSaturation: Util.parseNumberBetween(rawCommand.readUInt16BE(25), 0, 1000),
-			borderLuma: Util.parseNumberBetween(rawCommand.readUInt16BE(27), 0, 1000),
-			borderLightSourceDirection: Util.parseNumberBetween(rawCommand.readUInt16BE(29), 0, 3599),
-			borderLightSourceAltitude: Util.parseNumberBetween(rawCommand.readUInt8(31), 0, 100)
+			borderEnabled: rawCommand[13] === 1,
+			borderBevel: Util.parseEnum<Enums.BorderBevel>(rawCommand.readUInt8(14), Enums.BorderBevel),
+			borderOuterWidth: Util.parseNumberBetween(rawCommand.readUInt16BE(16), 0, 1600),
+			borderInnerWidth: Util.parseNumberBetween(rawCommand.readUInt16BE(18), 0, 1600),
+			borderOuterSoftness: Util.parseNumberBetween(rawCommand.readUInt8(20), 0, 100),
+			borderInnerSoftness: Util.parseNumberBetween(rawCommand.readUInt8(21), 0, 100),
+			borderBevelSoftness: Util.parseNumberBetween(rawCommand.readUInt8(22), 0, 100),
+			borderBevelPosition: Util.parseNumberBetween(rawCommand.readUInt8(23), 0, 100),
+			borderHue: Util.parseNumberBetween(rawCommand.readUInt16BE(24), 0, 3599),
+			borderSaturation: Util.parseNumberBetween(rawCommand.readUInt16BE(26), 0, 1000),
+			borderLuma: Util.parseNumberBetween(rawCommand.readUInt16BE(28), 0, 1000),
+			borderLightSourceDirection: Util.parseNumberBetween(rawCommand.readUInt16BE(30), 0, 3599),
+			borderLightSourceAltitude: Util.parseNumberBetween(rawCommand.readUInt8(32), 0, 100)
 		}
 	}
 
@@ -68,27 +68,27 @@ export class SuperSourcePropertiesCommand extends AbstractCommand {
 
 		buffer.writeUInt32BE(this.flag, 0)
 		buffer.writeUInt8(this.ssrcId, 4)
-		buffer.writeUInt16BE(this.properties.artFillSource, 5)
-		buffer.writeUInt16BE(this.properties.artCutSource, 7)
-		buffer.writeUInt8(this.properties.artOption, 9)
-		buffer.writeUInt8(this.properties.artPreMultiplied ? 1 : 0, 10)
-		buffer.writeUInt16BE(this.properties.artClip, 11)
-		buffer.writeUInt16BE(this.properties.artGain, 13)
-		buffer.writeUInt8(this.properties.artInvertKey ? 1 : 0, 15)
+		buffer.writeUInt16BE(this.properties.artFillSource, 6)
+		buffer.writeUInt16BE(this.properties.artCutSource, 8)
+		buffer.writeUInt8(this.properties.artOption, 10)
+		buffer.writeUInt8(this.properties.artPreMultiplied ? 1 : 0, 11)
+		buffer.writeUInt16BE(this.properties.artClip, 12)
+		buffer.writeUInt16BE(this.properties.artGain, 14)
+		buffer.writeUInt8(this.properties.artInvertKey ? 1 : 0, 16)
 
-		buffer.writeUInt8(this.properties.borderEnabled ? 1 : 0, 16)
-		buffer.writeUInt8(this.properties.borderBevel, 17)
-		buffer.writeUInt16BE(this.properties.borderOuterWidth, 19)
-		buffer.writeUInt16BE(this.properties.borderInnerWidth, 21)
-		buffer.writeUInt8(this.properties.borderOuterSoftness, 23)
-		buffer.writeUInt8(this.properties.borderInnerSoftness, 24)
-		buffer.writeUInt8(this.properties.borderBevelSoftness, 25)
-		buffer.writeUInt8(this.properties.borderBevelPosition, 26)
-		buffer.writeUInt16BE(this.properties.borderHue, 27)
-		buffer.writeUInt16BE(this.properties.borderSaturation, 29)
-		buffer.writeUInt16BE(this.properties.borderLuma, 31)
-		buffer.writeUInt16BE(this.properties.borderLightSourceDirection, 33)
-		buffer.writeUInt8(this.properties.borderLightSourceAltitude, 35)
+		buffer.writeUInt8(this.properties.borderEnabled ? 1 : 0, 17)
+		buffer.writeUInt8(this.properties.borderBevel, 18)
+		buffer.writeUInt16BE(this.properties.borderOuterWidth, 20)
+		buffer.writeUInt16BE(this.properties.borderInnerWidth, 22)
+		buffer.writeUInt8(this.properties.borderOuterSoftness, 24)
+		buffer.writeUInt8(this.properties.borderInnerSoftness, 25)
+		buffer.writeUInt8(this.properties.borderBevelSoftness, 26)
+		buffer.writeUInt8(this.properties.borderBevelPosition, 27)
+		buffer.writeUInt16BE(this.properties.borderHue, 28)
+		buffer.writeUInt16BE(this.properties.borderSaturation, 30)
+		buffer.writeUInt16BE(this.properties.borderLuma, 32)
+		buffer.writeUInt16BE(this.properties.borderLightSourceDirection, 34)
+		buffer.writeUInt8(this.properties.borderLightSourceAltitude, 36)
 
 		return Buffer.concat([Buffer.from('CSSc', 'ascii'), buffer])
 	}

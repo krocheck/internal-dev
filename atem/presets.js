@@ -385,8 +385,7 @@ module.exports = {
 			}
 		}
 
-		//Future loop for multiple SSRC
-		for (var i = 0; i < 1; i++) {
+		for (var i = 0; i < this.model.SSrc; i++) {
 
 			for (var j = 0; j < 4; j++) {
 
@@ -408,7 +407,7 @@ module.exports = {
 								options: {
 									bg:        this.rgb(255,255,0),
 									fg:        this.rgb(0,0,0),
-									//ssrcId:    i,
+									ssrcId:    i,
 									source:    this.CHOICES_MESOURCES[k].id,
 									boxIndex:  j
 								}
@@ -418,7 +417,7 @@ module.exports = {
 							{
 								action: 'setSsrcBoxSource',
 								options: {
-									//ssrcId:    i,
+									ssrcId:    i,
 									source:    this.CHOICES_MESOURCES[k].id,
 									boxIndex:  j
 								}
