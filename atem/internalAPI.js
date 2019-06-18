@@ -263,7 +263,7 @@ class instance_api {
 			};
 		}
 
-		return this.states['ssrc_cascade'].enabled;
+		return this.states['ssrc_cascade'];
 	}
 
 	/**

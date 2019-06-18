@@ -811,7 +811,7 @@ module.exports = {
 		};
 
 		if (this.model.SSrc > 1) {
-			actions['ssrc_cascade'] = {
+			feedbacks['ssrc_cascade'] = {
 				label: 'Change colors from SuperSorce cascade state',
 				description: 'If the SuperSource cascade is set to the specific state, change color of the bank',
 				options: [
@@ -835,7 +835,7 @@ module.exports = {
 					}
 				],
 				callback: (feedback, bank) => {
-					if (this.api.getSuperSourceCascade() === opt.enabled) {
+					if (this.api.getSuperSourceCascade().enabled === feedback.options.enabled) {
 						return {
 							color: feedback.options.fg,
 							bgcolor: feedback.options.bg
@@ -845,46 +845,101 @@ module.exports = {
 			};
 		}
 
-		feedbacks['ssrc_box_source'] = {
-			label: 'Change colors from SuperSorce box source',
-			description: 'If the specified SuperSource box is set to the specified source, change color of the bank',
-			options: [
-				{
-					type: 'colorpicker',
-					label: 'Foreground color',
-					id: 'fg',
-					default: this.rgb(0,0,0)
-				},
-				{
-					type: 'colorpicker',
-					label: 'Background color',
-					id: 'bg',
-					default: this.rgb(255,255,0)
-				},
-				{
-					type:    'dropdown',
-					id:      'boxIndex',
-					label:   'Box #',
-					default: 2,
-					choices: this.CHOICES_SSRCBOXES
-				},
-				{
-					type:    'dropdown',
-					id:      'source',
-					label:   'Source',
-					default: 0,
-					choices: this.CHOICES_MESOURCES
+		if (this.model.SSrc > 0) {
+			feedbacks['ssrc_box_source'] = {
+				label: 'Change colors from SuperSorce box source',
+				description: 'If the specified SuperSource box is set to the specified source, change color of the bank',
+				options: [
+					{
+						type: 'colorpicker',
+						label: 'Foreground color',
+						id: 'fg',
+						default: this.rgb(0,0,0)
+					},
+					{
+						type: 'colorpicker',
+						label: 'Background color',
+						id: 'bg',
+						default: this.rgb(255,255,0)
+					},
+					{
+						type: 'dropdown',
+						id: 'ssrc',
+						label: 'SuperSource',
+						default: 0,
+						choices: this.CHOICES_SUPERSOURCES.slice(0, this.model.SSrc)
+					},
+					{
+						type:    'dropdown',
+						id:      'boxIndex',
+						label:   'Box #',
+						default: 0,
+						choices: this.CHOICES_SSRCBOXES
+					},
+					{
+						type:    'dropdown',
+						id:      'source',
+						label:   'Source',
+						default: 0,
+						choices: this.CHOICES_MESOURCES
+					}
+				],
+				callback: (feedback, bank) => {
+					if (this.api.getSuperSourceBox(feedback.options.boxIndex, feedback.options.ssrc).source == feedback.options.source) {
+						return {
+							color: feedback.options.fg,
+							bgcolor: feedback.options.bg
+						};
+					}
 				}
-			],
-			callback: (feedback, bank) => {
-				if (this.api.getSuperSourceBox(opt.boxIndex, 0).source == opt.source) {
-					return {
-						color: feedback.options.fg,
-						bgcolor: feedback.options.bg
-					};
+			};
+			feedbacks['ssrc_box_enabled'] = {
+				label: 'Change colors from SuperSorce box enable state',
+				description: 'If the specified SuperSource box is set to the specified enable state, change color of the bank',
+				options: [
+					{
+						type: 'colorpicker',
+						label: 'Foreground color',
+						id: 'fg',
+						default: this.rgb(0,0,0)
+					},
+					{
+						type: 'colorpicker',
+						label: 'Background color',
+						id: 'bg',
+						default: this.rgb(255,255,0)
+					},
+					{
+						type: 'dropdown',
+						id: 'ssrc',
+						label: 'SuperSource',
+						default: 0,
+						choices: this.CHOICES_SUPERSOURCES.slice(0, this.model.SSrc)
+					},
+					{
+						type:    'dropdown',
+						id:      'boxIndex',
+						label:   'Box #',
+						default: 0,
+						choices: this.CHOICES_SSRCBOXES
+					},
+					{
+						type:    'checkbox',
+						id:      'enable',
+						label:   'Box enabled?',
+						default: false
+					}
+				],
+				callback: (feedback, bank) => {
+					if (this.api.getSuperSourceBox(feedback.options.boxIndex, feedback.options.ssrc).enabled === feedback.options.enabled) {
+						return {
+							color: feedback.options.fg,
+							bgcolor: feedback.options.bg
+						};
+					}
 				}
-			}
-		};
+			};
+		}
 
 		this.setFeedbackDefinitions(feedbacks);
 	}

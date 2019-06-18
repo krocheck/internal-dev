@@ -317,8 +317,9 @@ export class Atem extends EventEmitter {
 		return this.sendCommand(command)
 	}
 
-	setSuperSourceBoxSettings (newProps: Partial<SuperSourceBox>, box = 0) {
+	setSuperSourceBoxSettings (newProps: Partial<SuperSourceBox>, box = 0, ssrc = 0) {
 		const command = new Commands.SuperSourceBoxParametersCommand()
+		command.ssrcId = ssrc
 		command.boxId = box
 		command.updateProps(newProps)
 		return this.sendCommand(command)
@@ -330,8 +331,9 @@ export class Atem extends EventEmitter {
 		return this.sendCommand(command)
 	}
 
-	setSuperSourceProperties (newProps: Partial<SuperSourceProperties>) {
+	setSuperSourceProperties (newProps: Partial<SuperSourceProperties>, ssrc = 0) {
 		const command = new Commands.SuperSourcePropertiesCommand()
+		command.ssrcId = ssrc
 		command.updateProps(newProps)
 		return this.sendCommand(command)
 	}

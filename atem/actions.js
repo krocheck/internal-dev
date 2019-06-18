@@ -250,50 +250,66 @@ module.exports = {
 					{
 						type:    'checkbox',
 						id:      'enable',
-						label:   'Enable Cascade?',
+						label:   'Enable cascade?',
 						default: false
 					}
 				]
 			};
 		}
 
-		actions['setSsrcBoxSource'] = {
-			label: 'Change SuperSource box source',
-			options: [
-				{
-					type:    'dropdown',
-					id:      'boxIndex',
-					label:   'Box #',
-					default: 0,
-					choices: this.CHOICES_SSRCBOXES
-				},
-				{
-					type:    'dropdown',
-					id:      'source',
-					label:   'Source',
-					default: 0,
-					choices: this.CHOICES_MESOURCES
-				}
-			]
-		};
-		actions['setSsrcBoxEnabled'] = {
-			label: 'Change SuperSource box source',
-			options: [
-				{
-					type:    'dropdown',
-					id:      'boxIndex',
-					label:   'Box #',
-					default: 0,
-					choices: this.CHOICES_SSRCBOXES
-				},
-				{
-					type:    'checkbox',
-					id:      'enabled',
-					label:   'Enabled?',
-					default: true
-				}
-			]
-		};
+		if (this.model.SSrc > 0) {
+			actions['setSsrcBoxSource'] = {
+				label: 'Change SuperSource box source',
+				options: [
+					{
+						type: 'dropdown',
+						id: 'ssrc',
+						label: 'SuperSource',
+						default: 0,
+						choices: this.CHOICES_SUPERSOURCES.slice(0, this.model.SSrc)
+					},
+					{
+						type:    'dropdown',
+						id:      'boxIndex',
+						label:   'Box #',
+						default: 0,
+						choices: this.CHOICES_SSRCBOXES
+					},
+					{
+						type:    'dropdown',
+						id:      'source',
+						label:   'Source',
+						default: 0,
+						choices: this.CHOICES_MESOURCES
+					}
+				]
+			};
+			actions['setSsrcBoxEnabled'] = {
+				label: 'Set SuperSource box enable',
+				options: [
+					{
+						type: 'dropdown',
+						id: 'ssrc',
+						label: 'SuperSource',
+						default: 0,
+						choices: this.CHOICES_SUPERSOURCES.slice(0, this.model.SSrc)
+					},
+					{
+						type:    'dropdown',
+						id:      'boxIndex',
+						label:   'Box #',
+						default: 0,
+						choices: this.CHOICES_SSRCBOXES
+					},
+					{
+						type:    'checkbox',
+						id:      'enable',
+						label:   'Enable box?',
+						default: false
+					}
+				]
+			};
+		}
 
 		return actions;
 	}

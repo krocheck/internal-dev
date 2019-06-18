@@ -122,6 +122,11 @@ class instance extends instance_skel {
 			{ id: 1, label: 'Long Names' }
 		];
 
+		this.CHOICES_SUPERSOURCES = [
+			{ id: 0, label: 'SuperSource 1' },
+			{ id: 1, label: 'SuperSource 2' }
+		];
+
 		this.CHOICES_USKS = [
 			{ id: 0, label: '1' },
 			{ id: 1, label: '2' },
@@ -227,10 +232,10 @@ class instance extends instance_skel {
 				this.atem.setSuperSourceCascade(opt.enable);
 				break;
 			case 'setSsrcBoxSource':
-				this.atem.setSuperSourceBoxSettings( { 'source': opt.source }, opt.boxIndex);
+				this.atem.setSuperSourceBoxSettings( { 'source': opt.source }, opt.boxIndex, opt.ssrc);
 				break;
 			case 'setSsrcBoxEnabled':
-				this.atem.setSuperSourceBoxSettings( { 'enabled': opt.enabled }, opt.boxIndex);
+				this.atem.setSuperSourceBoxSettings( { 'enabled': opt.enable }, opt.boxIndex, opt.ssrc);
 				break;
 			default:
 				this.debug('Unknown action: ' + action.action);
@@ -370,21 +375,7 @@ class instance extends instance_skel {
 				this.log('info', 'Connected to a ' + this.deviceName);
 
 				this.setAtemModel(this.deviceModel);
-				this.checkFeedbacks('aux_bg');
-				this.checkFeedbacks('preview_bg');
-				this.checkFeedbacks('preview_bg_2');
-				this.checkFeedbacks('preview_bg_3');
-				this.checkFeedbacks('preview_bg_4');
-				this.checkFeedbacks('program_bg');
-				this.checkFeedbacks('program_bg_2');
-				this.checkFeedbacks('program_bg_3');
-				this.checkFeedbacks('program_bg_4');
-				this.checkFeedbacks('dsk_bg');
-				this.checkFeedbacks('dsk_source');
-				this.checkFeedbacks('usk_bg');
-				this.checkFeedbacks('usk_source');
-				this.checkFeedbacks('macro');
-				this.checkFeedbacks('mv_source');
+				this.checkFeedbacks();
 				break;
 
 			case 'InputPropertiesCommand':
@@ -488,15 +479,16 @@ class instance extends instance_skel {
 				break;
 
 			case 'SuperSourceBoxPropertiesCommand':
-				this.api.updateSuperSourceBox(state.boxId, 0, state.properties)
+				this.api.updateSuperSourceBox(state.boxId, state.ssrcId, state.properties);
 
 				if (this.initDone === true) {
 					this.checkFeedbacks('ssrc_box_source');
+					this.checkFeedbacks('ssrc_box_enabled');
 				}
 				break;
 
 			case 'SuperSourceCascadeCommand':
-				this.api.getSuperSourceCascade(state.properties.enabled)
+				this.api.getSuperSourceCascade().enabled = state.properties.enabled;
 
 				if (this.initDone === true) {
 					this.checkFeedbacks('ssrc_cascade');
@@ -504,7 +496,7 @@ class instance extends instance_skel {
 				break;
 
 			case 'SuperSourcePropertiesCommand':
-				this.api.updateSuperSource(0, state.properties)
+				this.api.updateSuperSource(state.ssrcId, state.properties);
 
 				if (this.initDone === true) {
 					//this.checkFeedbacks('ssrc_');
