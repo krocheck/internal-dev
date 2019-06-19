@@ -130,15 +130,7 @@ export interface SuperSourceBox {
 	cropRight: number
 }
 
-export interface SuperSourceProperties {
-	artFillSource: number
-	artCutSource: number
-	artOption: Enum.SuperSourceArtOption
-	artPreMultiplied: boolean
-	artClip: number
-	artGain: number
-	artInvertKey: boolean
-
+export interface SuperSourceBorder {
 	borderEnabled: boolean
 	borderBevel: Enum.BorderBevel
 	borderOuterWidth: number
@@ -154,10 +146,21 @@ export interface SuperSourceProperties {
 	borderLightSourceAltitude: number
 }
 
+export interface SuperSourceProperties {
+	artFillSource: number
+	artCutSource: number
+	artOption: Enum.SuperSourceArtOption
+	artPreMultiplied: boolean
+	artClip: number
+	artGain: number
+	artInvertKey: boolean
+}
+
 export class SuperSource {
 	index: number
 	boxes: { [index: string]: SuperSourceBox } = {}
 	properties: SuperSourceProperties
+	border: SuperSourceBorder
 
 	constructor(index: number) {
 		this.index = index

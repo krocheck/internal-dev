@@ -14,7 +14,8 @@ import {
 	SuperSourceBox,
 	TransitionProperties,
 	WipeTransitionSettings,
-	SuperSourceProperties
+	SuperSourceProperties,
+    SuperSourceBorder
 } from './state/video'
 import * as USK from './state/video/upstreamKeyers'
 import { InputChannel } from './state/input'
@@ -321,6 +322,13 @@ export class Atem extends EventEmitter {
 		const command = new Commands.SuperSourceBoxParametersCommand()
 		command.ssrcId = ssrc
 		command.boxId = box
+		command.updateProps(newProps)
+		return this.sendCommand(command)
+	}
+
+	setSuperSourceBorder(newProps: Partial<SuperSourceBorder>, ssrc = 0) {
+		const command = new Commands.SuperSourceBorderCommand()
+		command.ssrcId = ssrc
 		command.updateProps(newProps)
 		return this.sendCommand(command)
 	}
