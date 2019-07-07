@@ -48,7 +48,7 @@ module.exports = {
 				}
 			],
 			callback: (feedback, bank) => {
-				if (parseInt(this.localVariables['battery_bars_' + feedback.options.channel]) <= parseInt(feedback.options.barlevel)) {
+				if (this.api.getChannel(parseInt(feedback.options.channel)).batteryBars <= parseInt(feedback.options.barlevel)) {
 					return {
 						color: feedback.options.fg,
 						bgcolor: feedback.options.bg
@@ -82,7 +82,7 @@ module.exports = {
 				}
 			],
 			callback: (feedback, bank) => {
-				if (this.localVariables['transmitter_mutestatus_' + feedback.options.channel] === 'ON') {
+				if (this.api.getChannel(parseInt(feedback.options.channel)).txMuteStatus == 'ON') {
 					return {
 						color: feedback.options.fg,
 						bgcolor: feedback.options.bg
@@ -116,7 +116,7 @@ module.exports = {
 				}
 			],
 			callback: (feedback, bank) => {
-				if (this.localVariables['interference_detection_' + feedback.options.channel] === 'CRITICAL') {
+				if (this.api.getChannel(parseInt(feedback.options.channel)).interferenceStatus == 'DETECTED') {
 					return {
 						color: feedback.options.fg,
 						bgcolor: feedback.options.bg
@@ -150,7 +150,7 @@ module.exports = {
 				}
 			],
 			callback: (feedback, bank) => {
-				if ((this.localVariables['transmitter_type_' + feedback.options.channel] === 'UNKN') || (this.localVariables['battery_bars_' + feedback.options.channel] === '255')) {
+				if ((this.api.getChannel(parseInt(feedback.options.channel)).txType == 'Unknown') || (this.api.getChannel(parseInt(feedback.options.channel)).batteryBars == 255)) {
 					return {
 						color: feedback.options.fg,
 						bgcolor: feedback.options.bg
