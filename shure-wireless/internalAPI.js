@@ -112,7 +112,8 @@ class instance_api {
 				txDeviceId:           '',        // (ULX+QLX:ULXD6/ULXD8 only) 8 | (AD) 31
 				txOffset:             255,       // (ULX|QLX) 0,3,6,9,12,15,18,21 255=UNKN | (AD) 0-32,-12 255=UNKN
 				txInputPad:           255,       // (AD) 0=ON(-12), 12=OFF(0), 255=UNKN
-				txPowerLevel:         255,       // (AD) 0-50mW 255=UNKN | (ULX|QLX:TX_RF_PWR) LOW=1 NORMAL=10 HIGH=20 UNKN=255
+				txPowerLevel:         255,       // (AD) 0-50mW 255=UNKN | (ULX+QLX:TX_RF_PWR) LOW=1 NORMAL=10 HIGH=20 UNKN=255
+				txPowerMode:          'Unknown', // (ULX+QLX:TX_RF_PWR) UNKNOWN - LOW - NORMAL - HIGH
 				txMuteStatus:         'Unknown', // (ULX|QLX) OFF - ON - UNKN | (AD:TX_MUTE_MODE_STATUS) OFF - MUTE=ON - UNKNOWN
 				txPolarity:           'Unknown', // (AD) POSITIVE - NEGATIVE - UNKNOWN
 				txPowerLock:          'Unknown', // (ULX|QLX) OFF - ON - UNKN | (AD:TX_LOCK) POWER|ALL=ON - MENU|NONE=OFF - UNKNOWN
@@ -352,6 +353,10 @@ class instance_api {
 			channel.txPowerLock = value;
 			this.instance.setVariable(prefix + 'tx_power_lock', value);
 		}
+		else if (key == 'TX_POWER_SOURCE') {
+			channel.txPowerSource = value;
+			this.instance.setVariable(prefix + 'tx_power_source', value);
+		}
 		else if (key.match(/(MUTE|MUTE_MODE)_STATUS/)) {
 			switch(value) {
 				case 'MUTE':
@@ -500,18 +505,26 @@ class instance_api {
 			channel.batteryRuntime = parseInt(value);
 			if (channel.batteryRuntime == 65535){
 				variable = 'Unknown';
+				if (model.family == 'mxw') {
+					channel.txPowerSource = 'Unknown';
+				}
 			}
 			else if (channel.batteryRuntime == 65534) {
 				variable = 'Calculating';
+				if (model.family == 'mxw') {
+					channel.txPowerSource = 'BATTERY';
+				}
 			}
 			else if (channel.batteryRuntime == 65533 && model.family == 'ad') {
 				variable = 'Error';
 			}
 			else if (channel.batteryRuntime == 65533 && model.family == 'mxw') {
 				variable = 'Charging';
+				channel.txPowerSource = 'EXTERNAL';
 			}
 			else if (channel.batteryRuntime == 65532 && model.family == 'mxw') {
 				variable = 'Wall Power';
+				channel.txPowerSource = 'EXTERNAL';
 			}
 			else {
 				let mins = channel.batteryRuntime;
@@ -519,6 +532,9 @@ class instance_api {
 				let m = mins % 60;
 				m = m < 10 ? '0' + m : m;
 				variable = `${h}:${m}`;
+			}
+			if (model.family == 'mxw') {
+				this.instance.setVariable(prefix + 'tx_power_source', channel.txPowerSource);
 			}
 			this.instance.setVariable(prefix + 'battery_runtime', variable);
 		}
