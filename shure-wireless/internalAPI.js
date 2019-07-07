@@ -187,6 +187,53 @@ class instance_api {
 	}
 
 	/**
+	 * Parse sample data for MXW.
+	 *
+	 * @param {number} id - the channel id
+	 * @param {String} data - the sample data
+	 * @access public
+	 * @since 1.0.0
+	 */
+	parseMXWSample(id, data) {
+		let channel = this.getChannel(id);
+		let sample = data.split(' ');
+
+		channel.rfLevel    = parseInt(sample[1]);
+		channel.audioLevel = parseInt(sample[2]);
+	}
+
+	/**
+	 * Parse sample data for ULX/QLX.
+	 *
+	 * @param {number} id - the channel id
+	 * @param {String} data - the sample data
+	 * @access public
+	 * @since 1.0.0
+	 */
+	parseULXSample(id, data) {
+		let channel = this.getChannel(id);
+		let sample = data.split(' ');
+
+		switch(sample[2]) {
+			case 'AX':
+				channel.antennaA = 'BLUE';
+				channel.antennaB = 'OFF';
+				break;
+			case 'XB':
+				channel.antennaA = 'OFF';
+				channel.antennaB = 'BLUE';
+				break;
+			default:
+				channel.antennaA = 'OFF';
+				channel.antennaB = 'OFF';
+				break;
+		}
+
+		channel.rfLevel    = parseInt(sample[3]);
+		channel.audioLevel = parseInt(sample[4]);
+	}
+
+	/**
 	 * Update a channel property.
 	 *
 	 * @param {number} id - the channel id
@@ -303,6 +350,17 @@ class instance_api {
 			this.instance.setVariable(prefix + 'fd_mode', value);
 		}
 		else if (key == 'TX_AVAILABLE') {
+			if (channel.txAvailable != value && value == 'YES') {
+				//poll for tx when becoming available (per Shure spec)
+				this.socket.send('< GET ' + id + ' TX_STATUS >');
+				this.socket.send('< GET ' + id + ' AUDIO_GAIN >');
+				this.socket.send('< GET ' + id + ' BATT_RUN_TIME >');
+				this.socket.send('< GET ' + id + ' BATT_CHARGE >');
+				this.socket.send('< GET ' + id + ' BATT_HEALTH >');
+				this.socket.send('< GET ' + id + ' BUTTON_STS >');
+				this.socket.send('< GET ' + id + ' LED_STATUS >');
+				this.socket.send('< GET ' + id + ' TX_TYPE >');
+			}
 			channel.txAvailable = value;
 			this.instance.setVariable(prefix + 'tx_available', value);
 		}
@@ -316,8 +374,8 @@ class instance_api {
 			this.instance.checkFeedbacks('transmitter_turned_off');
 		}
 		else if (key == 'TX_DEVICE_ID') {
-			channel.txDeviceId = value;
-			this.instance.setVariable(prefix + 'tx_device_id', value);
+			channel.txDeviceId = value.replace('{','').replace('}','');
+			this.instance.setVariable(prefix + 'tx_device_id', channel.txDeviceId);
 		}
 		else if (key == 'TX_LOCK') {
 			switch(value) {
@@ -596,12 +654,12 @@ class instance_api {
 		}
 
 		if (key == 'FW_VER') {
-			this.receiver.firmwareVersion = value;
-			this.instance.setVariable('firmware_version', value.replace('{',''));
+			this.receiver.firmwareVersion = value.replace('{','').replace('}','');
+			this.instance.setVariable('firmware_version', this.receiver.firmwareVersion);
 		}
 		else if (key == 'DEVICE_ID') {
-			this.receiver.deviceId = value;
-			this.instance.setVariable('device_id', value.replace('{',''));
+			this.receiver.deviceId = value.replace('{','').replace('}','');
+			this.instance.setVariable('device_id', this.receiver.deviceId);
 		}
 		else if (key == 'FREQUENCY_DIVERSITY_MODE') {
 			this.receiver.frequencyDiversity = value;
@@ -684,8 +742,8 @@ class instance_api {
 				this.instance.setVariable(prefix + 'tx_model', value);
 				break;
 			case 'SLOT_TX_DEVICE_ID':
-				slot.txDeviceId = value;
-				this.instance.setVariable(prefix + 'tx_device_id', value);
+				slot.txDeviceId = value.replace('{','').replace('}','');
+				this.instance.setVariable(prefix + 'tx_device_id', slot.txDeviceId);
 				this.instance.actions();
 				this.instance.initFeedbacks();
 				break;
