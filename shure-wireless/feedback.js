@@ -91,8 +91,8 @@ module.exports = {
 			}
 		};
 
-		feedbacks['interference_detection'] = {
-			label: 'Interference Detection',
+		feedbacks['interference_status'] = {
+			label: 'Interference Status',
 			description: 'If the selected channel gets interference, change the color of the button.',
 			options: [
 				{

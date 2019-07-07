@@ -321,6 +321,10 @@ class instance extends instance_skel {
 			else if (commandArr[0] == 'PRI' || commandArr[0] == 'SEC') {
 				//ignore pri/sec commands in MXW
 			}
+			else if (commandArr[1] == 'LED_STATUS') {
+				//this command is led status for a MXW channel
+				this.api.updateChannel(commandNum, commandArr[1], commandArr[2]+','+commandArr[3]);
+			}
 			else {
 				//this command is about a specific channel
 				this.api.updateChannel(commandNum, commandArr[1], commandArr[2]);

@@ -38,6 +38,14 @@ class instance_api {
 			rfBand:             ''     // (AD) 8
 		};
 		this.channels  = [];
+
+		this.MXW_LED_STATUS = {
+			ON: 'On',
+			OF: 'Off',
+			ST: 'Strobe',
+			FL: 'Flash',
+			PU: 'Pulse'
+		};
 	}
 
 	/**
@@ -107,8 +115,8 @@ class instance_api {
 				txPowerLevel:         255,       // (AD) 0-50mW 255=UNKN | (ULX|QLX:TX_RF_PWR) LOW=1 NORMAL=10 HIGH=20 UNKN=255
 				txMuteStatus:         'Unknown', // (ULX|QLX) OFF - ON - UNKN | (AD:TX_MUTE_MODE_STATUS) OFF - MUTE=ON - UNKNOWN
 				txPolarity:           'Unknown', // (AD) POSITIVE - NEGATIVE - UNKNOWN
-				txPowerLock:          'Unknown', // (ULX|QLX) OFF - ON - UNKN | (AD:TX_LOCK) POWER|BOTH=ON - MENU=OFF - UNKNOWN
-				txMenuLock:           'Unknown', // (ULX|QLX) OFF - ON - UNKN | (AD:TX_LOCK) MENU|BOTH=ON - POWER=OFF - UNKNOWN
+				txPowerLock:          'Unknown', // (ULX|QLX) OFF - ON - UNKN | (AD:TX_LOCK) POWER|ALL=ON - MENU|NONE=OFF - UNKNOWN
+				txMenuLock:           'Unknown', // (ULX|QLX) OFF - ON - UNKN | (AD:TX_LOCK) MENU|ALL=ON - POWER|NONE=OFF - UNKNOWN
 				txTalkSwitch:         'Unknown', // (ULX+QLX:TX_MUTE_BUTTON_STATUS) PRESSED - RELEASED - UNKN | (AD|MWX:BUTTON_STS) OFF=RELEASED - ON=PRESSED - UNKNOWN
 				txPowerSource:        'Unknown', // (ULX|QLX) BATTERY - EXTERNAL - UNKN | (MXW) SEE batteryRuntime
 				ledStatusRed:         'Off',     // (MXW) rr gg (rr) ON=On,OF=Off,ST=Strobe,FL=Flash,PU=Pulse,NC=No Change
@@ -196,169 +204,244 @@ class instance_api {
 			value = 'Unknown';
 		}
 
-		if (value == 'CHAN_NAME') {
-			this.updateVariable('channel_name_' + commandNum, commandVal.replace('{',''));
-			this.actions();
-			this.initFeedbacks();
+		if (key == 'CHAN_NAME') {
+			channel.name = value.replace('{','').replace('}','');
+			this.instance.setVariable(prefix + 'name', channel.name);
+			this.instance.actions();
+			this.instance.initFeedbacks();
 		}
-		else if (value == 'METER_RATE') {
-			this.updateVariable('meter_rate_' + commandNum, commandVal);
-		}
-		else if (value == 'AUDIO_GAIN') {
-			this.updateVariable('audio_gain_' + commandNum, commandVal);
-		}
-		else if (value == 'AUDIO_MUTE') {
-			this.updateVariable('audio_mute_' + commandNum, commandVal);
-			this.checkFeedbacks('channelmuted');
-		}
-		else if (value == 'AUDIO_LVL') {
-			this.updateVariable('audio_lvl_' + commandNum, commandVal);
-		}
-		else if (value == 'GROUP_CHAN') {
-			this.updateVariable('group_channel_' + commandNum, commandVal);
-		}
-		else if (value == 'FREQUENCY') {
-			let frequency = commandVal.substr(0,3) + '.' + commandVal.substr(3,3) + ' MHz';
-			this.updateVariable('frequency_' + commandNum, frequency);
-		}
-		else if (value == 'RF_INT_DET') {
-			this.updateVariable('interference_detection_' + commandNum, commandVal);
-			this.checkFeedbacks('interferenc_edetection');
-		}
-		else if (value == 'RX_RF_LVL') {
-			this.updateVariable('RX_RF_LVL_' + commandNum, commandVal);
-		}
-		else if (value == 'RF_ANTENNA') {
-			this.updateVariable('RF_ANTENNA_' + commandNum, commandVal);
-		}
-		else if (value == 'BATT_BARS') {
-			this.updateVariable('battery_bars_' + commandNum, commandVal);
-			this.checkFeedbacks('battery_level');
-			this.checkFeedbacks('transmitter_turned_off');
-		}
-		else if (value == 'TX_OFFSET') {
-			this.updateVariable('transmitter_offset_' + commandNum, commandVal);
-		}
-		else if (value == 'TX_RF_PWR') {
-			this.updateVariable('transmitter_rfpower_' + commandNum, commandVal);
-		}
-		else if (value == 'TX_TYPE') {
-			this.updateVariable('transmitter_type_' + commandNum, commandVal);
-			this.checkFeedbacks('transmitter_turned_off');
-		}
-		else if (value == 'BATT_TYPE') {
-			this.updateVariable('battery_type_' + commandNum, commandVal);
-		}
-		else if (value == 'BATT_RUN_TIME') {
-			this.updateVariable('battery_runtime_' + commandNum, commandVal);
-		}
-		else if (value == 'BATT_CHARGE') {
-			this.updateVariable('battery_chargestatus_' + commandNum, commandVal);
-		}
-		else if (value == 'BATT_CYCLE') {
-			this.updateVariable('battery_cycle_' + commandNum, commandVal);
-		}
-		else if (value == 'BATT_TEMP_C') {
-			this.updateVariable('battery_temperature_c_' + commandNum, commandVal);
-		}
-		else if (value == 'BATT_TEMP_F') {
-			this.updateVariable('battery_temperature_f_' + commandNum, commandVal);
-		}
-		else if (value == 'TX_PWR_LOCK') {
-			this.updateVariable('tramsmitter_powerlock_' + commandNum, commandVal);
-		}
-		else if (value == 'TX_MENU_LOCK') {
-			this.updateVariable('transmitter_menulock_' + commandNum, commandVal);
-		}
-		else if (value == 'ENCRYPTION_WARNING') {
-			this.updateVariable('encryption_warning_' + commandNum, commandVal);
-		}
-		else if (value == 'SLOT_STATUS') {
-			slot.status = value;
-			this.instance.setVariable(prefix + 'status', value);
-		}
-		else if (value == 'SLOT_SHOWLINK_STATUS') {
-			slot.showLinkStatus = parseInt(value);
-			if (value == 255){
-				variable = 'Unknown';
+		else if (key == 'METER_RATE') {
+			channel.meterRate = parseInt(value);
+			if (channel.meterRate == 0){
+				variable = 'Disabled';
 			}
 			else {
-				variable = value;
+				variable = value + ' ms';
 			}
-			this.instance.setVariable(prefix + 'link_status', variable);
+			this.instance.setVariable(prefix + 'meter', variable);
 		}
-		else if (value == 'SLOT_TX_MODEL') {
-			slot.txType = value;
+		else if (key == 'AUDIO_GAIN') {
+			channel.audioGain = parseInt(value);
+			if (model.family == 'mxw') {
+				variable = (channel.txOffset - 25).toString() + ' dB';
+			}
+			else {
+				variable = (channel.txOffset - 18).toString() + ' dB';
+			}
+			this.instance.setVariable(prefix + 'audio_gain', variable);
+		}
+		else if (key == 'AUDIO_MUTE') {
+			channel.audioMute = value;
+			this.instance.setVariable(prefix + 'audio_mute', value);
+			this.instance.checkFeedbacks('channel_muted');
+		}
+		else if (key == 'GROUP_CHANNEL2') {
+			this.instance.setVariable(prefix + 'group_chan2', value);
+			variable = value.split(',');
+			channel.group2   = variable[0];
+			channel.channel2 = variable[1];
+		}
+		else if (key.match(/GROUP_CHAN/)) {
+			this.instance.setVariable(prefix + 'group_chan', value);
+			variable = value.split(',');
+			channel.group   = variable[0];
+			channel.channel = variable[1];
+		}
+		else if (key == 'FREQUENCY') {
+			channel.frequency = value;
+			variable = value.substr(0,3) + '.' + value.substr(3,3) + ' MHz';
+			this.instance.setVariable(prefix + 'frequency', variable);
+		}
+		else if (key == 'FREQUENCY2') {
+			channel.frequency2 = value;
+			variable = value.substr(0,3) + '.' + value.substr(3,3) + ' MHz';
+			this.instance.setVariable(prefix + 'frequency2', variable);
+		}
+		else if (key.match(/ENCRYPTION/)) {
+			switch(value) {
+				case 'ON':
+					variable = 'ERROR';
+					break;
+				case 'OFF':
+					variable = 'OK';
+					break;
+				default:
+					variable = value;
+					break;
+			}
+			channel.encryptionStatus = variable;
+			this.instance.setVariable(prefix + 'encryption_status', variable);
+		}
+		else if (key == 'RF_INT_DET' || key = 'INTERFERENCE_STATUS') {
+			switch(value) {
+				case 'CRITICAL':
+					variable = 'DETECTED';
+					break;
+				default:
+					variable = value;
+					break;
+			}
+			channel.interferenceStatus = variable;
+			this.instance.setVariable(prefix + 'interference_status', variable);
+			this.instance.checkFeedbacks('interference_status');
+		}
+		else if (key = 'INTERFERENCE_STATUS2') {
+			channel.interferenceStatus = value;
+			this.instance.setVariable(prefix + 'interference_status', value);
+		}
+		else if (key == 'FLASH') {
+			channel.flash = value;
+			this.instance.setVariable(prefix + 'flash', value);
+		}
+		else if (key == 'UNREGISTERED_TX_STATUS') {
+			channel.unregisteredTxStatus = value;
+			this.instance.setVariable(prefix + 'unregistered_tx_status', value);
+		}
+		else if (key == 'FD_MODE') {
+			channel.fdMode = value;
+			this.instance.setVariable(prefix + 'fd_mode', value);
+		}
+		else if (key == 'TX_AVAILABLE') {
+			channel.txAvailable = value;
+			this.instance.setVariable(prefix + 'tx_available', value);
+		}
+		else if (key == 'TX_STATUS') {
+			channel.txStatus = value;
+			this.instance.setVariable(prefix + 'tx_status', value);
+		}
+		else if (key == 'TX_TYPE' || value == 'TX_MODEL') {
+			channel.txType = value;
 			this.instance.setVariable(prefix + 'tx_model', value);
+			this.instance.checkFeedbacks('transmitter_turned_off');
 		}
-		else if (value == 'SLOT_TX_DEVICE_ID') {
-			slot.txDeviceId = value;
+		else if (key == 'TX_DEVICE_ID') {
+			channel.txDeviceId = value;
 			this.instance.setVariable(prefix + 'tx_device_id', value);
 		}
-		else if (value == 'SLOT_OFFSET') {
-			slot.txOffset = parseInt(value);
-			if (slot.txOffset == 255){
+		else if (key == 'TX_LOCK') {
+			switch(value) {
+				case 'ALL':
+					channel.txMenuLock  = 'ON';
+					channel.txPowerLock = 'ON';
+					break;
+				case 'POWER':
+					channel.txMenuLock  = 'OFF';
+					channel.txPowerLock = 'ON';
+					break;
+				case 'MENU':
+					channel.txMenuLock  = 'ON';
+					channel.txPowerLock = 'OFF';
+					break;
+				case 'NONE':
+					channel.txMenuLock  = 'OFF';
+					channel.txPowerLock = 'OFF';
+					break;
+				case 'Unknown':
+					channel.txMenuLock  = 'Unknown';
+					channel.txPowerLock = 'Unknown';
+					break;
+			}
+			this.instance.setVariable(prefix + 'tx_power_lock', channel.txPowerLock);
+			this.instance.setVariable(prefix + 'tx_menu_lock',  channel.txMenuLock);
+		}
+		else if (key == 'TX_MENU_LOCK') {
+			channel.txMenuLock = value;
+			this.instance.setVariable(prefix + 'tx_menu_lock', value);
+		}
+		else if (key == 'TX_PWR_LOCK') {
+			channel.txPowerLock = value;
+			this.instance.setVariable(prefix + 'tx_power_lock', value);
+		}
+		else if (key == 'TX_OFFSET') {
+			channel.txOffset = parseInt(value);
+			if (channel.txOffset == 255){
 				variable = 'Unknown';
 			}
 			else {
-				variable = (slot.txOffset - 12).toString() + ' dB';
+				if (model.family == 'ad') {
+					variable = (channel.txOffset - 12).toString() + ' dB';
+				}
+				else {
+					variable = value + ' dB';
+				}
 			}
 			this.instance.setVariable(prefix + 'tx_offset', variable);
 		}
-		else if (value == 'SLOT_INPUT_PAD') {
-			slot.txInputPad = parseInt(value);
-			if (slot.txInputPad == 255){
+		else if (key == 'TX_INPUT_PAD') {
+			channel.txInputPad = parseInt(value);
+			if (channel.txInputPad == 255){
 				variable = 'Unknown';
 			}
 			else {
-				variable = (slot.txInputPad - 12).toString() + ' dB';
+				variable = (channel.txInputPad - 12).toString() + ' dB';
 			}
 			this.instance.setVariable(prefix + 'tx_input_pad', variable);
 		}
-		else if (value == 'SLOT_RF_POWER') {
-			slot.txPowerLevel = parseInt(value);
-			if (slot.txPowerLevel == 255){
+		else if (key == 'TX_POWER_LEVEL') {
+			channel.txPowerLevel = parseInt(value);
+			if (channel.txPowerLevel == 255){
 				variable = 'Unknown';
 			}
 			else {
 				variable = value + ' mW';
 			}
-			this.instance.setVariable(prefix + 'tx_rf_power', variable);
+			this.instance.setVariable(prefix + 'tx_power_level', variable);
 		}
-		else if (value == 'SLOT_RF_POWER_MODE') {
-			slot.txPowerMode = value;
+		else if (key.match(/POWER_MODE/) || key == 'TX_RF_PWR') {
+			channel.txPowerMode = value;
+			if (model.family == 'ulx' || model.family == 'qlx') {
+				switch(value) {
+					case 'LOW':
+						channel.txPowerLevel = 1;
+						variable = '1 mW';
+						break;
+					case 'NORMAL':
+						channel.txPowerLevel = 10;
+						variable = '10 mW';
+						break;
+					case 'HIGH':
+						channel.txPowerLevel = 20;
+						variable = '20 mW';
+						break;
+					case 'Unknown':
+						channel.txPowerLevel = 255;
+						variable = 'Unknown';
+						break;
+				}
+				this.instance.setVariable(prefix + 'tx_power_level', variable);
+			}
 			this.instance.setVariable(prefix + 'tx_power_mode', value);
 		}
-		else if (value == 'SLOT_POLARITY') {
-			slot.txPolarity = value;
+		else if (key == 'TX_POLARITY') {
+			channel.txPolarity = value;
 			this.instance.setVariable(prefix + 'tx_polarity', value);
 		}
-		else if (value == 'SLOT_RF_OUTPUT') {
-			slot.txRfOutput = value;
-			if (value == 'RF_ON') {
-				variable = 'ON';
+		else if (key == 'LED_STATUS') {
+			variable = value.split(',');
+			if (variable[0] != 'NC') {
+				channel.ledStatusRed   = variable[0];
+				this.instance.setVariable(prefix + 'led_status_red', this.MXW_LED_STATUS[variable[0]]);
 			}
-			else if (value == 'RF_MUTE') {
-				variable = 'MUTE';
+			if (variable[1] != 'NC') {
+				channel.ledStatusGreen = variable[1];
+				this.instance.setVariable(prefix + 'led_status_green', this.MXW_LED_STATUS[variable[1]]);
 			}
-			else {
-				variable = value;
-			}
-			this.instance.setVariable(prefix + 'rf_output', variable);
 		}
-		else if (value == 'SLOT_BATT_BARS') {
-			slot.batteryBars = parseInt(value);
-			if (slot.batteryBars == 255){
+		else if (key.match(/BATT_BARS/)) {
+			channel.batteryBars = parseInt(value);
+			if (channel.batteryBars == 255){
 				variable = 'Unknown';
 			}
 			else {
 				variable = value;
 			}
 			this.instance.setVariable(prefix + 'battery_bars', variable);
+			this.instance.checkFeedbacks('battery_level');
+			this.instance.checkFeedbacks('transmitter_turned_off');
 		}
-		else if (value == 'SLOT_BATT_CHARGE_PERCENT') {
-			slot.batteryCharge = parseInt(value);
-			if (slot.batteryCharge == 255){
+		else if (key.match(/BATT_CHARGE/)) {
+			channel.batteryCharge = parseInt(value);
+			if (channel.batteryCharge == 255){
 				variable = 'Unknown';
 			}
 			else {
@@ -366,9 +449,9 @@ class instance_api {
 			}
 			this.instance.setVariable(prefix + 'battery_charge', variable);
 		}
-		else if (value == 'SLOT_BATT_CYCLE_COUNT') {
-			slot.batteryCycle = parseInt(value);
-			if (slot.batteryCycle == 65535){
+		else if (key.match(/BATT_CYCLE/)) {
+			channel.batteryCycle = parseInt(value);
+			if (channel.batteryCycle == 65535){
 				variable = 'Unknown';
 			}
 			else {
@@ -376,9 +459,9 @@ class instance_api {
 			}
 			this.instance.setVariable(prefix + 'battery_cycle', variable);
 		}
-		else if (value == 'SLOT_BATT_HEALTH_PERCENT') {
-			slot.batteryHealth = parseInt(value);
-			if (slot.batteryHealth == 255){
+		else if (key.match(/BATT_HEALTH/)) {
+			channel.batteryHealth = parseInt(value);
+			if (channel.batteryHealth == 255){
 				variable = 'Unknown';
 			}
 			else {
@@ -386,19 +469,25 @@ class instance_api {
 			}
 			this.instance.setVariable(prefix + 'battery_health', variable);
 		}
-		else if (value == 'SLOT_BATT_MINS') {
-			slot.batteryRuntime = parseInt(value);
-			if (slot.batteryRuntime == 65535){
+		else if (key == 'TX_BATT_MINS' || key == 'BATT_RUN_TIME') {
+			channel.batteryRuntime = parseInt(value);
+			if (channel.batteryRuntime == 65535){
 				variable = 'Unknown';
 			}
-			else if (slot.batteryRuntime == 65534) {
+			else if (channel.batteryRuntime == 65534) {
 				variable = 'Calculating';
 			}
-			else if (slot.batteryRuntime == 65533) {
+			else if (channel.batteryRuntime == 65533 && model.family == 'ad') {
 				variable = 'Error';
 			}
+			else if (channel.batteryRuntime == 65533 && model.family == 'mxw') {
+				variable = 'Charging';
+			}
+			else if (channel.batteryRuntime == 65532 && model.family == 'mxw') {
+				variable = 'Wall Power';
+			}
 			else {
-				let mins = slot.batteryRuntime;
+				let mins = channel.batteryRuntime;
 				let h = Math.floor(mins / 60);
 				let m = mins % 60;
 				m = m < 10 ? '0' + m : m;
@@ -406,9 +495,46 @@ class instance_api {
 			}
 			this.instance.setVariable(prefix + 'battery_runtime', variable);
 		}
-		else if (value == 'SLOT_BATT_TYPE') {
-			slot.batteryType = value;
+		else if (key.match(/BATT_TEMP_C/)) {
+			channel.batteryTempC = parseInt(value);
+			if (channel.batteryTempC == 255){
+				variable = 'Unknown';
+			}
+			else {
+				variable = (channel.batteryTempC + 40) + '&#176;';
+			}
+			this.instance.setVariable(prefix + 'battery_temp_c', variable);
+		}
+		else if (key.match(/BATT_TEMP_F/)) {
+			channel.batteryTempF = parseInt(value);
+			if (channel.batteryTempF == 255){
+				variable = 'Unknown';
+			}
+			else {
+				variable = (channel.batteryTempF + 40) + '&#176;';
+			}
+			this.instance.setVariable(prefix + 'battery_temp_f', variable);
+		}
+		else if (key.match(/BATT_TYPE/)) {
+			channel.batteryType = value;
 			this.instance.setVariable(prefix + 'battery_type', value);
+		}
+		else if (key == 'BATT_TIME_TO_FULL') {
+			channel.batteryTimeToFull = parseInt(value);
+			if (channel.batteryTimeToFull == 65535){
+				variable = 'Unknown';
+			}
+			else if (channel.batteryTimeToFull == 65534) {
+				variable = 'Charged';
+			}
+			else {
+				let mins = channel.batteryTimeToFull;
+				let h = Math.floor(mins / 60);
+				let m = mins % 60;
+				m = m < 10 ? '0' + m : m;
+				variable = `${h}:${m}`;
+			}
+			this.instance.setVariable(prefix + 'battery_time_to_full', variable);
 		}
 	}
 
@@ -517,6 +643,8 @@ class instance_api {
 			case 'SLOT_TX_DEVICE_ID':
 				slot.txDeviceId = value;
 				this.instance.setVariable(prefix + 'tx_device_id', value);
+				this.instance.actions();
+				this.instance.initFeedbacks();
 				break;
 			case 'SLOT_OFFSET':
 				slot.txOffset = parseInt(value);
@@ -546,7 +674,7 @@ class instance_api {
 				else {
 					variable = value + ' mW';
 				}
-				this.instance.setVariable(prefix + 'tx_rf_power', variable);
+				this.instance.setVariable(prefix + 'tx_power_level', variable);
 				break;
 			case 'SLOT_RF_POWER_MODE':
 				slot.txPowerMode = value;
