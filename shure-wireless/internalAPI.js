@@ -272,7 +272,7 @@ class instance_api {
 			channel.encryptionStatus = variable;
 			this.instance.setVariable(prefix + 'encryption_status', variable);
 		}
-		else if (key == 'RF_INT_DET' || key = 'INTERFERENCE_STATUS') {
+		else if (key == 'RF_INT_DET' || key == 'INTERFERENCE_STATUS') {
 			switch(value) {
 				case 'CRITICAL':
 					variable = 'DETECTED';
@@ -285,7 +285,7 @@ class instance_api {
 			this.instance.setVariable(prefix + 'interference_status', variable);
 			this.instance.checkFeedbacks('interference_status');
 		}
-		else if (key = 'INTERFERENCE_STATUS2') {
+		else if (key == 'INTERFERENCE_STATUS2') {
 			channel.interferenceStatus = value;
 			this.instance.setVariable(prefix + 'interference_status', value);
 		}
@@ -351,6 +351,33 @@ class instance_api {
 		else if (key == 'TX_PWR_LOCK') {
 			channel.txPowerLock = value;
 			this.instance.setVariable(prefix + 'tx_power_lock', value);
+		}
+		else if (key.match(/(MUTE|MUTE_MODE)_STATUS/)) {
+			switch(value) {
+				case 'MUTE':
+					variable = 'ON';
+					break;
+				default:
+					variable = value;
+					break;
+			}
+			channel.txMuteStatus = variable;
+			this.instance.setVariable(prefix + 'tx_mute_status', variable);
+		}
+		else if (key == 'TX_MUTE_BUTTON_STATUS' || key == 'TX_TALK_SWITCH' || key == 'BUTTON_STS') {
+			switch(value) {
+				case 'OFF':
+					variable = 'RELEASED';
+					break;
+				case 'ON':
+					variable = 'PRESSED';
+					break;
+				default:
+					variable = value;
+					break;
+			}
+			channel.txTalkSwitch = variable;
+			this.instance.setVariable(prefix + 'tx_talk_switch', variable);
 		}
 		else if (key == 'TX_OFFSET') {
 			channel.txOffset = parseInt(value);

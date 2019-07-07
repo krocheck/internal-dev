@@ -63,10 +63,6 @@ module.exports = {
 			variables.push({ name: 'flash_lights', label: 'Flash Lights On/Off' });
 		}
 
-		variables.push({ name: 'last_command_sent',        label: 'Last Command Sent' });
-		variables.push({ name: 'last_command_received',    label: 'Last Command Received' });
-
 		this.setVariableDefinitions(variables);
-		this.localVariables = variables; //copies variable definitions for local instance use
 	}
 }

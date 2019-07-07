@@ -44,14 +44,14 @@ class instance extends instance_skel {
 		this.api = new instance_api(this);
 
 		this.CONFIG_MODEL = {
-			'ulxd4':   {id: 'ulxd4',   family: 'ulx', label: 'ULXD4 Single Receiver', channels: 1, slots: 0},
-			'ulxd4d':  {id: 'ulxd4d',  family: 'ulx', label: 'ULXD4D Dual Receiver',  channels: 2, slots: 0},
-			'ulxd4q':  {id: 'ulxd4q',  family: 'ulx', label: 'ULXD4Q Quad Receiver',  channels: 4, slots: 0},
-			'qlxd4':   {id: 'qlxd4',   family: 'qlx', label: 'QLXD4 Single Receiver', channels: 1, slots: 0},
-			'ad4d':    {id: 'ad4d',    family: 'ad',  label: 'AD4D Dual Receiver',    channels: 2, slots: 8},
-			'ad4q':    {id: 'ad4q',    family: 'ad',  label: 'AD4Q Quad Receiver',    channels: 4, slots: 8},
-			'mxwani4': {id: 'mxwani4', family: 'mxw', label: 'MXWANI4 Quad Receiver', channels: 4, slots: 0},
-			'mxwani8': {id: 'mxwani8', family: 'mxw', label: 'MXWANI8 Octo Receiver', channels: 8, slots: 0}
+			0: {id: 0, model: 'ulxd4',   family: 'ulx', label: 'ULXD4 Single Receiver', channels: 1, slots: 0},
+			1: {id: 1, model: 'ulxd4d',  family: 'ulx', label: 'ULXD4D Dual Receiver',  channels: 2, slots: 0},
+			2: {id: 2, model: 'ulxd4q',  family: 'ulx', label: 'ULXD4Q Quad Receiver',  channels: 4, slots: 0},
+			3: {id: 3, model: 'qlxd4',   family: 'qlx', label: 'QLXD4 Single Receiver', channels: 1, slots: 0},
+			4: {id: 4, model: 'ad4d',    family: 'ad',  label: 'AD4D Dual Receiver',    channels: 2, slots: 8},
+			5: {id: 5, model: 'ad4q',    family: 'ad',  label: 'AD4Q Quad Receiver',    channels: 4, slots: 8},
+			6: {id: 6, model: 'mxwani4', family: 'mxw', label: 'MXWANI4 Quad Receiver', channels: 4, slots: 0},
+			7: {id: 7, model: 'mxwani8', family: 'mxw', label: 'MXWANI8 Octo Receiver', channels: 8, slots: 0}
 		};
 
 		this.CHOICES_CHANNELS = [];
@@ -71,8 +71,8 @@ class instance extends instance_skel {
 			this.model = this.CONFIG_MODEL[this.config.modelID];
 		}
 		else {
-			this.config.modelID = 'ulxd4';
-			this.model = this.CONFIG_MODEL['ulxd4'];
+			this.config.modelID = 0;
+			this.model = this.CONFIG_MODEL[0];
 		}
 
 		this.actions(); // export actions
@@ -132,7 +132,6 @@ class instance extends instance_skel {
 		if (cmd !== undefined) {
 			if (this.socket !== undefined && this.socket.connected) {
 				this.socket.send('< ' + cmd + ' >');
-				this.updateVariable('last_command_sent', cmd);
 			} else {
 				debug('Socket not connected :(');
 			}
@@ -161,7 +160,7 @@ class instance extends instance_skel {
 				id: 'port',
 				label: 'Target Port',
 				default: 2202,
-				width: 4,
+				width: 2,
 				regex: this.REGEX_PORT
 			},
 			{
@@ -169,7 +168,8 @@ class instance extends instance_skel {
 				id: 'modelID',
 				label: 'Model Type',
 				choices: this.CHOICES_MODEL,
-				width: 6
+				width: 6,
+				default: 'ulxd4'
 			},
 			{
 				type: 'checkbox',
@@ -187,7 +187,7 @@ class instance extends instance_skel {
 				max: 99999,
 				default: 5000,
 				required: true,
-				range: true
+				range: false
 			}
 		]
 	}
@@ -265,7 +265,6 @@ class instance extends instance_skel {
 					this.socket.send(cmd);
 				}
 
-				this.updateVariable('last_command_send', cmd);
 				this.actions(); // export actions
 			});
 
@@ -297,8 +296,6 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	processShureCommand(command) {
-
-		this.updateVariable('last_command_received', command);
 
 		let commandArr = null;
 		let commandNum = null;
@@ -404,10 +401,10 @@ class instance extends instance_skel {
 		this.config = config;
 
 		if (this.CONFIG_MODEL[this.config.modelID] !== undefined) {
-			this.model = this.CONFIG_MODEL[modelID];
+			this.model = this.CONFIG_MODEL[this.config.modelID];
 		}
 		else {
-			this.debug('Shure Model: ' + modelID + 'NOT FOUND');
+			this.debug('Shure Model: ' + this.config.modelID + 'NOT FOUND');
 		}
 
 		this.actions();
@@ -419,7 +416,6 @@ class instance extends instance_skel {
 		}
 		else if (cmd !== undefined) {
 			this.socket.send(cmd);
-			this.updateVariable('last_command_send', cmd);
 		}
 	}
 }
