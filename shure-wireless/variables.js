@@ -54,7 +54,7 @@ module.exports = {
 			variables.push({ name: 'rf_band',          label: 'RF Band' });
 		}
 
-		if ( this.mode.family != 'mxw') {
+		if ( this.model.family != 'mxw') {
 			variables.push({ name: 'encryption',       label: 'Encryption' });
 			variables.push({ name: 'firmware_version', label: 'Firmware Version' });
 		}
