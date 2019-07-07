@@ -159,7 +159,7 @@ module.exports = {
 			};
 		}
 
-		if (this.model.family == 'ad' || this.model.family == 'mxw') {
+		if (this.model.family == 'ad') {
 			actions['slot_rf_output'] = {
 				label: 'Set slot RF output',
 				options: [
@@ -174,7 +174,7 @@ module.exports = {
 						type: 'dropdown',
 						label: 'On/Off',
 						id: 'onoff',
-						default: 'ON',
+						default: 'RF_ON',
 						choices: [
 							{id: 'RF_ON',   label: 'RF On'},
 							{id: 'RF_MUTE', label: 'RF Mute'}

@@ -133,7 +133,7 @@ class instance extends instance_skel {
 				break;
 			case 'slot_rf_output':
 				let slot = options.slot.split(':');
-				cmd = 'SET ' + slot[0] + ' SLOT_RF_OUTPUT ' + parseInt(slot[1]) + ' ' + options.onoff;
+				cmd = 'SET ' + slot[0] + ' SLOT_RF_OUTPUT ' + slot[1] + ' ' + options.onoff;
 				break;
 		}
 
@@ -376,8 +376,7 @@ class instance extends instance_skel {
 
 			if (this.model.slots > 0) {
 				for (var j = 1; j <= this.model.slots; j++) {
-					let k = j < 10 ? '0' + j : j;
-					let id = `${i}:${k}`;
+					let id = `${i}:${j}`;
 					data = id;
 
 					if ( this.api.getSlot(i,j).txDeviceId != '' ) {

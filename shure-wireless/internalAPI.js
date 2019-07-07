@@ -92,16 +92,16 @@ class instance_api {
 				interferenceStatus2:  'NONE',    // (AD) NONE - DETECTED
 
 				//sample
-				antennaA:             'OFF',     // (ULX|QLX) OFF - ON=BLUE | (AD) OFF - RED - BLUE
-				antennaB:             'OFF',     // (ULX|QLX) OFF - ON=BLUE | (AD) OFF - RED - BLUE
-				antennaC:             'OFF',     // (AD:QUADVERITY ON) OFF - RED - BLUE
-				antennaD:             'OFF',     // (AD:QUADVERITY ON) OFF - RED - BLUE
+				antenna:              'XX',      // (ULX|QLX|AD) raw sample
+				antennaA:             'X',       // (ULX|QLX) X - B | (AD) X - B - R
+				antennaB:             'X',       // (ULX|QLX) X - B | (AD) X - B - R
+				antennaC:             'X',       // (AD:QUADVERITY ON) X - B - R
+				antennaD:             'X',       // (AD:QUADVERITY ON) X - B - R
 				rfLevel:              -120,      // (ULX|QLX) 0-115,-120dBm | (MXW) 0-96?
 				audioLevel:           -50,       // (ULX|QLX) 0-50,-50dB | (AD) 0-120,-120dB | (MXW) 0-98,-98dB?
 				audioLevelPeak:       -120,      // (AD) 0-120,-120dB
 				audioLED:             0,         // (AD) 0-255 binary, 1-7=level, 8=OL
-				channelQuality:       255,       // (AD) 0-5,255=UNKN
-				adSample:             {},        // (AD) extended sample data
+				signallQuality:       255,       // (AD) 0-5,255=UNKN
 
 				//tx
 				txType:               'Unknown', // (ULX|QLX) QLXD1 - QLXD2 - ULXD1 - ULXD2 - ULXD6 - ULXD8 - UNKN
@@ -187,6 +187,54 @@ class instance_api {
 	}
 
 	/**
+	 * Parse sample data for AD.
+	 *
+	 * @param {number} id - the channel id
+	 * @param {String} data - the sample data
+	 * @access public
+	 * @since 1.0.0
+	 */
+	parseADSample(id, data) {
+		let channel = this.getChannel(id);
+		let sample = data.split(' ');
+
+		channel.signalQuality  = parseInt(sample[2]);
+		channel.audioLED       = parseInt(sample[3]);
+		channel.audioLevelPeak = parseInt(sample[4]);
+		channel.audioLevel     = parseInt(sample[5]);
+
+		if (channel.fdMode == 'FD-C') {
+			// need to do something here
+		}
+		else {
+			channel.rfLevelA  = parseInt(sample[8]);
+			channel.rfBitmapA = parseInt(sample[7]);
+			channel.rfLevelB  = parseInt(sample[10]);
+			channel.rfBitmapB = parseInt(sample[9]);
+			channel.antenna   = sample[6];
+			channel.antennaA  = sample[6].substr(0,1);
+			channel.antennaB  = sample[6].substr(1,1);
+
+			this.instance.setVariable(prefix + 'antenna', channel.antenna);
+			this.instance.setVariable(prefix + 'rf_level_a', (channel.rfLevelA-120) + ' dBm');
+			this.instance.setVariable(prefix + 'rf_level_b', (channel.rfLevelB-120) + ' dBm');
+			this.instance.setVariable(prefix + 'audio_level', (channel.audioLevel-120) + ' dBFS');
+			this.instance.setVariable(prefix + 'audio_level_peak', (channel.audioLevelPeak-120) + ' dBFS');
+
+			if (this.receiver.quadversityMode == 'ON') {
+				channel.rfLevelC  = parseInt(sample[12]);
+				channel.rfBitmapC = parseInt(sample[11]);
+				channel.rfLevelC  = parseInt(sample[14]);
+				channel.rfBitmapC = parseInt(sample[13]);
+				channel.antennaC  = sample[6].substr(2,1);
+				channel.antennaD  = sample[6].substr(3,1);
+				this.instance.setVariable(prefix + 'rf_level_c', (channel.rfLevelC-120) + ' dBm');
+				this.instance.setVariable(prefix + 'rf_level_d', (channel.rfLevelD-120) + ' dBm');
+			}
+		}
+	}
+
+	/**
 	 * Parse sample data for MXW.
 	 *
 	 * @param {number} id - the channel id
@@ -200,6 +248,9 @@ class instance_api {
 
 		channel.rfLevel    = parseInt(sample[1]);
 		channel.audioLevel = parseInt(sample[2]);
+
+		this.instance.setVariable(prefix + 'rf_level',    channel.rfLevel);
+		this.instance.setVariable(prefix + 'audio_level', channel.audioLevel);
 	}
 
 	/**
@@ -216,21 +267,26 @@ class instance_api {
 
 		switch(sample[2]) {
 			case 'AX':
-				channel.antennaA = 'BLUE';
-				channel.antennaB = 'OFF';
+				channel.antennaA = 'B';
+				channel.antennaB = 'X';
 				break;
 			case 'XB':
-				channel.antennaA = 'OFF';
-				channel.antennaB = 'BLUE';
+				channel.antennaA = 'X';
+				channel.antennaB = 'B';
 				break;
 			default:
-				channel.antennaA = 'OFF';
-				channel.antennaB = 'OFF';
+				channel.antennaA = 'X';
+				channel.antennaB = 'X';
 				break;
 		}
 
+		channel.antenna    = sample[2];
 		channel.rfLevel    = parseInt(sample[3]);
 		channel.audioLevel = parseInt(sample[4]);
+
+		this.instance.setVariable(prefix + 'antenna', channel.antenna);
+		this.instance.setVariable(prefix + 'rf_level', (channel.rfLevel-120) + ' dBm');
+		this.instance.setVariable(prefix + 'audio_level', (channel.audioLevel-50) + ' dBFS');
 	}
 
 	/**
