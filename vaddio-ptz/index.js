@@ -1,4 +1,4 @@
-var telnet = require("telnet-client");
+var tcp = require('../../tcp');
 var instance_skel = require('../../instance_skel');
 
 var instance_api  = require('./internalAPI');
@@ -35,9 +35,6 @@ class instance extends instance_skel {
 		this.loggedIn     = false;
 		this.okToSend     = false;
 		this.nextCommand  = '';
-
-		this.reconnectTimer;
-		this.pollTimer;
 
 		this.panSpeed     = 12;
 		this.tiltSpeed    = 10;
@@ -174,187 +171,177 @@ class instance extends instance_skel {
 				break;
 /**
 			case 'irisU':
-				if (this.irisIndex == 99) {
-					this.irisIndex = 99;
+				if (self.irisIndex == 99) {
+					self.irisIndex = 99;
 				}
-				else if (this.irisIndex < 99) {
-					this.irisIndex ++;
+				else if (self.irisIndex < 99) {
+					self.irisIndex ++;
 				}
-				this.irisVal = IRIS[this.irisIndex].id;
-				this.sendPTZ('I' + this.irisVal.toUpperCase());
+				self.irisVal = IRIS[self.irisIndex].id;
+				self.sendPTZ('I' + self.irisVal.toUpperCase());
 				break;
 
 			case 'irisD':
-				if (this.irisIndex == 0) {
-					this.irisIndex = 0;
+				if (self.irisIndex == 0) {
+					self.irisIndex = 0;
 				}
-				else if (this.irisIndex > 0) {
-					this.irisIndex--;
+				else if (self.irisIndex > 0) {
+					self.irisIndex--;
 				}
-				this.irisVal = IRIS[this.irisIndex].id;
-				this.sendPTZ('I' + this.irisVal.toUpperCase());
+				self.irisVal = IRIS[self.irisIndex].id;
+				self.sendPTZ('I' + self.irisVal.toUpperCase());
 				break;
 
 			case 'irisS':
-				this.sendPTZ('I' + opt.val);
-				this.irisVal = opt.val;
-				this.irisIndex = opt.val;
+				self.sendPTZ('I' + opt.val);
+				self.irisVal = opt.val;
+				self.irisIndex = opt.val;
 				break;
 
 			case 'gainU':
-				if (this.gainIndex == 49) {
-					this.gainIndex = 49;
+				if (self.gainIndex == 49) {
+					self.gainIndex = 49;
 				}
-				else if (this.gainIndex < 49) {
-					this.gainIndex ++;
+				else if (self.gainIndex < 49) {
+					self.gainIndex ++;
 				}
-				this.gainVal = GAIN[this.gainIndex].id
+				self.gainVal = GAIN[self.gainIndex].id
 
-				var cmd = 'OGU:' + this.gainVal.toUpperCase();
-				this.sendCam(cmd);
+				var cmd = 'OGU:' + self.gainVal.toUpperCase();
+				self.sendCam(cmd);
 				break;
 
 			case 'gainD':
-				if (this.gainIndex == 0) {
-					this.gainIndex = 0;
+				if (self.gainIndex == 0) {
+					self.gainIndex = 0;
 				}
-				else if (this.gainIndex > 0) {
-					this.gainIndex--;
+				else if (self.gainIndex > 0) {
+					self.gainIndex--;
 				}
-				this.gainVal = GAIN[this.gainIndex].id
+				self.gainVal = GAIN[self.gainIndex].id
 
-				var cmd = 'OGU:' + this.gainVal.toUpperCase();
-				this.sendCam(cmd);
+				var cmd = 'OGU:' + self.gainVal.toUpperCase();
+				self.sendCam(cmd);
 				break;
 
 
 			case 'gainS':
 				var cmd = 'OGU:' + opt.val;
-				this.sendCam(cmd);
+				self.sendCam(cmd);
 				break;
 
 			case 'shutU':
-				if (this.shutIndex == 14) {
-					this.shutIndex = 14;
+				if (self.shutIndex == 14) {
+					self.shutIndex = 14;
 				}
-				else if (this.shutIndex < 14) {
-					this.shutIndex ++;
+				else if (self.shutIndex < 14) {
+					self.shutIndex ++;
 				}
-				this.shutVal = SHUTTER[this.shutIndex].id
+				self.shutVal = SHUTTER[self.shutIndex].id
 
-				var cmd = 'OSH:' + this.shutVal.toUpperCase();
-				this.sendCam(cmd);
+				var cmd = 'OSH:' + self.shutVal.toUpperCase();
+				self.sendCam(cmd);
 				break;
 
 			case 'shutD':
-				if (this.shutIndex == 0) {
-					this.shutIndex = 0;
+				if (self.shutIndex == 0) {
+					self.shutIndex = 0;
 				}
-				else if (this.shutIndex > 0) {
-					this.shutIndex--;
+				else if (self.shutIndex > 0) {
+					self.shutIndex--;
 				}
-				this.shutVal = SHUTTER[this.shutIndex].id
+				self.shutVal = SHUTTER[self.shutIndex].id
 
-				var cmd = 'OSH:' + this.shutVal.toUpperCase();
-				this.sendCam(cmd);
+				var cmd = 'OSH:' + self.shutVal.toUpperCase();
+				self.sendCam(cmd);
 				break;
 
 
 			case 'shutS':
 				var cmd = 'OSH:' + opt.val.toUpperCase();
-				this.sendCam(cmd);
+				self.sendCam(cmd);
 				break;
 
 			case 'filterU':
-				if (this.filterIndex == 5) {
-					this.filterIndex = 5;
+				if (self.filterIndex == 5) {
+					self.filterIndex = 5;
 				}
-				else if (this.filterIndex < 5) {
-					this.filterIndex ++;
+				else if (self.filterIndex < 5) {
+					self.filterIndex ++;
 				}
-				this.filterVal = FILTER[this.filterIndex].id
+				self.filterVal = FILTER[self.filterIndex].id
 
-				var cmd = 'OFT:' + this.filterVal;
-				this.sendCam(cmd);
-				debug(this.filterVal);
+				var cmd = 'OFT:' + self.filterVal;
+				self.sendCam(cmd);
+				debug(self.filterVal);
 				break;
 
 			case 'filterD':
-				if (this.filterIndex == 0) {
-					this.filterIndex = 0;
+				if (self.filterIndex == 0) {
+					self.filterIndex = 0;
 				}
-				else if (this.filterIndex > 0) {
-					this.filterIndex--;
+				else if (self.filterIndex > 0) {
+					self.filterIndex--;
 				}
-				this.filterVal = FILTER[this.filterIndex].id
+				self.filterVal = FILTER[self.filterIndex].id
 
-				var cmd = 'OFT:' + this.filterVal;
-				this.sendCam(cmd);
-				debug(this.filterVal);
+				var cmd = 'OFT:' + self.filterVal;
+				self.sendCam(cmd);
+				debug(self.filterVal);
 				break;
 
 
 			case 'filterS':
 				var cmd = 'OFT:' + opt.val;
-				this.sendCam(cmd);
+				self.sendCam(cmd);
 				break;
 
 			case 'pedU':
-				if (this.pedestalIndex == 299) {
-					this.pedestalIndex = 299;
+				if (self.pedestalIndex == 299) {
+					self.pedestalIndex = 299;
 				}
-				else if (this.pedestalIndex < 299) {
-					this.pedestalIndex ++;
+				else if (self.pedestalIndex < 299) {
+					self.pedestalIndex ++;
 				}
-				this.pedestalVal = PEDESTAL[this.pedestalIndex].id
+				self.pedestalVal = PEDESTAL[self.pedestalIndex].id
 
-				var cmd = 'OTP:' + this.pedestalVal.toUpperCase();
-				this.sendCam(cmd);
+				var cmd = 'OTP:' + self.pedestalVal.toUpperCase();
+				self.sendCam(cmd);
 				break;
 
 			case 'pedD':
-				if (this.pedestalIndex == 0) {
-					this.pedestalIndex = 0;
+				if (self.pedestalIndex == 0) {
+					self.pedestalIndex = 0;
 				}
-				else if (this.pedestalIndex > 0) {
-					this.pedestalIndex--;
+				else if (self.pedestalIndex > 0) {
+					self.pedestalIndex--;
 				}
-				this.pedestalVal = PEDESTAL[this.pedestalIndex].id
+				self.pedestalVal = PEDESTAL[self.pedestalIndex].id
 
-				var cmd = 'OTP:' + this.pedestalVal.toUpperCase();
-				this.sendCam(cmd);
+				var cmd = 'OTP:' + self.pedestalVal.toUpperCase();
+				self.sendCam(cmd);
 				break;
 
 
 			case 'pedS':
 				var cmd = 'OTP:' + opt.val.toUpperCase();
-				this.sendCam(cmd);
+				self.sendCam(cmd);
 				break;
 
 			case 'savePset':
 				cmd ='M' + opt.val;
-				this.sendPTZ(cmd);
+				self.sendPTZ(cmd);
 				break;
 
 			case 'recallPset':
 				cmd ='R' + opt.val ;
-				this.sendPTZ(cmd);
+				self.sendPTZ(cmd);
 				break;
 
 			case 'speedPset':
 				cmd ='UPVS' + opt.speed
-				this.sendPTZ(cmd);
+				self.sendPTZ(cmd);
 				break;*/
-		}
-
-		if (cmd !== undefined) {
-
-			if (this.socket !== undefined && this.socket.connected) {
-				this.socket.send(cmd);
-			}
-			else {
-				this.debug('Socket not connected :(');
-			}
 		}
 	}
 
@@ -452,45 +439,27 @@ class instance extends instance_skel {
 		}
 
 		if (this.config.host) {
-			this.socket = new telnet();
+			this.socket = new tcp(this.config.host, this.config.port);
 
-			this.socket.connect({
-				host: this.config.host,
-				port: this.config.port,
-				username: this.config.username,
-				password: this.config.password,
-				shellPrompt: ">",
-				failedLoginMatch: 'Login incorrect'
+			this.socket.on('status_change', (status, message) => {
+				this.status(status, message);
 			});
 
-			if (this.reconnectTimer) {
-				clearInterval(this.reconnectTimer);
-			}
-
-			this.socket.on("ready", (data) => {
-				this.status(this.STATUS_OK, "Connected");
-				this.loggedIn = true;
-				this.okToSend = true;
-				this.sendCommand('version');
-
-				/*if (this.config.polling_interval > 0) {
-					this.pollTimer = setInterval(
-						pollActiveCuelists,
-						this.config.polling_interval
-					);
-				}*/
+			this.socket.on('error', (err) => {
+				this.debug("Network error", err);
+				this.log('error',"Network error: " + err.message);
 			});
 
-			this.socket.on("close", () => {
-				this.status(this.STATUS_ERROR, "Disconnected");
+			this.socket.on('connect', () => {
+				this.debug("Connected");
+			});
+
+			this.socket.on('disconnect', () => {
+				this.debug("Disconnected");
 				this.loggedIn = false;
-
-				if (!this.reconnectTimer) {
-					this.reconnectTimer = setInterval( () => {
-						this.initTCP(), 5000;
-					});
-				}
+				this.okToSend = false;
 			});
+
 
 			// separate buffered stream into lines with responses
 			this.socket.on('data', (chunk) => {
@@ -501,10 +470,41 @@ class instance extends instance_skel {
 				while ( (i = receivebuffer.indexOf('\n', offset)) !== -1) {
 					line = receivebuffer.substr(offset, i - offset);
 					offset = i + 1;
-					this.processCameraInformation(line);
+					this.socket.emit('receiveline', line.toString());
 				}
 
 				receivebuffer = receivebuffer.substr(offset);
+
+				// Read current line
+				if (receivebuffer.match(/[L|l]ogin:/)) {
+					receivebuffer = '';
+					this.socket.send(this.config.username + '\r\n');
+				}
+				else if (receivebuffer.match(/[P|p]assword:/)) {
+					receivebuffer = '';
+					this.socket.send(this.config.password + '\r\n');
+				}
+				else if (receivebuffer.match(/>/)) {
+					this.loggedIn = true;
+					if (this.deviceName == '') {
+						receivebuffer = '';
+						this.socket.send('version\r\n');
+					}
+					else {
+						this.okToSend = true;
+						this.sendCommand();
+					}
+				}
+			});
+
+			this.socket.on('receiveline', (line) => {
+
+				if (this.loggedIn == false || line.match(/[L|l]ogin:/) || line.match(/[P|p]assword:/)) {
+					this.processLogin(line);
+				}
+				else {
+					this.processCameraInformation(line);
+				}
 			});
 		}
 	}
@@ -537,6 +537,25 @@ class instance extends instance_skel {
 	}
 
 	/**
+	 * INTERNAL: Processes data from telnet and handles the login procedure.
+	 *
+	 * @param {Object} data - the collected data
+	 * @access protected
+	 * @since 1.0.0
+	 */
+	processLogin(data) {
+		if (data.match(/[L|l]ogin:/)) {
+			this.socket.send(this.config.username + '\r\n');
+		}
+		else if (data.match(/[P|p]assowrd:/)) {
+			this.socket.send(this.config.password + '\r\n');
+		}
+		else if (data == ('Welcome ' + this.config.username)) {
+			this.loggedIn = true;
+		}
+	}
+
+	/**
 	 * INTERNAL: Send a command to the camera
 	 *
 	 * @param {String} cmd - the command to send
@@ -547,7 +566,7 @@ class instance extends instance_skel {
 		if (this.okToSend === false && cmd != '') {
 			this.nextCommand = cmd;
 		}
-		else if (this.loggedIn === true && this.okToSend === true) {
+		else if (this.okToSend === true) {
 			if (cmd == '') {
 				cmd = this.nextCommand;
 				this.nextCommand = '';

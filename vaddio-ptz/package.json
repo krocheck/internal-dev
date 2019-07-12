@@ -22,8 +22,5 @@
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/bitfocus/companion-module-vaddio-ptz/issues"
-	},
-	"dependencies": {
-		"telnet-client": "^1.0.0"
 	}
 }
