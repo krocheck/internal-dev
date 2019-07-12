@@ -36,6 +36,11 @@ class instance extends instance_skel {
 		this.okToSend     = false;
 		this.nextCommand  = '';
 
+		this.panSpeed     = 12;
+		this.tiltSpeed    = 10;
+		this.zoomSpeed    = 3;
+		this.focusSpeed   = 5;
+
 		Object.assign(this, {
 			...actions,
 			...feedback,
@@ -73,14 +78,270 @@ class instance extends instance_skel {
 		var opt = action.options;
 
 		switch (action.action) {
-			case 'route':
-				if (parseInt(opt.destination) >= this.outputCount) {
-					cmd = "VIDEO MONITORING OUTPUT ROUTING:\n"+(parseInt(opt.destination)-this.outputCount)+" "+opt.source+"\n\n";
-				}
-				else {
-					cmd = "VIDEO OUTPUT ROUTING:\n"+opt.destination+" "+opt.source+"\n\n";
-				}
+			case 'left':
+				cmd = 'camera pan left ' + this.panSpeed;
+				this.sendCommand(cmd);
 				break;
+			case 'right':
+				cmd = 'camera pan right ' + this.panSpeed;
+				this.sendCommand(cmd);
+				break;
+			case 'up':
+				cmd = 'camera tilt up ' + this.tiltSpeed;
+				this.sendCommand(cmd);
+				break;
+			case 'down':
+				cmd = 'camera tilt down ' + this.tiltSpeed;
+				this.sendCommand(cmd);
+				break;
+			case 'upLeft':
+				cmd = 'camera pan left ' + this.panSpeed;
+				this.sendCommand(cmd);
+				cmd = 'camera tilt up ' + this.tiltSpeed;
+				this.sendCommand(cmd);
+				break;
+			case 'upRight':
+				cmd = 'camera pan right ' + this.panSpeed;
+				this.sendCommand(cmd);
+				cmd = 'camera tilt up ' + this.tiltSpeed;
+				this.sendCommand(cmd);
+				break;
+			case 'downLeft':
+				cmd = 'camera pan left ' + this.panSpeed;
+				this.sendCommand(cmd);
+				cmd = 'camera tilt down ' + this.tiltSpeed;
+				this.sendCommand(cmd);
+				break;
+			case 'downRight':
+				cmd = 'camera pan right ' + this.panSpeed;
+				this.sendCommand(cmd);
+				cmd = 'camera tilt down ' + this.tiltSpeed;
+				this.sendCommand(cmd);
+				break;
+			case 'stop':
+				cmd = 'camera pan stop';
+				this.sendCommand(cmd);
+				cmd = 'camera tilt down';
+				this.sendCommand(cmd);
+				break;
+			case 'home':
+				cmd = 'camera home';
+				this.sendCommand(cmd);
+				break;
+
+			case 'ptSpeedS':
+				this.panSpeed = opt.panSpeed;
+				this.tiltSpeed = opt.tiltSpeed;
+				break;
+
+			case 'zoomO':
+				cmd = 'camera zoom out ' + this.zoomSpeed;
+				this.sendCommand(cmd);
+				break;
+			case 'zoomI':
+				cmd = 'camera zoom in ' + this.zoomSpeed;
+				this.sendCommand(cmd);
+				break;
+			case 'zoomS':
+				cmd = 'camera zoom stop';
+				this.sendCommand(cmd);
+				break;
+			case 'zSpeedS':
+				this.zoomSpeed = opt.speed;
+				break;
+
+			case 'focusN':
+				cmd = 'camera focus near ' + this.zoomSpeed;
+				this.sendCommand(cmd);
+				break;
+			case 'focusF':
+				cmd = 'camera focus far ' + this.zoomSpeed;
+				this.sendCommand(cmd);
+				break;
+			case 'focusS':
+				cmd = 'camera focus stop';
+				this.sendCommand(cmd);
+				break;
+			case 'zSpeedS':
+				this.focusSpeed = opt.speed;
+				break;
+			case 'focusM':
+				cmd = 'camera focus mode ' + this.mode;
+				this.sendCommand(cmd);
+				break;
+/**
+			case 'irisU':
+				if (self.irisIndex == 99) {
+					self.irisIndex = 99;
+				}
+				else if (self.irisIndex < 99) {
+					self.irisIndex ++;
+				}
+				self.irisVal = IRIS[self.irisIndex].id;
+				self.sendPTZ('I' + self.irisVal.toUpperCase());
+				break;
+
+			case 'irisD':
+				if (self.irisIndex == 0) {
+					self.irisIndex = 0;
+				}
+				else if (self.irisIndex > 0) {
+					self.irisIndex--;
+				}
+				self.irisVal = IRIS[self.irisIndex].id;
+				self.sendPTZ('I' + self.irisVal.toUpperCase());
+				break;
+
+			case 'irisS':
+				self.sendPTZ('I' + opt.val);
+				self.irisVal = opt.val;
+				self.irisIndex = opt.val;
+				break;
+
+			case 'gainU':
+				if (self.gainIndex == 49) {
+					self.gainIndex = 49;
+				}
+				else if (self.gainIndex < 49) {
+					self.gainIndex ++;
+				}
+				self.gainVal = GAIN[self.gainIndex].id
+
+				var cmd = 'OGU:' + self.gainVal.toUpperCase();
+				self.sendCam(cmd);
+				break;
+
+			case 'gainD':
+				if (self.gainIndex == 0) {
+					self.gainIndex = 0;
+				}
+				else if (self.gainIndex > 0) {
+					self.gainIndex--;
+				}
+				self.gainVal = GAIN[self.gainIndex].id
+
+				var cmd = 'OGU:' + self.gainVal.toUpperCase();
+				self.sendCam(cmd);
+				break;
+
+
+			case 'gainS':
+				var cmd = 'OGU:' + opt.val;
+				self.sendCam(cmd);
+				break;
+
+			case 'shutU':
+				if (self.shutIndex == 14) {
+					self.shutIndex = 14;
+				}
+				else if (self.shutIndex < 14) {
+					self.shutIndex ++;
+				}
+				self.shutVal = SHUTTER[self.shutIndex].id
+
+				var cmd = 'OSH:' + self.shutVal.toUpperCase();
+				self.sendCam(cmd);
+				break;
+
+			case 'shutD':
+				if (self.shutIndex == 0) {
+					self.shutIndex = 0;
+				}
+				else if (self.shutIndex > 0) {
+					self.shutIndex--;
+				}
+				self.shutVal = SHUTTER[self.shutIndex].id
+
+				var cmd = 'OSH:' + self.shutVal.toUpperCase();
+				self.sendCam(cmd);
+				break;
+
+
+			case 'shutS':
+				var cmd = 'OSH:' + opt.val.toUpperCase();
+				self.sendCam(cmd);
+				break;
+
+			case 'filterU':
+				if (self.filterIndex == 5) {
+					self.filterIndex = 5;
+				}
+				else if (self.filterIndex < 5) {
+					self.filterIndex ++;
+				}
+				self.filterVal = FILTER[self.filterIndex].id
+
+				var cmd = 'OFT:' + self.filterVal;
+				self.sendCam(cmd);
+				debug(self.filterVal);
+				break;
+
+			case 'filterD':
+				if (self.filterIndex == 0) {
+					self.filterIndex = 0;
+				}
+				else if (self.filterIndex > 0) {
+					self.filterIndex--;
+				}
+				self.filterVal = FILTER[self.filterIndex].id
+
+				var cmd = 'OFT:' + self.filterVal;
+				self.sendCam(cmd);
+				debug(self.filterVal);
+				break;
+
+
+			case 'filterS':
+				var cmd = 'OFT:' + opt.val;
+				self.sendCam(cmd);
+				break;
+
+			case 'pedU':
+				if (self.pedestalIndex == 299) {
+					self.pedestalIndex = 299;
+				}
+				else if (self.pedestalIndex < 299) {
+					self.pedestalIndex ++;
+				}
+				self.pedestalVal = PEDESTAL[self.pedestalIndex].id
+
+				var cmd = 'OTP:' + self.pedestalVal.toUpperCase();
+				self.sendCam(cmd);
+				break;
+
+			case 'pedD':
+				if (self.pedestalIndex == 0) {
+					self.pedestalIndex = 0;
+				}
+				else if (self.pedestalIndex > 0) {
+					self.pedestalIndex--;
+				}
+				self.pedestalVal = PEDESTAL[self.pedestalIndex].id
+
+				var cmd = 'OTP:' + self.pedestalVal.toUpperCase();
+				self.sendCam(cmd);
+				break;
+
+
+			case 'pedS':
+				var cmd = 'OTP:' + opt.val.toUpperCase();
+				self.sendCam(cmd);
+				break;
+
+			case 'savePset':
+				cmd ='M' + opt.val;
+				self.sendPTZ(cmd);
+				break;
+
+			case 'recallPset':
+				cmd ='R' + opt.val ;
+				self.sendPTZ(cmd);
+				break;
+
+			case 'speedPset':
+				cmd ='UPVS' + opt.speed
+				self.sendPTZ(cmd);
+				break;*/
 		}
 
 		if (cmd !== undefined) {
@@ -226,15 +487,17 @@ class instance extends instance_skel {
 
 				// Read current line
 				if (receivebuffer.match(/[L|l]ogin:/)) {
-					receiverbuffer = '';
+					receivebuffer = '';
 					this.socket.send(this.config.username + '\n');
 				}
 				else if (receivebuffer.match(/[P|p]assword:/)) {
-					receiverbuffer = '';
+					receivebuffer = '';
 					this.socket.send(this.config.password + '\n');
 				}
 				else if (receivebuffer.match(/>/)) {
+					this.loggedIn = true;
 					if (this.deviceName == '') {
+						receivebuffer = '';
 						this.socket.send('version\n');
 					}
 					else {
@@ -278,7 +541,7 @@ class instance extends instance_skel {
 	 */
 	processCameraInformation(data) {
 		if (data.match(/System Version/)) {
-			this.deviceName = data.substring(data.indexOf('RoboShot'));
+			this.deviceName = data.substring(data.indexOf('Robo'));
 			this.log('info', 'Connected to a ' + this.deviceName);
 		}
 	}

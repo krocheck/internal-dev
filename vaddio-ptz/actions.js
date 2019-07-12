@@ -9,134 +9,184 @@ module.exports = {
 	 */
 	getActions() {
 		var actions = {};
+
+		actions['left'] = { label: 'Pan Left' };
+		actions['right'] = { label: 'Pan Right' };
+		actions['up'] = { label: 'Tilt Up' };
+		actions['down'] = { label: 'Tilt Down' };
+		actions['upLeft'] = { label: 'Up Left' };
+		actions['upRight'] = { label: 'Up Right' };
+		actions['downLeft'] = { label: 'Down Left' };
+		actions['downRight'] = { label: 'Down Right' };
+		actions['stop'] = { label: 'P/T Stop' };
+		actions['home'] = { label: 'P/T Home' };
+		actions['ptSpeedS'] = {
+			label: 'P/T Speed',
+			options: [
+				{
+					type: 'number',
+					label: 'Pan speed',
+					id: 'panSpeed',
+					min: 1,
+					max: 24,
+					default: 12,
+					required: true,
+					range: true
+				},
+				{
+					type: 'number',
+					label: 'Tilt speed',
+					id: 'tiltSpeed',
+					min: 1,
+					max: 20,
+					default: 10,
+					required: true,
+					range: true
+				}
+			]
+		};
+
+		actions['zoomI'] = { label: 'Zoom In' };
+		actions['zoomO'] = { label: 'Zoom Out' };
+		actions['zoomS'] = { label: 'Zoom Stop' };
+		actions['zSpeedS'] = {
+			label: 'Zoom Speed',
+			options: [
+				{
+					type: 'number',
+					label: 'speed setting',
+					id: 'speed',
+					min: 1,
+					max: 7,
+					default: 3,
+					required: true,
+					range: true
+				}
+			]
+		};
+
+		actions['focusN'] = { label: 'Focus Near' };
+		actions['focusF'] = { label: 'Focus Far' };
+		actions['focusS'] = { label: 'Focus Stop' };
+		actions['fSpeedS'] = {
+			label: 'Focus Speed',
+			options: [
+				{
+					type: 'number',
+					label: 'speed setting',
+					id: 'speed',
+					min: 1,
+					max: 8,
+					default: 4,
+					required: true,
+					range: true
+				}
+			]
+		};
+		actions['focusM'] = {
+			label: 'Focus Mode',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Auto / Manual Focus',
+					id: 'mode',
+					choices: [ { id: 'auto', label: 'Auto Focus' }, { id: 'manual', label: 'Manual Focus' } ]
+				}
+			]
+		};
 /*
-		actions['rename_destination'] = {
-			label: 'Rename destination',
+		actions['irisS'] = {
+			label: 'Set Iris',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Destination',
-					id: 'destination',
-					default: '0',
-					choices: this.CHOICES_OUTPUTS
-				},
-				{
-					type: 'textinput',
-					label: 'New label',
-					id: 'label',
-					default: "Dest name"
+					label: 'Iris setting',
+					id: 'val',
+					choices: IRIS
 				}
 			]
 		};
-		actions['rename_source'] ={
-			label: 'Rename source',
+		actions['gainS'] = {
+			label: 'Set Gain',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Source',
-					id: 'source',
-					default: '0',
-					choices: this.CHOICES_INPUTS
-				},
-				{
-					type: 'textinput',
-					label: 'New label',
-					id: 'label',
-					default: "Src name"
+					label: 'Gain setting',
+					id: 'val',
+					choices: GAIN
 				}
 			]
 		};
-
-		if (this.serialCount > 0) {
-			actions['rename_serial'] ={
-				label: 'Rename serial port',
-				options: [
-					{
-						type: 'dropdown',
-						label: 'Serial Port',
-						id: 'serial',
-						default: '0',
-						choices: this.CHOICES_SERIALS
-					},
-					{
-						type: 'textinput',
-						label: 'New label',
-						id: 'label',
-						default: "Serial name"
-					}
-				]
-			};
-		}
-
-		actions['route'] = {
-			label: 'Route',
+		actions['shutS'] = {
+			label: 'Set Shutter',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Source',
-					id: 'source',
-					default: '0',
-					choices: this.CHOICES_INPUTS
-				},
-				{
-					type: 'dropdown',
-					label: 'Destination',
-					id: 'destination',
-					default: '0',
-					choices: this.CHOICES_OUTPUTS
+					label: 'Shutter setting',
+					id: 'val',
+					choices: SHUTTER
 				}
 			]
 		};
-
-		if (this.serialCount > 0) {
-			actions['route_serial'] = {
-				label: 'Route serial port',
-				options: [
-					{
-						type: 'dropdown',
-						label: 'Source',
-						id: 'source',
-						default: '0',
-						choices: this.CHOICES_SERIALS
-					},
-					{
-						type: 'dropdown',
-						label: 'Destination',
-						id: 'destination',
-						default: '1',
-						choices: this.CHOICES_SERIALS
-					}
-				]
-			};
-		}
-
-		actions['select_destination'] = {
-			label: 'Select destination',
+		actions['pedU'] = { label: 'Pedestal Up' };
+		actions['pedD'] = { label: 'Pedestal Down' };
+		actions['pedS'] = {
+			label: 'Set Pedestal',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Destination',
-					id: 'destination',
-					default: '0',
-					choices: this.CHOICES_OUTPUTS
+					label: 'Iris setting',
+					id: 'val',
+					choices: PEDESTAL
 				}
 			]
 		};
-		actions['route_source'] = {
-			label: 'Route source to selected destination',
+		actions['filterU'] = { label: 'Filter Up' };
+		actions['filterD'] = { label: 'Filter Down' };
+		actions['filterS'] = {
+			label: 'Set Filter',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Source',
-					id: 'source',
-					default: '0',
-					choices: this.CHOICES_INPUTS
+					label: 'Iris setting',
+					id: 'val',
+					choices: FILTER
 				}
 			]
 		};
-
-		actions['take']  = { label: 'Take' };
-		actions['clear'] = { label: 'Clear' };
+		actions['savePset'] = {
+			label: 'Save Preset',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset Nr.',
+					id: 'val',
+					choices: PRESET
+				}
+			]
+		};
+		actions['recallPset'] = {
+			label: 'Recall Preset',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset Nr.',
+					id: 'val',
+					choices: PRESET
+				}
+			]
+		};
+		actions['speedPset'] = {
+			label: 'Preset Drive Speed',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'speed setting',
+					id: 'speed',
+					choices: PSSPEED
+				}
+			]
+		};
 */
 		return actions;
 	}
