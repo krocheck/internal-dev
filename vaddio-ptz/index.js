@@ -566,6 +566,28 @@ class instance extends instance_skel {
 	}
 
 	/**
+	 * INTERNAL: Send a command to the camera
+	 *
+	 * @param {String} cmd - the command to send
+	 * @access protected
+	 * @since 1.0.0
+	 */
+	sendCommand(cmd = '') {
+		if (this.okToSend === false && cmd != '') {
+			this.nextCommand = cmd;
+		}
+		else if (this.okToSend === true) {
+			if (cmd == '') {
+				cmd = this.nextCommand;
+				this.nextCommand = '';
+			}
+
+			this.okToSend = false;
+			this.socket.send(cmd + '\n');
+		}
+	}
+
+	/**
 	 * INTERNAL: use model data to define the choices for the dropdowns.
 	 *
 	 * @access protected
