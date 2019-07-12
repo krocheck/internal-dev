@@ -215,6 +215,7 @@ class instance extends instance_skel {
 				var i = 0, line = '', offset = 0;
 				receivebuffer += chunk;
 
+				// Process lines
 				while ( (i = receivebuffer.indexOf('\n', offset)) !== -1) {
 					line = receivebuffer.substr(offset, i - offset);
 					offset = i + 1;
@@ -223,23 +224,29 @@ class instance extends instance_skel {
 
 				receivebuffer = receivebuffer.substr(offset);
 
+				// Read current line
 				if (receivebuffer.match(/[L|l]ogin:/)) {
 					receiverbuffer = '';
 					this.socket.send(this.config.username + '\n');
 				}
-				else if (receivebuffer.match(/[P|p]assowrd:/)) {
+				else if (receivebuffer.match(/[P|p]assword:/)) {
 					receiverbuffer = '';
 					this.socket.send(this.config.password + '\n');
+				}
+				else if (receivebuffer.match(/>/)) {
+					if (this.deviceName == '') {
+						this.socket.send('version\n');
+					}
+					else {
+						this.okToSend = true;
+						//this.sendCommand();
+					}
 				}
 			});
 
 			this.socket.on('receiveline', (line) => {
 
-				if (line == 'OK') {
-					this.okToSend = true;
-					this.sendCommand();
-				}
-				else if (this.loggedIn == false || line.match(/[L|l]ogin:/) || line.match(/[P|p]assowrd:/)) {
+				if (this.loggedIn == false || line.match(/[L|l]ogin:/) || line.match(/[P|p]assword:/)) {
 					this.processLogin(line);
 				}
 				else {
@@ -292,7 +299,6 @@ class instance extends instance_skel {
 		}
 		else if (data == ('Welcome ' + this.config.username)) {
 			this.loggedIn = true;
-			this.socket.send('\n');
 		}
 	}
 
