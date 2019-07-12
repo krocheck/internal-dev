@@ -116,7 +116,6 @@ class instance extends instance_skel {
 				id: 'host',
 				label: 'Camera IP',
 				width: 6,
-				default: '192.168.10.150',
 				regex: this.REGEX_IP
 			},
 			{
@@ -129,7 +128,7 @@ class instance extends instance_skel {
 			},
 			{
 				type: 'textinput',
-				id: 'host',
+				id: 'password',
 				label: 'Password',
 				width: 6,
 				default: 'password',
@@ -223,6 +222,15 @@ class instance extends instance_skel {
 				}
 
 				receivebuffer = receivebuffer.substr(offset);
+
+				if (receivebuffer.match(/[L|l]ogin:/)) {
+					receiverbuffer = '';
+					this.socket.send(this.config.username + '\n');
+				}
+				else if (receivebuffer.match(/[P|p]assowrd:/)) {
+					receiverbuffer = '';
+					this.socket.send(this.config.password + '\n');
+				}
 			});
 
 			this.socket.on('receiveline', (line) => {
