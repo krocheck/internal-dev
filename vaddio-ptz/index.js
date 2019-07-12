@@ -467,7 +467,7 @@ class instance extends instance_skel {
 				clearInterval(this.reconnectTimer);
 			}
 
-			this.socket.on("ready", function(data) {
+			this.socket.on("ready", (data) => {
 				this.status(this.STATUS_OK, "Connected");
 				this.loggedIn = true;
 				this.okToSend = true;
@@ -481,12 +481,12 @@ class instance extends instance_skel {
 				}*/
 			});
 
-			this.socket.on("close", function() {
+			this.socket.on("close", () => {
 				this.status(this.STATUS_ERROR, "Disconnected");
 				this.loggedIn = false;
 
 				if (!this.reconnectTimer) {
-					this.reconnectTimer = setInterval(function() {
+					this.reconnectTimer = setInterval( () => {
 						this.initTCP(), 5000;
 					});
 				}
