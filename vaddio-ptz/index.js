@@ -68,7 +68,7 @@ class instance extends instance_skel {
 			...variables
 		});
 
-		const this.ICONS = {
+		this.ICONS = {
 			up:        'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6AQMAAAApyY3OAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAIFJREFUKM+90EEKgzAQRmFDFy49ghcp5FquVPBighcRegHBjWDJ68D8U6F7m00+EnhkUlW3ru6rdyCV0INQzSg1zFLLKmU2aeCQQMEEJXIQORRsTLNyKJhNm3IoaPBg4mQorp2Mh1+00kKN307o/bZrpt5O/FlPU/c75X91/fPd6wPRD1eHyHEL4wAAAABJRU5ErkJggg==',
 			down:      'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6AQMAAAApyY3OAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAIlJREFUKM/F0DEOwyAMBVAjDxk5Qo7CtdiClIv1KJF6gUpZIhXxY2zTDJ2benoS8LFN9MsKbYjxF2XRS1UZ4bCeGFztFmNqphURpidm146kpwFvLDYJpPQtLSLNoySyP2bRpoqih2oSFW8K3lYAxmJGXA88XMnjeuDmih7XA8vXvNeeqX6U6aY6AacbWAQNWOPUAAAAAElFTkSuQmCC',
 			left:      'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6AQMAAAApyY3OAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAHpJREFUKM+1kTEOgCAQBM9Q2JjwA/mJPA2fxlN4giWF8TRBBhMpbKSaZie3i8gPb4Y8FNZKGm8YIAONkNWacIruQLejy+gyug1dQhfRqZa0v6gYA6QfqSWapZnto1B6XdUuFaVHoJunr2MD21nIdJYUEhLYfoGmP777BKKIXC0eYSD5AAAAAElFTkSuQmCC',
@@ -79,9 +79,9 @@ class instance extends instance_skel {
 			downLeft:  'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAMAAAAk2e+/AAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAABg1BMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8aT76cAAAAgHRSTlMAafwJfflezc+3WA7Z5Rk6PAvpBNE73kJT89QxZ48czNIv9A1DnI3qKQUaymjT4a7HdVuGf85LR20CVHr+tLBlA0GvYSTYZEnbAcazNPX4yB4GrAgnmL6Bcj4qIVKIe8kdVadIEe27B90bOG/3Er1rYJq1wibyh+4Q5CMzRllMXDo5euMAAAGfSURBVFjD7dblUwJBGAbw5aSlBJRGQERBkLC7u7u7u7veP90jDnaEcdhjP+k9X5h9Zu43O7PLe4eQECH/KGsIaUooOEcLK75LpehH628idSrE+nMANfyQ3MY2BRm0C6mM462tUwJAJtVyUB1WmsoSFZEk46D6TBcYS3UKPpCYawxD5VxHImVD/RHIxMQbGintkGQcppkcOkuutQPYfkDfmjck556ZTSydve2YY5UWk0Mww672VPh+XFqCU8tA+whtL+KOpa+bF3Rh8B4ymDNaSnSzG9IPIpsL34/HTPZfS58auMPYuYNMWcQXOsD3U9ZDOkZkkCvqwSIqUI2WfEDmgiQxRANiIp8GKtDLO6/Znw19oOdXhKoROtEUBr1F5Y9f4dt1XygqKgh6YqcHwMQkQBWICr1H6czTgrpoQde0IGnekJEWNEwLMv/GPDDB/M/fDioVeLYA5GqoYt+xNRY4toJkCiBUG7vTEVxJu2Z549RbqXQuba7uVDZWO66mgw6d7kYaEPvvCb+REIp/srGzLP4aa0n8zKFkKUSIkD+Qb9QrYMvxAbaBAAAAAElFTkSuQmCC'
 		};
 
-		const this.POLL_COMMANDS = ['camera standby get', 'camera focus mode get', 'camera ccu get all', 'camera led get', 'video mute get'];
+		this.POLL_COMMANDS = ['camera standby get', 'camera focus mode get', 'camera ccu get all', 'camera led get', 'video mute get'];
 
-		const this.PRESETS_PT = [
+		this.PRESETS_PT = [
 			{ id: 'up',        label: 'UP'         },
 			{ id: 'down',      label: 'DOWN'       },
 			{ id: 'left',      label: 'LEFT'       },
@@ -92,7 +92,7 @@ class instance extends instance_skel {
 			{ id: 'downLeft',  label: 'DOWN LEFT'  },
 		];
 
-		const this.PRESETS_PRESETS = [
+		this.PRESETS_PRESETS = [
 			{ id: 'recallPset', group: 'Recall Preset',           label: 'Recall ', speed: null },
 			{ id: 'savePset',   group: 'Save Preset (very slow)', label: 'Save ',   speed: 1    },
 			{ id: 'savePset',   group: 'Save Preset (slow)',      label: 'Save ',   speed: 6    },
@@ -102,7 +102,7 @@ class instance extends instance_skel {
 			
 		];
 
-		const this.PRESETS_STATES = [
+		this.PRESETS_STATES = [
 			{ action: 'awbS',       feedback: 'auto_white_balance',     group: 'CCU Control',    label: 'AWB On',             actionValue: 'on',     fbValue: 'on'  },
 			{ action: 'awbS',       feedback: 'auto_white_balance',     group: 'CCU Control',    label: 'AWB Off',            actionValue: 'off',    fbValue: 'off' },
 			{ action: 'blcS',       feedback: 'backlight_compensation', group: 'CCU Control',    label: 'Backlight Comp On',  actionValue: 'on',     fbValue: 'on'  },
@@ -121,7 +121,7 @@ class instance extends instance_skel {
 			{ action: 'setVidMute', feedback: 'mute',                   group: 'Camera Control', label: 'Video Mute Off',     actionValue: 'off',    fbValue: 'off' }
 		];
 
-		const this.PRESETS_VALUES = [
+		this.PRESETS_VALUES = [
 			{ action: 'pSpeedU', release: null,     group: 'Pan/Tilt',    label: 'PAN SPEED\\nUP\\n$(vaddio:pan_speed)',       size: '7' },
 			{ action: 'pSpeedD', release: null,     group: 'Pan/Tilt',    label: 'PAN SPEED\\nDOWN\\n$(vaddio:pan_speed)',     size: '7' },
 			{ action: 'tSpeedU', release: null,     group: 'Pan/Tilt',    label: 'TILT SPEED\\nUP\\n$(vaddio:tilt_speed)',     size: '7' },
@@ -150,12 +150,12 @@ class instance extends instance_skel {
 			{ action: 'gammaD',  release: null,     group: 'CCU Control', label: 'GAMMA\\nDOWN\\n$(vaddio:gamma)',             size: '7' }
 		];
 
-		const this.CHOICES_AUTOMANUAL = [
+		this.CHOICES_AUTOMANUAL = [
 			{ id: 'auto',   label: 'Auto'   },
 			{ id: 'manual', label: 'Manual' }
 		];
 
-		const this.CHOICES_CCUSCENES_R [
+		this.CHOICES_CCUSCENES_R [
 			{ id: 'F1', label: 'Auto'            },
 			{ id: 'F2', label: 'Incandescent Hi' },
 			{ id: 'F3', label: 'Fluorescent Hi'  },
@@ -167,19 +167,19 @@ class instance extends instance_skel {
 			{ id: 'C3', label: 'Custom C'        }
 		];
 
-		const this.CHOICES_CCUSCENES_S [
+		this.CHOICES_CCUSCENES_S [
 			{ id: '1', label: 'Custom A' },
 			{ id: '2', label: 'Custom B' },
 			{ id: '3', label: 'Custom C' }
 		];
 
-		const this.CHOICES_ONOFF = [
+		this.CHOICES_ONOFF = [
 			{ id: 'on',  label: 'On'  },
 			{ id: 'off', label: 'Off' }
 			
 		];
 
-		const this.CHOICES_ONOFFTOGGLE = [
+		this.CHOICES_ONOFFTOGGLE = [
 			{ id: 'on',     label: 'On'     },
 			{ id: 'off',    label: 'Off'    },
 			{ id: 'toggle', label: 'Toggle' }
