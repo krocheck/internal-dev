@@ -1,8 +1,27 @@
-<!-- HELP.md is incorporated into Companion as contextual help when selecting and configuring instances.  It loads as an HOV popup when a (?) bubble is clicked. -->
-<!-- Information in square brackets should be changed with the square bracket removed.-->
-## [Module Title: e.g. Blackmagic Design ATEM]
-[Module description and helpful information such as instructions for configuring the module's settings and proper configuration of the target device.]
+# Vaddio PTZ Cameras
 
-**Available commands for [equipment names or module title]**
+This module will connect to any Vaddio PTZ camera.  It has only been tested against the following cameras:
+* RoboSHOT 20 UHD
+* RoboSHOT 40 UHD
 
-* [list of available actions]
+## Available Actions
+### Pan/Tilt
+*Up, Down, Left, Right, Up-Left, Up-Right, Down-Left, Down-Right
+*Set Pan Speed, Pan Speed Up, Pan Speed Down
+*Set Tilt Speed, Tilt Speed Up, Tilt Speed Down
+
+### Lens
+*Zoom In, Zoom Out, Set Zoom Speed, Zoom Speed Up, Zoom Speed Down
+*Focus Far, Focus Near, Set Focus Speed, Focus Speed Up, Focus Speed Down, Focus Mode
+
+### Exposure
+
+*Set Iris, Iris Open, Iris Close
+*Set Gain, Gain Up, Gain Down
+*Set Shutter, Shutter Up, Shutter Down
+*Set Filter, Filter Up, Filter Down
+*Set Pedestal, Pedestal Up, Pedestal Down
+
+### Presets
+*Save Preset 1-16
+*Recall Preset 1-16

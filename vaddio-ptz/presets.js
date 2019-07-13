@@ -8,6 +8,50 @@ module.exports = {
 	 */
 	initPresets () {
 		var presets = [];
+
+		for (var pt in this.PRESETS_PT) {
+
+			presets.push({
+				category: 'Pan/Tilt',
+				label: this.PRESETS_PT[pt].label,
+				bank: {
+					style: 'png',
+					text: '',
+					png64: this.ICONS[pt],
+					pngalignment: 'center:center',
+					size: '18',
+					color: this.rgb(255,255,255),
+					bgcolor: this.rgb(0,0,0)
+				},
+				actions: [
+					{
+						action: pt,
+					}
+				],
+				release_actions: [
+					{
+						action: 'stop',
+					}
+				]
+			});
+		}
+
+		presets.push({
+			category: 'Pan/Tilt',
+			label: 'HOME',
+			bank: {
+				style: 'png',
+				text: 'HOME',
+				size: '18',
+				color: this.rgb(255,255,255),
+				bgcolor: this.rgb(0,0,0)
+			},
+			actions: [
+				{
+					action: 'home',
+				}
+			]
+		});
 /*
 		presets.push({
 			category: 'Actions\n(XY only)',
@@ -60,88 +104,6 @@ module.exports = {
 				}
 			]
 		});
-
-		for (var i = 0; i < (this.outputCount + this.monitoringCount); i++) {
-
-			presets.push({
-				category: 'Select Destination (X)',
-				label: 'Selection destination button for ' + this.getOutput(i).name,
-				bank: {
-					style: 'text',
-					text: '$(videohub:output_' + (i+1) + ')',
-					size: '18',
-					color: this.rgb(255,255,255),
-					bgcolor: this.rgb(0,0,0)
-				},
-				feedbacks: [
-					{
-						type: 'selected_destination',
-						options: {
-							bg: this.rgb(255,255,0),
-							fg: this.rgb(0,0,0),
-							output: i
-						}
-					},
-					{
-						type: 'take_tally_dest',
-						options: {
-							bg: this.rgb(255,0,0),
-							fg: this.rgb(255,255,255),
-							output: i
-						}
-					}
-				],
-				actions: [
-					{
-						action: 'select_destination',
-						options: {
-							destination: i
-						}
-					}
-				]
-			});
-		}
-
-		for (var i = 0; i < this.inputCount; i++) {
-
-			presets.push({
-				category: 'Route Source (Y)',
-				label: 'Route ' + this.getInput(i).name + ' to selected destination',
-				bank: {
-					style: 'text',
-					text: '$(videohub:input_' + (i+1) + ')',
-					size: '18',
-					color: this.rgb(255,255,255),
-					bgcolor: this.rgb(0,0,0)
-				},
-				feedbacks: [
-					{
-						type: 'selected_source',
-						options: {
-							bg: this.rgb(255,255,255),
-							fg: this.rgb(0,0,0),
-							input: i
-						}
-					},
-					{
-						type: 'take_tally_source',
-						options: {
-							bg: this.rgb(255,0,0),
-							fg: this.rgb(255,255,255),
-							input: i
-						}
-					}
-				],
-				actions: [
-					{
-						action: 'route_source',
-						options: {
-							source: i
-						}
-					}
-				]
-			});
-		}
 
 		for (var out = 0; out < (this.outputCount + this.monitoringCount); out++) {
 			for (var i = 0; i < this.inputCount; i++) {

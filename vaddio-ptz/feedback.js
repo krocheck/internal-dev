@@ -1,10 +1,10 @@
 module.exports = {
 
 	/**
-	 * Get the available feedbacks.
+	 * INTERNAL: Get the available feedbacks.
 	 *
 	 * @returns {Object[]} the available feedbacks
-	 * @access public
+	 * @access protected
 	 * @since 1.0.0
 	 */
 	getFeedbacks() {
