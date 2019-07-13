@@ -17,7 +17,7 @@ module.exports = {
 				bank: {
 					style: 'png',
 					text: '',
-					png64: this.ICONS[this.PRESETS_PT[pt].id],
+					png64: this.PRESETS_PT[pt].icon,
 					pngalignment: 'center:center',
 					size: '18',
 					color: this.rgb(255,255,255),
@@ -133,7 +133,7 @@ module.exports = {
 				label: this.PRESETS_STATES[pt].label,
 				bank: {
 					style: 'text',
-					text: '',
+					text: this.PRESETS_STATES[pt].label,
 					size: '14',
 					color: this.rgb(255,255,255),
 					bgcolor: this.rgb(0,0,0)
@@ -166,7 +166,7 @@ module.exports = {
 				label: this.PRESETS_VALUES[pt].label,
 				bank: {
 					style: 'text',
-					text: '',
+					text: this.PRESETS_VALUES[pt].label,
 					size: this.PRESETS_VALUES[pt].size,
 					color: this.rgb(255,255,255),
 					bgcolor: this.rgb(0,0,0)
