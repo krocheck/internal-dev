@@ -150,8 +150,8 @@ module.exports = {
 					{
 						type: this.PRESETS_STATES[pt].feedback,
 						options: {
-							bg: this.rgb(0,0,0),
-							fg: this.rgb(255,255,0),
+							bg: this.rgb(255,255,0),
+							fg: this.rgb(0,0,0),
 							mode: this.PRESETS_STATES[pt].fbValue
 						}
 					}
