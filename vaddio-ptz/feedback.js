@@ -9,10 +9,10 @@ module.exports = {
 	 */
 	getFeedbacks() {
 		var feedbacks = {};
-/*
-		feedbacks['input_bg'] = {
-			label: 'Change background color by destination',
-			description: 'If the input specified is in use by the output specified, change background color of the bank',
+
+		feedbacks['standby'] = {
+			label: 'Change background color by camera standby state',
+			description: 'If the camera standby state specified is active, change background color of the bank',
 			options: [
 				{
 					type: 'colorpicker',
@@ -28,21 +28,14 @@ module.exports = {
 				},
 				{
 					type: 'dropdown',
-					label: 'Input',
-					id: 'input',
+					label: 'State',
+					id: 'mode',
 					default: '0',
-					choices: this.CHOICES_INPUTS
-				},
-				{
-					type: 'dropdown',
-					label: 'Output',
-					id: 'output',
-					default: '0',
-					choices: this.CHOICES_OUTPUTS
+					choices: this.CHOICES_ONOFF
 				}
 			],
 			callback: (feedback, bank) => {
-				if (this.getOutput(parseInt(feedback.options.output)).route == parseInt(feedback.options.input)) {
+				if (this.state.standby == feedback.options.mode) {
 					return {
 						color: feedback.options.fg,
 						bgcolor: feedback.options.bg
@@ -51,52 +44,9 @@ module.exports = {
 			}
 		};
 
-		if (this.serialCount > 0) {
-			feedbacks['serial_bg'] = {
-				label: 'Change background color by serial route',
-				description: 'If the input specified is in use by the output specified, change background color of the bank',
-				options: [
-					{
-						type: 'colorpicker',
-						label: 'Foreground color',
-						id: 'fg',
-						default: this.rgb(0,0,0)
-					},
-					{
-						type: 'colorpicker',
-						label: 'Background color',
-						id: 'bg',
-						default: this.rgb(255,255,0)
-					},
-					{
-						type: 'dropdown',
-						label: 'Input',
-						id: 'input',
-						default: '0',
-						choices: this.CHOICES_SERIALS
-					},
-					{
-						type: 'dropdown',
-						label: 'Output',
-						id: 'output',
-						default: '0',
-						choices: this.CHOICES_SERIALS
-					}
-				],
-				callback: (feedback, bank) => {
-					if (this.getSerial(parseInt(feedback.options.output)).route == parseInt(feedback.options.input)) {
-						return {
-							color: feedback.options.fg,
-							bgcolor: feedback.options.bg
-						};
-					}
-				}
-			};
-		}
-
-		feedbacks['selected_destination'] = {
-			label: 'Change background color by selected destination',
-			description: 'If the output specified is selected, change background color of the bank',
+		feedbacks['auto_focus'] = {
+			label: 'Change background color by auto focus state',
+			description: 'If the auto focus state specified is active, change background color of the bank',
 			options: [
 				{
 					type: 'colorpicker',
@@ -112,14 +62,14 @@ module.exports = {
 				},
 				{
 					type: 'dropdown',
-					label: 'Output',
-					id: 'output',
+					label: 'State',
+					id: 'mode',
 					default: '0',
-					choices: this.CHOICES_OUTPUTS
+					choices: this.CHOICES_ONOFF
 				}
 			],
 			callback: (feedback, bank) => {
-				if (parseInt(feedback.options.output) == this.selected) {
+				if (this.state.auto_focus == feedback.options.mode) {
 					return {
 						color: feedback.options.fg,
 						bgcolor: feedback.options.bg
@@ -128,9 +78,9 @@ module.exports = {
 			}
 		};
 
-		feedbacks['selected_source'] = {
-			label: 'Change background color by route to selected destination',
-			description: 'If the input specified is in use by the selected output, change background color of the bank',
+		feedbacks['auto_iris'] = {
+			label: 'Change background color by auto iris state',
+			description: 'If the auto iris state specified is active, change background color of the bank',
 			options: [
 				{
 					type: 'colorpicker',
@@ -142,18 +92,18 @@ module.exports = {
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: this.rgb(255,255,255)
+					default: this.rgb(255,255,0)
 				},
 				{
 					type: 'dropdown',
-					label: 'Input',
-					id: 'input',
+					label: 'State',
+					id: 'mode',
 					default: '0',
-					choices: this.CHOICES_INPUTS
+					choices: this.CHOICES_ONOFF
 				}
 			],
 			callback: (feedback, bank) => {
-				if (this.getOutput(this.selected).route == parseInt(feedback.options.input)) {
+				if (this.state.auto_iris == feedback.options.mode) {
 					return {
 						color: feedback.options.fg,
 						bgcolor: feedback.options.bg
@@ -162,26 +112,32 @@ module.exports = {
 			}
 		};
 
-		feedbacks['take'] = {
-			label: 'Change background color if take has a route queued',
-			description: 'If a route is queued for take, change background color of the bank',
+		feedbacks['auto_white_balance'] = {
+			label: 'Change background color by auto white balance state',
+			description: 'If the auto white balance state specified is active, change background color of the bank',
 			options: [
 				{
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: this.rgb(255,255,255)
-
+					default: this.rgb(0,0,0)
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: this.rgb(255,0,0)
+					default: this.rgb(255,255,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'State',
+					id: 'mode',
+					default: '0',
+					choices: this.CHOICES_ONOFF
 				}
 			],
 			callback: (feedback, bank) => {
-				if (this.queue != '') {
+				if (this.state.auto_white_balance == feedback.options.mode) {
 					return {
 						color: feedback.options.fg,
 						bgcolor: feedback.options.bg
@@ -190,33 +146,32 @@ module.exports = {
 			}
 		};
 
-		feedbacks['take_tally_source'] = {
-			label: 'Change background color if the selected source is queued in take',
-			description: 'If the selected source is queued for take, change background color of the bank',
+		feedbacks['backlight_compensation'] = {
+			label: 'Change background color by backlight compensation state',
+			description: 'If the backlight compensation state specified is active, change background color of the bank',
 			options: [
 				{
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: this.rgb(255,255,255)
-
+					default: this.rgb(0,0,0)
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: this.rgb(255,0,0)
+					default: this.rgb(255,255,0)
 				},
 				{
 					type: 'dropdown',
-					label: 'Input',
-					id: 'input',
+					label: 'State',
+					id: 'mode',
 					default: '0',
-					choices: this.CHOICES_INPUTS
+					choices: this.CHOICES_ONOFF
 				}
 			],
 			callback: (feedback, bank) => {
-				if (parseInt(feedback.options.input) == this.queuedSource && this.selected == this.queuedDest) {
+				if (this.state.backlight_compensation == feedback.options.mode) {
 					return {
 						color: feedback.options.fg,
 						bgcolor: feedback.options.bg
@@ -225,33 +180,32 @@ module.exports = {
 			}
 		};
 
-		feedbacks['take_tally_dest'] = {
-			label: 'Change background color if the selected destination is queued in take',
-			description: 'If the selected destination is queued for take, change background color of the bank',
+		feedbacks['led'] = {
+			label: 'Change background color by LED state',
+			description: 'If the front LED state specified is active, change background color of the bank',
 			options: [
 				{
 					type: 'colorpicker',
 					label: 'Foreground color',
 					id: 'fg',
-					default: this.rgb(255,255,255)
-
+					default: this.rgb(0,0,0)
 				},
 				{
 					type: 'colorpicker',
 					label: 'Background color',
 					id: 'bg',
-					default: this.rgb(255,0,0)
+					default: this.rgb(255,255,0)
 				},
 				{
 					type: 'dropdown',
-					label: 'Output',
-					id: 'output',
+					label: 'State',
+					id: 'mode',
 					default: '0',
-					choices: this.CHOICES_OUTPUTS
+					choices: this.CHOICES_ONOFF
 				}
 			],
 			callback: (feedback, bank) => {
-				if (parseInt(feedback.options.output) == this.queuedDest) {
+				if (this.state.led == feedback.options.mode) {
 					return {
 						color: feedback.options.fg,
 						bgcolor: feedback.options.bg
@@ -259,7 +213,75 @@ module.exports = {
 				}
 			}
 		};
-*/
+
+		feedbacks['mute'] = {
+			label: 'Change background color by video mute state',
+			description: 'If the video mute state specified is active, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'State',
+					id: 'mode',
+					default: '0',
+					choices: this.CHOICES_ONOFF
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.state.mute == feedback.options.mode) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
+		feedbacks['wide_dynamic_range'] = {
+			label: 'Change background color by wide dynamic range state',
+			description: 'If the wide dynamic range state specified is active, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type: 'dropdown',
+					label: 'State',
+					id: 'mode',
+					default: '0',
+					choices: this.CHOICES_ONOFF
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.state.wide_dynamic_range == feedback.options.mode) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
 		return feedbacks;
 	}
 }

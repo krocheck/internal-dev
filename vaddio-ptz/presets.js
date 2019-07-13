@@ -17,7 +17,7 @@ module.exports = {
 				bank: {
 					style: 'png',
 					text: '',
-					png64: this.ICONS[pt],
+					png64: this.ICONS[this.PRESETS_PT[pt].id],
 					pngalignment: 'center:center',
 					size: '18',
 					color: this.rgb(255,255,255),
@@ -25,7 +25,7 @@ module.exports = {
 				},
 				actions: [
 					{
-						action: pt,
+						action: this.PRESETS_PT[pt].id,
 					}
 				],
 				release_actions: [
@@ -52,89 +52,27 @@ module.exports = {
 				}
 			]
 		});
-/*
-		presets.push({
-			category: 'Actions\n(XY only)',
-			label: 'Take',
-			bank: {
-				style: 'text',
-				text: 'Take',
-				size: '18',
-				color: this.rgb(255,255,255),
-				bgcolor: this.rgb(0,0,0)
-			},
-			feedbacks: [
-				{
-					type: 'take',
-					options: {
-						bg: this.rgb(255,0,0),
-						fg: this.rgb(255,255,255)
-					}
-				}
-			],
-			actions: [
-				{
-					action: 'take'
-				}
-			]
-		});
 
-		presets.push({
-			category: 'Actions\n(XY only)',
-			label: 'Clear',
-			bank: {
-				style: 'text',
-				text: 'Clear',
-				size: '18',
-				color: this.rgb(128,128,128),
-				bgcolor: this.rgb(0,0,0)
-			},
-			feedbacks: [
-				{
-					type: 'take',
-					options: {
-						bg: this.rgb(0,0,0),
-						fg: this.rgb(255,255,255)
-					}
-				}
-			],
-			actions: [
-				{
-					action: 'clear'
-				}
-			]
-		});
-
-		for (var out = 0; out < (this.outputCount + this.monitoringCount); out++) {
-			for (var i = 0; i < this.inputCount; i++) {
+		for (var num = 1; num <= 16; num++) {
+			for (var type in this.PRESETS_PRESETS) {
 
 				presets.push({
-					category: 'Output ' + (out+1),
-					label: 'Output ' + (out+1) + ' button for ' + this.getInput(i).name,
+					category: this.PRESETS_PRESETS[type].group,
+					label: this.PRESETS_PRESETS[type].label + num,
 					bank: {
 						style: 'text',
-						text: '$(videohub:input_' + (i+1) + ')',
-						size: '18',
+						text: this.PRESETS_PRESETS[type].label + num,
+						size: '14',
 						color: this.rgb(255,255,255),
 						bgcolor: this.rgb(0,0,0)
 					},
-					feedbacks: [
-						{
-							type: 'input_bg',
-							options: {
-								bg: this.rgb(255,255,0),
-								fg: this.rgb(0,0,0),
-								input: i,
-								output: out
-							}
-						}
-					],
 					actions: [
 						{
-							action: 'route',
+							action: this.PRESETS_PRESETS[type].id,
 							options: {
-								source: i,
-								destination: out
+								val: num,
+								speed: this.PRESETS_PRESETS[type].speed,
+								ccu: false
 							}
 						}
 					]
@@ -142,48 +80,115 @@ module.exports = {
 			}
 		}
 
-		if (this.serialCount > 0) {
-			for (var out = 0; out < this.serialCount; out++) {
-				for (var i = 0; i < this.serialCount; i++) {
-					if (i == out) {
-						continue;
-					}
+		for (var type in this.CHOICES_CCUSCENES_R) {
 
-					presets.push({
-						category: 'Serial ' + (out+1),
-						label: 'Route serial ' + (i+1) + ' to serial ' + (out+1),
-						bank: {
-							style: 'text',
-							text: '$(videohub:serial_' + (i+1) + ')',
-							size: '18',
-							color: this.rgb(255,255,255),
-							bgcolor: this.rgb(0,0,0)
-						},
-						feedbacks: [
-							{
-								type: 'serial_bg',
-								options: {
-									bg: this.rgb(255,255,0),
-									fg: this.rgb(0,0,0),
-									input: i,
-									output: out
-								}
-							}
-						],
-						actions: [
-							{
-								action: 'route_serial',
-								options: {
-									source: i,
-									destination: out
-								}
-							}
-						]
-					});
-				}
-			}
+			presets.push({
+				category: 'CCU Presets',
+				label: 'Recall ' + this.CHOICES_CCUSCENES_R[type].label,
+				bank: {
+					style: 'text',
+					text: 'Recall ' + this.CHOICES_CCUSCENES_R[type].label,
+					size: '14',
+					color: this.rgb(255,255,255),
+					bgcolor: this.rgb(0,0,0)
+				},
+				actions: [
+					{
+						action: 'recallCCU',
+						options: {
+							speed: this.CHOICES_CCUSCENES_R[type].id
+						}
+					}
+				]
+			});
 		}
-*/
+
+		for (var type in this.CHOICES_CCUSCENES_S) {
+
+			presets.push({
+				category: 'CCU Presets',
+				label: 'Save ' + this.CHOICES_CCUSCENES_S[type].label,
+				bank: {
+					style: 'text',
+					text: 'Save ' + this.CHOICES_CCUSCENES_S[type].label,
+					size: '14',
+					color: this.rgb(255,255,255),
+					bgcolor: this.rgb(0,0,0)
+				},
+				actions: [
+					{
+						action: 'saveCCU',
+						options: {
+							speed: this.CHOICES_CCUSCENES_S[type].id
+						}
+					}
+				]
+			});
+		}
+
+		for (var pt in this.PRESETS_STATES) {
+
+			presets.push({
+				category: this.PRESETS_STATES[pt].group,
+				label: this.PRESETS_STATES[pt].label,
+				bank: {
+					style: 'text',
+					text: '',
+					size: '14',
+					color: this.rgb(255,255,255),
+					bgcolor: this.rgb(0,0,0)
+				},
+				actions: [
+					{
+						action: this.PRESETS_STATES[pt].action,
+						options: {
+							mode: this.PRESETS_STATES[pt].actionValue
+						}
+					}
+				],
+				feedbacks: [
+					{
+						type: this.PRESETS_STATES[pt].feedback,
+						options: {
+							bg: this.rgb(0,0,0),
+							fg: this.rgb(255,255,0),
+							mode: this.PRESETS_STATES[pt].fbValue
+						}
+					}
+				]
+			});
+		}
+
+		for (var pt in this.PRESETS_VALUES) {
+
+			let pst = {
+				category: this.PRESETS_VALUES[pt].group,
+				label: this.PRESETS_VALUES[pt].label,
+				bank: {
+					style: 'text',
+					text: '',
+					size: this.PRESETS_VALUES[pt].size,
+					color: this.rgb(255,255,255),
+					bgcolor: this.rgb(0,0,0)
+				},
+				actions: [
+					{
+						action: this.PRESETS_VALUES[pt].action
+					}
+				]
+			};
+
+			if (this.PRESETS_VALUES[pt].release !== undefined) {
+				pst.release_Actions = [
+					{
+						action: this.PRESETS_VALUES[pt].release
+					}
+				]
+			}
+
+			presets.push(pst);
+		}
+
 		this.setPresetDefinitions(presets);
 	}
 }

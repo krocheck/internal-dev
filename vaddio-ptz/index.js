@@ -33,12 +33,33 @@ class instance extends instance_skel {
 		this.deviceName   = '';
 		this.loggedIn     = false;
 		this.okToSend     = false;
+		this.catchUp      = false;
 		this.nextCommand  = '';
+		this.lastPoll     = 0;
+		this.pollTimer    = null;
 
 		this.panSpeed     = 12;
 		this.tiltSpeed    = 10;
 		this.zoomSpeed    = 3;
 		this.focusSpeed   = 5;
+
+		this.state = {
+			auto_focus:             'on',//
+			auto_iris:              'on',//
+			auto_white_balance:     'on',//
+			backlight_compensation: 'off',//
+			blue_gain:              128,
+			chroma:                 7,
+			detail:                 7,
+			gain:                   0,
+			gamma:                  0,
+			iris:                   6,
+			led:                    'on',
+			mute:                   'off',
+			red_gain:               128,
+			standby:                'off',
+			wide_dynamic_range:     'off'
+		}
 
 		Object.assign(this, {
 			...actions,
@@ -58,7 +79,9 @@ class instance extends instance_skel {
 			downLeft:  'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAMAAAAk2e+/AAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAABg1BMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8aT76cAAAAgHRSTlMAafwJfflezc+3WA7Z5Rk6PAvpBNE73kJT89QxZ48czNIv9A1DnI3qKQUaymjT4a7HdVuGf85LR20CVHr+tLBlA0GvYSTYZEnbAcazNPX4yB4GrAgnmL6Bcj4qIVKIe8kdVadIEe27B90bOG/3Er1rYJq1wibyh+4Q5CMzRllMXDo5euMAAAGfSURBVFjD7dblUwJBGAbw5aSlBJRGQERBkLC7u7u7u7veP90jDnaEcdhjP+k9X5h9Zu43O7PLe4eQECH/KGsIaUooOEcLK75LpehH628idSrE+nMANfyQ3MY2BRm0C6mM462tUwJAJtVyUB1WmsoSFZEk46D6TBcYS3UKPpCYawxD5VxHImVD/RHIxMQbGintkGQcppkcOkuutQPYfkDfmjck556ZTSydve2YY5UWk0Mww672VPh+XFqCU8tA+whtL+KOpa+bF3Rh8B4ymDNaSnSzG9IPIpsL34/HTPZfS58auMPYuYNMWcQXOsD3U9ZDOkZkkCvqwSIqUI2WfEDmgiQxRANiIp8GKtDLO6/Znw19oOdXhKoROtEUBr1F5Y9f4dt1XygqKgh6YqcHwMQkQBWICr1H6czTgrpoQde0IGnekJEWNEwLMv/GPDDB/M/fDioVeLYA5GqoYt+xNRY4toJkCiBUG7vTEVxJu2Z549RbqXQuba7uVDZWO66mgw6d7kYaEPvvCb+REIp/srGzLP4aa0n8zKFkKUSIkD+Qb9QrYMvxAbaBAAAAAElFTkSuQmCC'
 		};
 
-		this.PRESETS_PT = [
+		const this.POLL_COMMANDS = ['camera standby get', 'camera focus mode get', 'camera ccu get all', 'camera led get', 'video mute get'];
+
+		const this.PRESETS_PT = [
 			{ id: 'up',        label: 'UP'         },
 			{ id: 'down',      label: 'DOWN'       },
 			{ id: 'left',      label: 'LEFT'       },
@@ -67,6 +90,100 @@ class instance extends instance_skel {
 			{ id: 'upLeft',    label: 'UP LEFT'    },
 			{ id: 'downRight', label: 'DOWN RIGHT' },
 			{ id: 'downLeft',  label: 'DOWN LEFT'  },
+		];
+
+		const this.PRESETS_PRESETS = [
+			{ id: 'recallPset', group: 'Recall Preset',           label: 'Recall ', speed: null },
+			{ id: 'savePset',   group: 'Save Preset (very slow)', label: 'Save ',   speed: 1    },
+			{ id: 'savePset',   group: 'Save Preset (slow)',      label: 'Save ',   speed: 6    },
+			{ id: 'savePset',   group: 'Save Preset (medium)',    label: 'Save ',   speed: 12   },
+			{ id: 'savePset',   group: 'Save Preset (fast)',      label: 'Save ',   speed: 18   },
+			{ id: 'savePset',   group: 'Save Preset (very fast)', label: 'Save ',   speed: 24   }
+			
+		];
+
+		const this.PRESETS_STATES = [
+			{ action: 'awbS',       feedback: 'auto_white_balance',     group: 'CCU Control',    label: 'AWB On',             actionValue: 'on',     fbValue: 'on'  },
+			{ action: 'awbS',       feedback: 'auto_white_balance',     group: 'CCU Control',    label: 'AWB Off',            actionValue: 'off',    fbValue: 'off' },
+			{ action: 'blcS',       feedback: 'backlight_compensation', group: 'CCU Control',    label: 'Backlight Comp On',  actionValue: 'on',     fbValue: 'on'  },
+			{ action: 'blcS',       feedback: 'backlight_compensation', group: 'CCU Control',    label: 'Backlight Comp Off', actionValue: 'off',    fbValue: 'off' },
+			{ action: 'aIrisS',     feedback: 'auto_iris',              group: 'CCU Control',    label: 'Auto Iris',          actionValue: 'on',     fbValue: 'on'  },
+			{ action: 'aIrisS',     feedback: 'auto_iris',              group: 'CCU Control',    label: 'Manual Iris',        actionValue: 'off',    fbValue: 'off' },
+			{ action: 'focusM',     feedback: 'auto_focus',             group: 'Lens',           label: 'Auto Focus',         actionValue: 'auto',   fbValue: 'on'  },
+			{ action: 'focusM',     feedback: 'auto_focus',             group: 'Lens',           label: 'Manual Focus',       actionValue: 'manual', fbValue: 'off' },
+			{ action: 'wdrS',       feedback: 'wide_dynamic_range',     group: 'CCU Control',    label: 'Wide Dyn Range On',  actionValue: 'on',     fbValue: 'on'  },
+			{ action: 'wdrS',       feedback: 'wide_dynamic_range',     group: 'CCU Control',    label: 'Wide Dyn Range Off', actionValue: 'off',    fbValue: 'off' },
+			{ action: 'setStandby', feedback: 'standby',                group: 'Camera Control', label: 'Standby On',         actionValue: 'on',     fbValue: 'on'  },
+			{ action: 'setStandby', feedback: 'standby',                group: 'Camera Control', label: 'Standby Off',        actionValue: 'off',    fbValue: 'off' },
+			{ action: 'setLed',     feedback: 'led',                    group: 'Camera Control', label: 'LED On',             actionValue: 'on',     fbValue: 'on'  },
+			{ action: 'setLed',     feedback: 'led',                    group: 'Camera Control', label: 'LED Off',            actionValue: 'off',    fbValue: 'off' },
+			{ action: 'setVidMute', feedback: 'mute',                   group: 'Camera Control', label: 'Video Mute On',      actionValue: 'on',     fbValue: 'on'  },
+			{ action: 'setVidMute', feedback: 'mute',                   group: 'Camera Control', label: 'Video Mute Off',     actionValue: 'off',    fbValue: 'off' }
+		];
+
+		const this.PRESETS_VALUES = [
+			{ action: 'pSpeedU', release: null,     group: 'Pan/Tilt',    label: 'PAN SPEED\\nUP\\n$(vaddio:pan_speed)',       size: '7' },
+			{ action: 'pSpeedD', release: null,     group: 'Pan/Tilt',    label: 'PAN SPEED\\nDOWN\\n$(vaddio:pan_speed)',     size: '7' },
+			{ action: 'tSpeedU', release: null,     group: 'Pan/Tilt',    label: 'TILT SPEED\\nUP\\n$(vaddio:tilt_speed)',     size: '7' },
+			{ action: 'tSpeedD', release: null,     group: 'Pan/Tilt',    label: 'TILT SPEED\\nDOWN\\n$(vaddio:tilt_speed)',   size: '7' },
+			{ action: 'zoomI',   release: 'zoomS',  group: 'Lens',        label: 'ZOOM IN',                                    size: '18' },
+			{ action: 'zoomO',   release: 'zoomS',  group: 'Lens',        label: 'ZOOM OUT',                                   size: '18' },
+			{ action: 'zSpeedU', release: null,     group: 'Lens',        label: 'ZOOM SPEED\\nUP\\n$(vaddio:zoom_speed)',     size: '7' },
+			{ action: 'zSpeedD', release: null,     group: 'Lens',        label: 'ZOOM SPEED\\nDOWN\\n$(vaddio:zoom_speed)',   size: '7' },
+			{ action: 'focusN',  release: 'focusS', group: 'Lens',        label: 'FOCUS NEAR',                                 size: '18' },
+			{ action: 'focusF',  release: 'focusS', group: 'Lens',        label: 'FOCUS FAR',                                  size: '18' },
+			{ action: 'fSpeedU', release: null,     group: 'Lens',        label: 'FOCUS SPEED\\nUP\\n$(vaddio:focus_speed)',   size: '7' },
+			{ action: 'fSpeedD', release: null,     group: 'Lens',        label: 'FOCUS SPEED\\nDOWN\\n$(vaddio:focus_speed)', size: '7' },
+			{ action: 'gainU',   release: null,     group: 'CCU Control', label: 'GAIN\\nUP\\n$(vaddio:gain)',                 size: '7' },
+			{ action: 'gainD',   release: null,     group: 'CCU Control', label: 'GAIN\\nDOWN\\n$(vaddio:gain)',               size: '7' },
+			{ action: 'rGainU',  release: null,     group: 'CCU Control', label: 'RED GAIN\\nUP\\n$(vaddio:red_gain)',         size: '7' },
+			{ action: 'rGainD',  release: null,     group: 'CCU Control', label: 'RED GAIN\\nDOWN\\n$(vaddio:red_gain)',       size: '7' },
+			{ action: 'bGainU',  release: null,     group: 'CCU Control', label: 'BLUE GAIN\\nUP\\n$(vaddio:blue_gain)',       size: '7' },
+			{ action: 'bGainD',  release: null,     group: 'CCU Control', label: 'BLUE GAIN\\nDOWN\\n$(vaddio:blue_gain)',     size: '7' },
+			{ action: 'irisU',   release: null,     group: 'CCU Control', label: 'IRIS\\nUP\\n$(vaddio:iris)',                 size: '7' },
+			{ action: 'irisD',   release: null,     group: 'CCU Control', label: 'IRIS\\nDOWN\\n$(vaddio:iris)',               size: '7' },
+			{ action: 'detailU', release: null,     group: 'CCU Control', label: 'DETAIL\\nUP\\n$(vaddio:detail)',             size: '7' },
+			{ action: 'detailD', release: null,     group: 'CCU Control', label: 'DETAIL\\nDOWN\\n$(vaddio:detail)',           size: '7' },
+			{ action: 'chromaU', release: null,     group: 'CCU Control', label: 'CHROMA\\nUP\\n$(vaddio:chroma)',             size: '7' },
+			{ action: 'chromaD', release: null,     group: 'CCU Control', label: 'CHROMA\\nDOWN\\n$(vaddio:chroma)',           size: '7' },
+			{ action: 'gammaU',  release: null,     group: 'CCU Control', label: 'GAMMA\\nUP\\n$(vaddio:gamma)',               size: '7' },
+			{ action: 'gammaD',  release: null,     group: 'CCU Control', label: 'GAMMA\\nDOWN\\n$(vaddio:gamma)',             size: '7' }
+		];
+
+		const this.CHOICES_AUTOMANUAL = [
+			{ id: 'auto',   label: 'Auto'   },
+			{ id: 'manual', label: 'Manual' }
+		];
+
+		const this.CHOICES_CCUSCENES_R [
+			{ id: 'F1', label: 'Auto'            },
+			{ id: 'F2', label: 'Incandescent Hi' },
+			{ id: 'F3', label: 'Fluorescent Hi'  },
+			{ id: 'F4', label: 'Outdoor'         },
+			{ id: 'F5', label: 'Incandescent Lo' },
+			{ id: 'F6', label: 'Fluorescent Lo'  },
+			{ id: 'C1', label: 'Custom A'        },
+			{ id: 'C2', label: 'Custom B'        },
+			{ id: 'C3', label: 'Custom C'        }
+		];
+
+		const this.CHOICES_CCUSCENES_S [
+			{ id: '1', label: 'Custom A' },
+			{ id: '2', label: 'Custom B' },
+			{ id: '3', label: 'Custom C' }
+		];
+
+		const this.CHOICES_ONOFF = [
+			{ id: 'on',  label: 'On'  },
+			{ id: 'off', label: 'Off' }
+			
+		];
+
+		const this.CHOICES_ONOFFTOGGLE = [
+			{ id: 'on',     label: 'On'     },
+			{ id: 'off',    label: 'Off'    },
+			{ id: 'toggle', label: 'Toggle' }
+			
 		];
 
 		this.actions(); // export actions
@@ -147,11 +264,36 @@ class instance extends instance_skel {
 				cmd = 'camera home';
 				this.sendCommand(cmd);
 				break;
+
 			case 'pSpeedS':
 				this.panSpeed = opt.speed;
 				break;
+			case 'pSpeedU':
+				if (this.panSpeed < 24) {
+					this.panSpeed++;
+					this.setVariable('pan_speed', this.panSpeed);
+				}
+				break;
+			case 'pSpeedD':
+				if (this.panSpeed > 1) {
+					this.panSpeed--;
+					this.setVariable('pan_speed', this.panSpeed);
+				}
+				break;
 			case 'tSpeedS':
 				this.tiltSpeed = opt.speed;
+				break;
+			case 'tSpeedU':
+				if (this.tiltSpeed < 20) {
+					this.tiltSpeed++;
+					this.setVariable('tilt_speed', this.tiltSpeed);
+				}
+				break;
+			case 'tSpeedD':
+				if (this.tiltSpeed > 1) {
+					this.tiltSpeed--;
+					this.setVariable('tilt_speed', this.tiltSpeed);
+				}
 				break;
 
 			case 'zoomO':
@@ -169,6 +311,18 @@ class instance extends instance_skel {
 			case 'zSpeedS':
 				this.zoomSpeed = opt.speed;
 				break;
+			case 'zSpeedU':
+				if (this.zoomSpeed < 7) {
+					this.zoomSpeed++;
+					this.setVariable('zoom_speed', this.zoomSpeed);
+				}
+				break;
+			case 'zSpeedD':
+				if (this.zoomSpeed > 1) {
+					this.zoomSpeed--;
+					this.setVariable('zoom_speed', this.zoomSpeed);
+				}
+				break;
 
 			case 'focusN':
 				cmd = 'camera focus near ' + this.zoomSpeed;
@@ -182,105 +336,233 @@ class instance extends instance_skel {
 				cmd = 'camera focus stop';
 				this.sendCommand(cmd);
 				break;
-			case 'zSpeedS':
-				this.focusSpeed = opt.speed;
-				break;
 			case 'focusM':
-				cmd = 'camera focus mode ' + this.mode;
+				cmd = 'camera focus mode ' + opt.mode;
 				this.sendCommand(cmd);
 				break;
-/**
-			case 'irisU':
-				if (self.irisIndex == 99) {
-					self.irisIndex = 99;
-				}
-				else if (self.irisIndex < 99) {
-					self.irisIndex ++;
-				}
-				self.irisVal = IRIS[self.irisIndex].id;
-				self.sendPTZ('I' + self.irisVal.toUpperCase());
+			case 'fSpeedS':
+				this.focusSpeed = opt.speed;
 				break;
-			case 'irisD':
-				if (self.irisIndex == 0) {
-					self.irisIndex = 0;
+			case 'fSpeedU':
+				if (this.focusSpeed < 8) {
+					this.focusSpeed++;
+					this.setVariable('zoom_speed', this.zoomSpeed);
 				}
-				else if (self.irisIndex > 0) {
-					self.irisIndex--;
-				}
-				self.irisVal = IRIS[self.irisIndex].id;
-				self.sendPTZ('I' + self.irisVal.toUpperCase());
 				break;
-			case 'irisS':
-				self.sendPTZ('I' + opt.val);
-				self.irisVal = opt.val;
-				self.irisIndex = opt.val;
+			case 'fSpeedD':
+				if (this.focusSpeed > 1) {
+					this.focusSpeed--;
+					this.setVariable('zoom_speed', this.zoomSpeed);
+				}
 				break;
 
+			case 'gainS':
+				cmd = 'camera ccu set gain ' + opt.value;
+				this.sendCommand(cmd);
+				cmd = 'camera ccu get gain';
+				this.sendCommand(cmd);
+				break;
 			case 'gainU':
-				if (self.gainIndex == 49) {
-					self.gainIndex = 49;
+				if (this.state.gain < 11) {
+					cmd = 'camera ccu set gain ' + (this.state.gain+1);
+					this.sendCommand(cmd);
 				}
-				else if (self.gainIndex < 49) {
-					self.gainIndex ++;
-				}
-				self.gainVal = GAIN[self.gainIndex].id
-
-				var cmd = 'OGU:' + self.gainVal.toUpperCase();
-				self.sendCam(cmd);
+				cmd = 'camera ccu get gain';
+				this.sendCommand(cmd);
 				break;
 			case 'gainD':
-				if (self.gainIndex == 0) {
-					self.gainIndex = 0;
+				if (this.state.gain > 0) {
+					cmd = 'camera ccu set gain ' + (this.state.gain-1);
+					this.sendCommand(cmd);
 				}
-				else if (self.gainIndex > 0) {
-					self.gainIndex--;
-				}
-				self.gainVal = GAIN[self.gainIndex].id
-
-				var cmd = 'OGU:' + self.gainVal.toUpperCase();
-				self.sendCam(cmd);
+				cmd = 'camera ccu get gain';
+				this.sendCommand(cmd);
 				break;
-			case 'gainS':
-				var cmd = 'OGU:' + opt.val;
-				self.sendCam(cmd);
+			case 'awbS':
+				cmd = 'camera ccu set auto_white_balance ' + opt.mode;
+				this.sendCommand(cmd);
+				cmd = 'camera ccu get auto_white_balance';
+				this.sendCommand(cmd);
+				break;
+			case 'rGainS':
+				cmd = 'camera ccu set red_gain ' + opt.value;
+				this.sendCommand(cmd);
+				cmd = 'camera ccu get red_gain';
+				this.sendCommand(cmd);
+				break;
+			case 'rGainU':
+				if (this.state.red_gain < 255) {
+					cmd = 'camera ccu set red_gain ' + (this.state.red_gain+1);
+					this.sendCommand(cmd);
+				}
+				cmd = 'camera ccu get red_gain';
+				this.sendCommand(cmd);
+				break;
+			case 'rGainD':
+				if (this.state.red_gain > 0) {
+					cmd = 'camera ccu set red_gain ' + (this.state.red_gain-1);
+					this.sendCommand(cmd);
+				}
+				cmd = 'camera ccu get red_gain';
+				this.sendCommand(cmd);
+				break;
+			case 'bGainS':
+				cmd = 'camera ccu set blue_gain ' + opt.value;
+				this.sendCommand(cmd);
+				cmd = 'camera ccu get blue_gain';
+				this.sendCommand(cmd);
+				break;
+			case 'bGainU':
+				if (this.state.blue_gain < 255) {
+					cmd = 'camera ccu set blue_gain ' + (this.state.blue_gain+1);
+					this.sendCommand(cmd);
+				}
+				cmd = 'camera ccu get blue_gain';
+				this.sendCommand(cmd);
+				break;
+			case 'bGainD':
+				if (this.state.blue_gain > 0) {
+					cmd = 'camera ccu set blue_gain ' + (this.state.blue_gain-1);
+					this.sendCommand(cmd);
+				}
+				cmd = 'camera ccu get blue_gain';
+				this.sendCommand(cmd);
+				break;
+			case 'blcS':
+				cmd = 'camera ccu set backlight_compensation ' + opt.mode;
+				this.sendCommand(cmd);
+				cmd = 'camera ccu get backlight_compensation';
+				this.sendCommand(cmd);
+				break;
+			case 'aIrisS':
+				cmd = 'camera ccu set auto_iris ' + opt.mode;
+				this.sendCommand(cmd);
+				cmd = 'camera ccu get auto_iris';
+				this.sendCommand(cmd);
+				break;
+			case 'irisS':
+				cmd = 'camera ccu set iris ' + opt.value;
+				this.sendCommand(cmd);
+				cmd = 'camera ccu get iris';
+				this.sendCommand(cmd);
+				break;
+			case 'irisU':
+				if (this.state.iris < 11) {
+					cmd = 'camera ccu set iris ' + (this.state.iris+1);
+					this.sendCommand(cmd);
+				}
+				cmd = 'camera ccu get iris';
+				this.sendCommand(cmd);
+				break;
+			case 'irisD':
+				if (this.state.iris > 0) {
+					cmd = 'camera ccu set iris ' + (this.state.iris-1);
+					this.sendCommand(cmd);
+				}
+				cmd = 'camera ccu get iris';
+				this.sendCommand(cmd);
+				break;
+			case 'detailS':
+				cmd = 'camera ccu set detail ' + opt.value;
+				this.sendCommand(cmd);
+				cmd = 'camera ccu get detail';
+				this.sendCommand(cmd);
+				break;
+			case 'detailU':
+				if (this.state.detail < 15) {
+					cmd = 'camera ccu set detail ' + (this.state.detail+1);
+					this.sendCommand(cmd);
+				}
+				cmd = 'camera ccu get detail';
+				this.sendCommand(cmd);
+				break;
+			case 'detailD':
+				if (this.state.detail > 0) {
+					cmd = 'camera ccu set detail ' + (this.state.detail-1);
+					this.sendCommand(cmd);
+				}
+				cmd = 'camera ccu get detail';
+				this.sendCommand(cmd);
+				break;
+			case 'chromaS':
+				cmd = 'camera ccu set chroma ' + opt.value;
+				this.sendCommand(cmd);
+				cmd = 'camera ccu get chroma';
+				this.sendCommand(cmd);
+				break;
+			case 'chromaU':
+				if (this.state.chroma < 14) {
+					cmd = 'camera ccu set chroma ' + (this.state.chroma+1);
+					this.sendCommand(cmd);
+				}
+				cmd = 'camera ccu get chroma';
+				this.sendCommand(cmd);
+				break;
+			case 'chromaD':
+				if (this.state.chroma > 0) {
+					cmd = 'camera ccu set chroma ' + (this.state.chroma-1);
+					this.sendCommand(cmd);
+				}
+				cmd = 'camera ccu get chroma';
+				this.sendCommand(cmd);
+				break;
+			case 'gammaS':
+				cmd = 'camera ccu set gamma ' + opt.value;
+				this.sendCommand(cmd);
+				cmd = 'camera ccu get gamma';
+				this.sendCommand(cmd);
+				break;
+			case 'gammaU':
+				if (this.state.gamma < 64) {
+					cmd = 'camera ccu set gamma ' + (this.state.gamma+1);
+					this.sendCommand(cmd);
+				}
+				cmd = 'camera ccu get gamma';
+				this.sendCommand(cmd);
+				break;
+			case 'gammaD':
+				if (this.state.gamma > -64) {
+					cmd = 'camera ccu set gamma ' + (this.state.gamma-1);
+					this.sendCommand(cmd);
+				}
+				cmd = 'camera ccu get gamma';
+				this.sendCommand(cmd);
+				break;
+			case 'wdrS':
+				cmd = 'camera ccu set wide_dynamic_range ' + opt.mode;
+				this.sendCommand(cmd);
+				cmd = 'camera ccu get wide_dynamic_range';
+				this.sendCommand(cmd);
 				break;
 
-			case 'shutU':
-				if (self.shutIndex == 14) {
-					self.shutIndex = 14;
-				}
-				else if (self.shutIndex < 14) {
-					self.shutIndex ++;
-				}
-				self.shutVal = SHUTTER[self.shutIndex].id
-
-				var cmd = 'OSH:' + self.shutVal.toUpperCase();
-				self.sendCam(cmd);
-				break;
-			case 'shutD':
-				if (self.shutIndex == 0) {
-					self.shutIndex = 0;
-				}
-				else if (self.shutIndex > 0) {
-					self.shutIndex--;
-				}
-				self.shutVal = SHUTTER[self.shutIndex].id
-
-				var cmd = 'OSH:' + self.shutVal.toUpperCase();
-				self.sendCam(cmd);
-				break;
-
-			case 'shutS':
-				var cmd = 'OSH:' + opt.val.toUpperCase();
-				self.sendCam(cmd);
-				break;
-*/
 			case 'savePset':
 				cmd = 'camera preset store ' + opt.val + ' ' + opt.speed + (opt.ccu === true ? ' save-ccu' : '');
 				this.sendCommand(cmd);
 				break;
 			case 'recallPset':
 				cmd = 'camera preset recall ' + opt.val;
+				this.sendCommand(cmd);
+				break;
+			case 'saveCCU':
+				cmd = 'camera ccu scene store custom ' + opt.preset;
+				this.sendCommand(cmd);
+				break;
+			case 'recallCCU':
+				cmd = 'camera ccu scene recall ' + (opt.preset.substring(0,1) == 'C' ? 'custom ' : 'factory ') + opt.preset.substring(1,2);
+				this.sendCommand(cmd);
+				cmd = 'camera ccu get all';
+				this.sendCommand(cmd);
+				break;
+			case 'setLed':
+				cmd = 'camera led ' + opt.mode;
+				this.sendCommand(cmd);
+				break;
+			case 'setStandby':
+				cmd = 'camera standby ' + opt.mode;
+				this.sendCommand(cmd);
+				break;
+			case 'setVidMute':
+				cmd = 'video mute ' + opt.mode;
 				this.sendCommand(cmd);
 				break;
 		}
@@ -325,6 +607,23 @@ class instance extends instance_skel {
 				width: 6,
 				default: 'password',
 				regex: this.REGEX_SOMETHING
+			},
+			{
+				type: 'checkbox',
+				id: 'pollingOn',
+				label: 'Enable Status Polling?',
+				width: 2,
+				default: true
+			},
+			{
+				type: 'number',
+				id: 'pollingInterval',
+				label: 'Polling Interval (in s)',
+				width: 4,
+				min: 1,
+				max: 999,
+				default: 5,
+				required: true
 			}
 		]
 	}
@@ -338,6 +637,10 @@ class instance extends instance_skel {
 	destroy() {
 		if (this.socket !== undefined) {
 			this.socket.destroy();
+		}
+
+		if (this.pollTimer !== undefined) {
+			clearInterval(this.pollTimer);
 		}
 
 		this.debug("destroy", this.id);
@@ -357,6 +660,7 @@ class instance extends instance_skel {
 		this.initVariables();
 		this.initFeedbacks();
 		this.initPresets();
+		this.checkFeedbacks();
 
 		this.initTCP();
 	}
@@ -373,6 +677,10 @@ class instance extends instance_skel {
 		if (this.socket !== undefined) {
 			this.socket.destroy();
 			delete this.socket;
+		}
+
+		if (this.pollTimer !== undefined) {
+			clearInterval(this.pollTimer);
 		}
 
 		if (this.config.port === undefined) {
@@ -399,6 +707,10 @@ class instance extends instance_skel {
 				this.debug("Disconnected");
 				this.loggedIn = false;
 				this.okToSend = false;
+
+				if (this.pollTimer !== undefined) {
+					clearInterval(this.pollTimer);
+				}
 			});
 
 
@@ -431,6 +743,26 @@ class instance extends instance_skel {
 					if (this.deviceName == '') {
 						receivebuffer = '';
 						this.socket.send('version\r\n');
+						this.catchUp = true;
+						this.lastPoll = -1;
+					}
+					else if (this.catchUp == true) {
+						let thisPoll = this.lastPoll + 1;
+
+						if (thisPoll < this.POLL_COMMANDS.length) {
+							this.socket.send(this.POLL_COMMANDS[thisPoll]'\r\n');
+							this.lastPoll = thisPoll;
+						}
+						else {
+							this.catchUp = false;
+
+							if (this.config.pollingOn === true) {
+								this.pollTimer = setInterval(
+									this.sendPollCommand,
+									(self.config.pollingInterval*1000)
+								);
+							}
+						}
 					}
 					else {
 						this.okToSend = true;
@@ -441,7 +773,7 @@ class instance extends instance_skel {
 
 			this.socket.on('receiveline', (line) => {
 
-				if (this.loggedIn == false || line.match(/[L|l]ogin:/) || line.match(/[P|p]assword:/)) {
+				if (this.loggedIn == false) {
 					this.processLogin(line);
 				}
 				else {
@@ -477,67 +809,92 @@ class instance extends instance_skel {
 			this.log('info', 'Connected to a ' + this.deviceName);
 			this.sendCommand('camera ccu get all');
 		}
-		else if (data.startsWith('auto_white_balance')) {
-			data.replace('auto_white_balance','').trim();
-			this.state['auto_white_balance'] = data;
-		}
-		else if (data.startsWith('red_gain')) {
-			data.replace('red_gain','').trim();
-			this.state['red_gain'] = parseInt(data);
-		}
-		else if (data.startsWith('blue_gain')) {
-			data.replace('blue_gain','').trim();
-			this.state['blue_gain'] = parseInt(data);
-		}
-		else if (data.startsWith('backlight_compensation')) {
-			data.replace('backlight_compensation','').trim();
-			this.state['backlight_compensation'] = data;
+		else if (data.startsWith('auto_focus')) {
+			data.replace('auto_focus','').trim();
+			this.state.auto_focus = data;
+			this.checkFeedbacks('auto_focus');
 		}
 		else if (data.startsWith('auto_iris')) {
 			data.replace('auto_iris','').trim();
-			this.state['auto_iris'] = data;
+			this.state.auto_iris = data;
+			this.checkFeedbacks('auto_iris');
 		}
-		else if (data.startsWith('iris')) {
-			data.replace('iris','').trim();
-			this.state['iris'] = parseInt(data);
+		else if (data.startsWith('auto_white_balance')) {
+			data.replace('auto_white_balance','').trim();
+			this.state.auto_white_balance = data;
+			this.checkFeedbacks('auto_white_balance');
 		}
-		else if (data.startsWith('gain')) {
-			data.replace('gain','').trim();
-			this.state['gain'] = parseInt(data);
+		else if (data.startsWith('backlight_compensation')) {
+			data.replace('backlight_compensation','').trim();
+			this.state.backlight_compensation = data;
+			this.checkFeedbacks('backlight_compensation');
 		}
-		else if (data.startsWith('detail')) {
-			data.replace('detail','').trim();
-			this.state['detail'] = parseInt(data);
+		else if (data.startsWith('blue_gain')) {
+			data.replace('blue_gain','').trim();
+			this.state.blue_gain = parseInt(data);
+			this.setVariable('blue_gain', this.state.blue_gain);
 		}
 		else if (data.startsWith('chroma')) {
 			data.replace('chroma','').trim();
-			this.state['chroma'] = parseInt(data);
+			this.state.chroma = parseInt(data);
+			this.setVariable('chroma', this.state.chroma);
+		}
+		else if (data.startsWith('detail')) {
+			data.replace('detail','').trim();
+			this.state.detail = parseInt(data);
+			this.setVariable('detail', this.state.detail);
+		}
+		else if (data.startsWith('gain')) {
+			data.replace('gain','').trim();
+			this.state.gain = parseInt(data);
+			this.setVariable('gain', this.state.gain);
 		}
 		else if (data.startsWith('gamma')) {
 			data.replace('gamma','').trim();
-			this.state['gamma'] = parseInt(data);
+			this.state.gamma = parseInt(data);
+			this.setVariable('gamma', this.state.gamma);
+		}
+		else if (data.startsWith('iris')) {
+			data.replace('iris','').trim();
+			this.state.iris = parseInt(data);
+			this.setVariable('iris', this.state.iris);
+		}
+		else if (data.startsWith('led')) {
+			data.replace('led','').trim();
+			this.state.led = data;
+			this.checkFeedbacks('led');
+		}
+		else if (data.startsWith('mute')) {
+			data.replace('mute','').trim();
+			this.state.mute = data;
+			this.checkFeedbacks('mute');
+		}
+		else if (data.startsWith('red_gain')) {
+			data.replace('red_gain','').trim();
+			this.state.red_gain = parseInt(data);
+			this.setVariable('red_gain', this.state.red_gain);
+		}
+		else if (data.startsWith('standby')) {
+			data.replace('standby','').trim();
+			this.state.standby = data;
+			this.checkFeedbacks('standby');
 		}
 		else if (data.startsWith('wide_dynamic_range')) {
 			data.replace('wide_dynamic_range','').trim();
-			this.state['wide_dynamic_range'] = data;
+			this.state.wide_dynamic_range = data;
+			this.checkFeedbacks('wide_dynamic_range');
 		}
 	}
 
 	/**
-	 * INTERNAL: Processes data from telnet and handles the login procedure.
+	 * INTERNAL: Processes data from telnet pre-login.
 	 *
 	 * @param {Object} data - the collected data
 	 * @access protected
 	 * @since 1.0.0
 	 */
 	processLogin(data) {
-		if (data.match(/[L|l]ogin:/)) {
-			this.socket.send(this.config.username + '\r\n');
-		}
-		else if (data.match(/[P|p]assowrd:/)) {
-			this.socket.send(this.config.password + '\r\n');
-		}
-		else if (data == ('Welcome ' + this.config.username)) {
+		if (data == ('Welcome ' + this.config.username)) {
 			this.loggedIn = true;
 		}
 	}
@@ -565,13 +922,25 @@ class instance extends instance_skel {
 	}
 
 	/**
-	 * INTERNAL: use model data to define the choices for the dropdowns.
+	 * INTERNAL: Send a poll command to refresh status
 	 *
 	 * @access protected
 	 * @since 1.0.0
 	 */
-	setupChoices() {
+	sendPollCommand() {
+		if (this.state['standby'] == 'off') {
+			let thisPoll = this.lastPoll + 1;
 
+			if (thisPoll >= this.POLL_COMMANDS.length) {
+				thisPoll = 0;
+			}
+
+			this.sendCommand(this.POLL_COMMANDS[thisPoll]);
+			this.lastPoll = thisPoll;
+		}
+		else {
+			this.sendCommand('camera standby get');
+		}
 	}
 
 	/**
