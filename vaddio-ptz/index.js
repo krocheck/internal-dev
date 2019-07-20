@@ -255,32 +255,40 @@ class instance extends instance_skel {
 
 			case 'pSpeedS':
 				this.panSpeed = opt.speed;
+				this.setVariable('pan_speed', this.panSpeed);
+				this.checkFeedbacks('pt_speed');
 				break;
 			case 'pSpeedU':
 				if (this.panSpeed < 24) {
 					this.panSpeed++;
 					this.setVariable('pan_speed', this.panSpeed);
+					this.checkFeedbacks('pt_speed');
 				}
 				break;
 			case 'pSpeedD':
 				if (this.panSpeed > 1) {
 					this.panSpeed--;
 					this.setVariable('pan_speed', this.panSpeed);
+					this.checkFeedbacks('pt_speed');
 				}
 				break;
 			case 'tSpeedS':
 				this.tiltSpeed = opt.speed;
+				this.setVariable('tilt_speed', this.tiltSpeed);
+				this.checkFeedbacks('pt_speed');
 				break;
 			case 'tSpeedU':
 				if (this.tiltSpeed < 20) {
 					this.tiltSpeed++;
 					this.setVariable('tilt_speed', this.tiltSpeed);
+					this.checkFeedbacks('pt_speed');
 				}
 				break;
 			case 'tSpeedD':
 				if (this.tiltSpeed > 1) {
 					this.tiltSpeed--;
 					this.setVariable('tilt_speed', this.tiltSpeed);
+					this.checkFeedbacks('pt_speed');
 				}
 				break;
 
@@ -298,6 +306,7 @@ class instance extends instance_skel {
 				break;
 			case 'zSpeedS':
 				this.zoomSpeed = opt.speed;
+				this.setVariable('zoom_speed', this.zoomSpeed);
 				break;
 			case 'zSpeedU':
 				if (this.zoomSpeed < 7) {
@@ -330,17 +339,18 @@ class instance extends instance_skel {
 				break;
 			case 'fSpeedS':
 				this.focusSpeed = opt.speed;
+				this.setVariable('focus_speed', this.focusSpeed);
 				break;
 			case 'fSpeedU':
 				if (this.focusSpeed < 8) {
 					this.focusSpeed++;
-					this.setVariable('zoom_speed', this.zoomSpeed);
+					this.setVariable('focus_speed', this.focusSpeed);
 				}
 				break;
 			case 'fSpeedD':
 				if (this.focusSpeed > 1) {
 					this.focusSpeed--;
-					this.setVariable('zoom_speed', this.zoomSpeed);
+					this.setVariable('focus_speed', this.focusSpeed);
 				}
 				break;
 

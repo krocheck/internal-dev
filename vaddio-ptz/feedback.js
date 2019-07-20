@@ -266,7 +266,7 @@ module.exports = {
 				},
 				{
 					type: 'number',
-					label: 'Speed',
+					label: 'Pan Speed',
 					id: 'panSpeed',
 					min: 1,
 					max: 24,
@@ -276,7 +276,7 @@ module.exports = {
 				},
 				{
 					type: 'number',
-					label: 'Speed',
+					label: 'Tilt Speed',
 					id: 'tiltSpeed',
 					min: 1,
 					max: 20,
