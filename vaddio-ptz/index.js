@@ -123,12 +123,12 @@ class instance extends instance_skel {
 			{ action: 'focusF',  release: 'focusS', group: 'Lens',        label: 'FOCUS FAR',                                       size: '18' },
 			{ action: 'fSpeedU', release: null,     group: 'Lens',        label: 'FOCUS\\nSPEED\\nUP\\n\\n$(vaddio:focus_speed)',   size: '7' },
 			{ action: 'fSpeedD', release: null,     group: 'Lens',        label: 'FOCUS\\nSPEED\\nDOWN\\n\\n$(vaddio:focus_speed)', size: '7' },
-			{ action: 'gainU',   release: null,     group: 'CCU Control', label: 'GAIN\\nUP\\n$(vaddio:gain)',                      size: '7' },
+			{ action: 'gainU',   release: null,     group: 'CCU Control', label: 'GAIN\\nUP\\n\\n$(vaddio:gain)',                   size: '7' },
 			{ action: 'gainD',   release: null,     group: 'CCU Control', label: 'GAIN\\nDOWN\\n\\n$(vaddio:gain)',                 size: '7' },
-			{ action: 'rGainU',  release: null,     group: 'CCU Control', label: 'RED GAIN\\nUP\\n\\n$(vaddio:red_gain)',           size: '7' },
-			{ action: 'rGainD',  release: null,     group: 'CCU Control', label: 'RED GAIN\\nDOWN\\n\\n$(vaddio:red_gain)',         size: '7' },
-			{ action: 'bGainU',  release: null,     group: 'CCU Control', label: 'BLUE GAIN\\nUP\\n\\n$(vaddio:blue_gain)',         size: '7' },
-			{ action: 'bGainD',  release: null,     group: 'CCU Control', label: 'BLUE GAIN\\nDOWN\\n\\n$(vaddio:blue_gain)',       size: '7' },
+			{ action: 'rGainU',  release: null,     group: 'CCU Control', label: 'RED\\nGAIN\\nUP\\n\\n$(vaddio:red_gain)',         size: '7' },
+			{ action: 'rGainD',  release: null,     group: 'CCU Control', label: 'RED\\nGAIN\\nDOWN\\n\\n$(vaddio:red_gain)',       size: '7' },
+			{ action: 'bGainU',  release: null,     group: 'CCU Control', label: 'BLUE\\nGAIN\\nUP\\n\\n$(vaddio:blue_gain)',       size: '7' },
+			{ action: 'bGainD',  release: null,     group: 'CCU Control', label: 'BLUE\\nGAIN\\nDOWN\\n\\n$(vaddio:blue_gain)',     size: '7' },
 			{ action: 'irisU',   release: null,     group: 'CCU Control', label: 'IRIS\\nUP\\n\\n$(vaddio:iris)',                   size: '7' },
 			{ action: 'irisD',   release: null,     group: 'CCU Control', label: 'IRIS\\nDOWN\\n\\n$(vaddio:iris)',                 size: '7' },
 			{ action: 'detailU', release: null,     group: 'CCU Control', label: 'DETAIL\\nUP\\n\\n$(vaddio:detail)',               size: '7' },
@@ -746,8 +746,8 @@ class instance extends instance_skel {
 
 							if (this.config.pollingOn === true) {
 								this.pollTimer = setInterval(
-									this.sendPollCommand,
-									(self.config.pollingInterval*1000)
+									this.sendPollCommand.bind(this),
+									(this.config.pollingInterval*1000)
 								);
 							}
 						}
@@ -798,77 +798,77 @@ class instance extends instance_skel {
 			this.sendCommand('camera ccu get all');
 		}
 		else if (data.startsWith('auto_focus')) {
-			data.replace('auto_focus','').trim();
+			data = data.replace('auto_focus:','').trim();
 			this.state.auto_focus = data;
 			this.checkFeedbacks('auto_focus');
 		}
 		else if (data.startsWith('auto_iris')) {
-			data.replace('auto_iris','').trim();
+			data = data.replace('auto_iris','').trim();
 			this.state.auto_iris = data;
 			this.checkFeedbacks('auto_iris');
 		}
 		else if (data.startsWith('auto_white_balance')) {
-			data.replace('auto_white_balance','').trim();
+			data = data.replace('auto_white_balance','').trim();
 			this.state.auto_white_balance = data;
 			this.checkFeedbacks('auto_white_balance');
 		}
 		else if (data.startsWith('backlight_compensation')) {
-			data.replace('backlight_compensation','').trim();
+			data = data.replace('backlight_compensation','').trim();
 			this.state.backlight_compensation = data;
 			this.checkFeedbacks('backlight_compensation');
 		}
 		else if (data.startsWith('blue_gain')) {
-			data.replace('blue_gain','').trim();
+			data = data.replace('blue_gain','').trim();
 			this.state.blue_gain = parseInt(data);
 			this.setVariable('blue_gain', this.state.blue_gain);
 		}
 		else if (data.startsWith('chroma')) {
-			data.replace('chroma','').trim();
+			data = data.replace('chroma','').trim();
 			this.state.chroma = parseInt(data);
 			this.setVariable('chroma', this.state.chroma);
 		}
 		else if (data.startsWith('detail')) {
-			data.replace('detail','').trim();
+			data = data.replace('detail','').trim();
 			this.state.detail = parseInt(data);
 			this.setVariable('detail', this.state.detail);
 		}
 		else if (data.startsWith('gain')) {
-			data.replace('gain','').trim();
+			data = data.replace('gain','').trim();
 			this.state.gain = parseInt(data);
 			this.setVariable('gain', this.state.gain);
 		}
 		else if (data.startsWith('gamma')) {
-			data.replace('gamma','').trim();
+			data = data.replace('gamma','').trim();
 			this.state.gamma = parseInt(data);
 			this.setVariable('gamma', this.state.gamma);
 		}
 		else if (data.startsWith('iris')) {
-			data.replace('iris','').trim();
+			data = data.replace('iris','').trim();
 			this.state.iris = parseInt(data);
 			this.setVariable('iris', this.state.iris);
 		}
 		else if (data.startsWith('led')) {
-			data.replace('led','').trim();
+			data = data.replace('led:','').trim();
 			this.state.led = data;
 			this.checkFeedbacks('led');
 		}
 		else if (data.startsWith('mute')) {
-			data.replace('mute','').trim();
+			data = data.replace('mute:','').trim();
 			this.state.mute = data;
 			this.checkFeedbacks('mute');
 		}
 		else if (data.startsWith('red_gain')) {
-			data.replace('red_gain','').trim();
+			data = data.replace('red_gain','').trim();
 			this.state.red_gain = parseInt(data);
 			this.setVariable('red_gain', this.state.red_gain);
 		}
 		else if (data.startsWith('standby')) {
-			data.replace('standby','').trim();
+			data = data.replace('standby:','').trim();
 			this.state.standby = data;
 			this.checkFeedbacks('standby');
 		}
 		else if (data.startsWith('wide_dynamic_range')) {
-			data.replace('wide_dynamic_range','').trim();
+			data = data.replace('wide_dynamic_range','').trim();
 			this.state.wide_dynamic_range = data;
 			this.checkFeedbacks('wide_dynamic_range');
 		}
@@ -916,7 +916,7 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	sendPollCommand() {
-		if (this.state['standby'] == 'off') {
+		if (this.state.standby == 'off') {
 			let thisPoll = this.lastPoll + 1;
 
 			if (thisPoll >= this.POLL_COMMANDS.length) {

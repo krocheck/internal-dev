@@ -248,6 +248,53 @@ module.exports = {
 			}
 		};
 
+		feedbacks['pt_speed'] = {
+			label: 'Change background color by pan & tilt speed',
+			description: 'If the the pan and tilt speeds selected are action, change background color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type: 'number',
+					label: 'Speed',
+					id: 'panSpeed',
+					min: 1,
+					max: 24,
+					default: 12,
+					required: true,
+					range: true
+				},
+				{
+					type: 'number',
+					label: 'Speed',
+					id: 'tiltSpeed',
+					min: 1,
+					max: 20,
+					default: 10,
+					required: true,
+					range: true
+				}
+			],
+			callback: (feedback, bank) => {
+				if (this.panSpeed == feedback.options.panSpeed && this.tiltSpeed == feedback.options.tiltSpeed) {
+					return {
+						color: feedback.options.fg,
+						bgcolor: feedback.options.bg
+					};
+				}
+			}
+		};
+
 		feedbacks['wide_dynamic_range'] = {
 			label: 'Change background color by wide dynamic range state',
 			description: 'If the wide dynamic range state specified is active, change background color of the bank',
