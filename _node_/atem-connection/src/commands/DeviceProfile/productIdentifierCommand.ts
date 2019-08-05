@@ -13,20 +13,9 @@ export class ProductIdentifierCommand extends AbstractCommand {
 
 	deserialize (rawCommand: Buffer) {
 		this.properties = {
-			deviceName: Util.bufToNullTerminatedString(rawCommand, 0, 32),
+			deviceName: Util.bufToNullTerminatedString(rawCommand, 0, 40),
 			model: Util.parseEnum<Enums.Model>(rawCommand[40], Enums.Model)
 		}
-	}
-
-	serialize () {
-		const rawName = Buffer.from(this.properties.deviceName)
-		// https://github.com/LibAtem/LibAtem/blob/master/LibAtem/Commands/DeviceProfile/ProductIdentifierCommand.cs#L12
-		return Buffer.from([
-			...Buffer.from(rawName),
-			0x28, 0x36, 0x9B, 0x60,
-			0x4C, 0x08, 0x11, 0x60,
-			0x04, 0x3D, 0xA4, 0x60
-		])
 	}
 
 	applyToState (state: AtemState) {
@@ -38,12 +27,13 @@ export class ProductIdentifierCommand extends AbstractCommand {
 			case Enums.Model.TwoME:
 			case Enums.Model.TwoME4K:
 			case Enums.Model.TwoMEBS4K:
-			case Enums.Model.Const8K:
 				state.info.power = [false, false]
 				break
 			default:
 				state.info.power = [false]
 				break
 		}
+
+		return `info`
 	}
 }

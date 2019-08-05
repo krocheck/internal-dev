@@ -1,11 +1,12 @@
+export interface MultiViewerSourceState {
+	source: number
+	windowIndex: number
+}
+
 export interface MultiViewerWindowState extends MultiViewerSourceState {
 	safeTitle: boolean
 	audioMeter: boolean
-}
-
-export interface MultiViewerSourceState {
-	windowIndex: number
-	source: number
+	// TODO - supports safeTitle & audioMeter?
 }
 
 export class MultiViewer {
@@ -14,11 +15,11 @@ export class MultiViewer {
 	overlayOpacity: number
 	windows: { [index: string]: MultiViewerWindowState }
 
-	constructor(index: number) {
+	constructor (index: number) {
 		this.index = index
 	}
 
-	getWindow(index: number) {
+	getWindow (index: number) {
 		if (!this.windows[index]) {
 			this.windows[index] = {} as MultiViewerWindowState
 		}
@@ -31,7 +32,7 @@ export class SettingsState {
 	multiViewers: { [index: string]: MultiViewer } = {}
 	videoMode: number
 
-	getMultiViewer(index: number) {
+	getMultiViewer (index: number) {
 		if (!this.multiViewers[index]) {
 			this.multiViewers[index] = new MultiViewer(index)
 		}
