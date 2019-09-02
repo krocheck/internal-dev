@@ -330,7 +330,7 @@ class instance_api {
 		else if (audioLevel > -30) {
 			channel.audioLED = 3;
 		}
-		else if audioLevel > -40) {
+		else if (audioLevel > -40) {
 			channel.audioLED = 2;
 		}
 		else if (audioLevel > -50) {
@@ -351,7 +351,7 @@ class instance_api {
 		else if (rfLevel > -77) {
 			channel.rfBitmapA = 3;
 		}
-		else if rfLevel > -83) {
+		else if (rfLevel > -83) {
 			channel.rfBitmapA = 2;
 		}
 		else if (rfLevel > -90) {
