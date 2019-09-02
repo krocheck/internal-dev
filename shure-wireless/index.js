@@ -93,8 +93,8 @@ class instance extends instance_skel {
 			this.model = this.CONFIG_MODEL['ulxd4'];
 		}
 
-		const this.REGEX_CHAR_8  = '/^[A-Za-z0-9,!"#\$%&\'\(\)\*\+,\-\./:;<=>\?@\[\\\]^_`~\s]{1,8}$/';
-		const this.REGEX_CHAR_31 = '/^[A-Za-z0-9,!"#\$%&\'\(\)\*\+,\-\./:;<=>\?@\[\\\]^_`~\s]{1,31}$/';
+		const this.defineConst('REGEX_CHAR_8',  '/^\\d+{1,8}$/');
+		const this.defineConst('REGEX_CHAR_31', '/^\\d+{1,31}$/');
 
 		this.actions(); // export actions
 	}
