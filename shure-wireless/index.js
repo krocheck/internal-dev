@@ -1,11 +1,11 @@
 var tcp = require('../../tcp');
 var instance_skel = require('../../instance_skel');
 
-var instance_api  = require('./internalAPI');
-var actions       = require('./actions');
-var feedback      = require('./feedback');
-var icons         = require('./icons');
-var variables     = require('./variables');
+var instance_api   = require('./internalAPI');
+var instance_icons = require('./icons');
+var actions        = require('./actions');
+var feedback       = require('./feedback');
+var variables      = require('./variables');
 
 var debug;
 var log;

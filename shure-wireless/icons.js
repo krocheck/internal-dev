@@ -198,4 +198,4 @@ class instance_icons {
 	}
 }
 
-exports = module.exports = instance_api;
+exports = module.exports = instance_icons;
