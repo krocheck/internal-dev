@@ -3,7 +3,7 @@ var instance_skel = require('../../instance_skel');
 
 var actions       = require('./actions');
 var feedback      = require('./feedback');
-var presets       = require('./presets');
+//var presets       = require('./presets');
 var variables     = require('./variables');
 
 var debug;
@@ -39,7 +39,7 @@ class instance extends instance_skel {
 		Object.assign(this, {
 			...actions,
 			...feedback,
-			...presets,
+//			...presets,
 			...variables
 		});
 
@@ -554,11 +554,11 @@ class instance extends instance_skel {
 
 		for (var key in object) {
 			var parsethis = object[key];
-			var a = parsethis.split(/ /);
-			var num = parseInt(a.shift());
+			var a = parsethis.split(/: /);
+			var attribute = a.shift();
 			var value = a.join(" ");
 
-			switch (labeltype) {
+			switch (attribute) {
 				case 'Brightness':
 					monitor.brightness = parseInt(value);
 					this.setVariable('mon_' + monitor.id + '_brightness', monitor.brightness);
