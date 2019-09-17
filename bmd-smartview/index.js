@@ -86,6 +86,54 @@ class instance extends instance_skel {
 			{ id: 'NONE', label: 'DISABLE'}
 		];
 
+		this.PRESETS_STATES = [
+			{ action: 'awbS',       feedback: 'auto_white_balance',     group: 'CCU Control',    label: 'AWB On',             actionValue: 'on',     fbValue: 'on'  },
+			{ action: 'awbS',       feedback: 'auto_white_balance',     group: 'CCU Control',    label: 'AWB Off',            actionValue: 'off',    fbValue: 'off' },
+			{ action: 'blcS',       feedback: 'backlight_compensation', group: 'CCU Control',    label: 'Backlight Comp On',  actionValue: 'on',     fbValue: 'on'  },
+			{ action: 'blcS',       feedback: 'backlight_compensation', group: 'CCU Control',    label: 'Backlight Comp Off', actionValue: 'off',    fbValue: 'off' },
+			{ action: 'aIrisS',     feedback: 'auto_iris',              group: 'CCU Control',    label: 'Auto Iris',          actionValue: 'on',     fbValue: 'on'  },
+			{ action: 'aIrisS',     feedback: 'auto_iris',              group: 'CCU Control',    label: 'Manual Iris',        actionValue: 'off',    fbValue: 'off' },
+			{ action: 'focusM',     feedback: 'auto_focus',             group: 'Lens',           label: 'Auto Focus',         actionValue: 'auto',   fbValue: 'on'  },
+			{ action: 'focusM',     feedback: 'auto_focus',             group: 'Lens',           label: 'Manual Focus',       actionValue: 'manual', fbValue: 'off' },
+			{ action: 'wdrS',       feedback: 'wide_dynamic_range',     group: 'CCU Control',    label: 'Wide Dyn Range On',  actionValue: 'on',     fbValue: 'on'  },
+			{ action: 'wdrS',       feedback: 'wide_dynamic_range',     group: 'CCU Control',    label: 'Wide Dyn Range Off', actionValue: 'off',    fbValue: 'off' },
+			{ action: 'setStandby', feedback: 'standby',                group: 'Camera Control', label: 'Standby On',         actionValue: 'on',     fbValue: 'on'  },
+			{ action: 'setStandby', feedback: 'standby',                group: 'Camera Control', label: 'Standby Off',        actionValue: 'off',    fbValue: 'off' },
+			{ action: 'setLed',     feedback: 'led',                    group: 'Camera Control', label: 'LED On',             actionValue: 'on',     fbValue: 'on'  },
+			{ action: 'setLed',     feedback: 'led',                    group: 'Camera Control', label: 'LED Off',            actionValue: 'off',    fbValue: 'off' },
+			{ action: 'setVidMute', feedback: 'mute',                   group: 'Camera Control', label: 'Video Mute On',      actionValue: 'on',     fbValue: 'on'  },
+			{ action: 'setVidMute', feedback: 'mute',                   group: 'Camera Control', label: 'Video Mute Off',     actionValue: 'off',    fbValue: 'off' }
+		];
+
+		this.PRESETS_VALUES = [
+			{ action: 'pSpeedU', release: null,     group: 'Pan/Tilt',    label: 'PAN\\nSPEED\\nUP\\n\\n$(vaddio:pan_speed)',       size: '7' },
+			{ action: 'pSpeedD', release: null,     group: 'Pan/Tilt',    label: 'PAN\\nSPEED\\nDOWN\\n\\n$(vaddio:pan_speed)',     size: '7' },
+			{ action: 'tSpeedU', release: null,     group: 'Pan/Tilt',    label: 'TILT\\nSPEED\\nUP\\n\\n$(vaddio:tilt_speed)',     size: '7' },
+			{ action: 'tSpeedD', release: null,     group: 'Pan/Tilt',    label: 'TILT\\nSPEED\\nDOWN\\n\\n$(vaddio:tilt_speed)',   size: '7' },
+			{ action: 'zoomI',   release: 'zoomS',  group: 'Lens',        label: 'ZOOM IN',                                         size: '18' },
+			{ action: 'zoomO',   release: 'zoomS',  group: 'Lens',        label: 'ZOOM OUT',                                        size: '18' },
+			{ action: 'zSpeedU', release: null,     group: 'Lens',        label: 'ZOOM\\nSPEED\\nUP\\n\\n$(vaddio:zoom_speed)',     size: '7' },
+			{ action: 'zSpeedD', release: null,     group: 'Lens',        label: 'ZOOM\\nSPEED\\nDOWN\\n\\n$(vaddio:zoom_speed)',   size: '7' },
+			{ action: 'focusN',  release: 'focusS', group: 'Lens',        label: 'FOCUS NEAR',                                      size: '18' },
+			{ action: 'focusF',  release: 'focusS', group: 'Lens',        label: 'FOCUS FAR',                                       size: '18' },
+			{ action: 'fSpeedU', release: null,     group: 'Lens',        label: 'FOCUS\\nSPEED\\nUP\\n\\n$(vaddio:focus_speed)',   size: '7' },
+			{ action: 'fSpeedD', release: null,     group: 'Lens',        label: 'FOCUS\\nSPEED\\nDOWN\\n\\n$(vaddio:focus_speed)', size: '7' },
+			{ action: 'gainU',   release: null,     group: 'CCU Control', label: 'GAIN\\nUP\\n\\n$(vaddio:gain)',                   size: '7' },
+			{ action: 'gainD',   release: null,     group: 'CCU Control', label: 'GAIN\\nDOWN\\n\\n$(vaddio:gain)',                 size: '7' },
+			{ action: 'rGainU',  release: null,     group: 'CCU Control', label: 'RED\\nGAIN\\nUP\\n\\n$(vaddio:red_gain)',         size: '7' },
+			{ action: 'rGainD',  release: null,     group: 'CCU Control', label: 'RED\\nGAIN\\nDOWN\\n\\n$(vaddio:red_gain)',       size: '7' },
+			{ action: 'bGainU',  release: null,     group: 'CCU Control', label: 'BLUE\\nGAIN\\nUP\\n\\n$(vaddio:blue_gain)',       size: '7' },
+			{ action: 'bGainD',  release: null,     group: 'CCU Control', label: 'BLUE\\nGAIN\\nDOWN\\n\\n$(vaddio:blue_gain)',     size: '7' },
+			{ action: 'irisU',   release: null,     group: 'CCU Control', label: 'IRIS\\nUP\\n\\n$(vaddio:iris)',                   size: '7' },
+			{ action: 'irisD',   release: null,     group: 'CCU Control', label: 'IRIS\\nDOWN\\n\\n$(vaddio:iris)',                 size: '7' },
+			{ action: 'detailU', release: null,     group: 'CCU Control', label: 'DETAIL\\nUP\\n\\n$(vaddio:detail)',               size: '7' },
+			{ action: 'detailD', release: null,     group: 'CCU Control', label: 'DETAIL\\nDOWN\\n\\n$(vaddio:detail)',             size: '7' },
+			{ action: 'chromaU', release: null,     group: 'CCU Control', label: 'CHROMA\\nUP\\n\\n$(vaddio:chroma)',               size: '7' },
+			{ action: 'chromaD', release: null,     group: 'CCU Control', label: 'CHROMA\\nDOWN\\n\\n$(vaddio:chroma)',             size: '7' },
+			{ action: 'gammaU',  release: null,     group: 'CCU Control', label: 'GAMMA\\nUP\\n\\n$(vaddio:gamma)',                 size: '7' },
+			{ action: 'gammaD',  release: null,     group: 'CCU Control', label: 'GAMMA\\nDOWN\\n\\n$(vaddio:gamma)',               size: '7' }
+		];
+
 		this.actions(); // export actions
 	}
 
@@ -245,8 +293,11 @@ class instance extends instance_skel {
 			}
 		}
 
+		id = id.toLowerCase();
+
 		if (this.monitors[id] === undefined) {
 			this.monitors[id] = {
+				id:              id,
 				brightness:      255,
 				contrast:        127,
 				saturation:      127,
@@ -412,7 +463,7 @@ class instance extends instance_skel {
 
 		this.CHOICES_MONITOR = [];
 
-		if ( this.config.modelID == 'smViewDuo' || this.config.modelID == 'smScope' ) {
+		if ( this.config.ver == 'smViewDuo' || this.config.ver == 'smScope' ) {
 			this.CHOICES_MONITOR = [
 				{id: 'MONITOR A:', label: 'Monitor A'},
 				{id: 'MONITOR B:', label: 'Monitor B'}
@@ -497,7 +548,7 @@ class instance extends instance_skel {
 	 * @access protected
 	 * @since 1.1.0
 	 */
-	updateStatus(labeltype, object) {
+	updateMonitor(labeltype, object) {
 
 		var monitor = this.getMonitor(labeltype);
 
@@ -509,31 +560,34 @@ class instance extends instance_skel {
 
 			switch (labeltype) {
 				case 'Brightness':
-					this.monitor.brightness = parseInt(value);
+					monitor.brightness = parseInt(value);
+					this.setVariable('mon_' + monitor.id + '_brightness', monitor.brightness);
 					break;
 				case 'Contrast':
-					this.monitor.contrast = parseInt(value);
+					monitor.contrast = parseInt(value);
+					this.setVariable('mon_' + monitor.id + 'contrast', monitor.contrast);
 					break;
 				case 'Saturation':
-					this.monitor.saturation = parseInt(value);
+					monitor.saturation = parseInt(value);
+					this.setVariable('mon_' + monitor.id + '_saturation', monitor.saturation);
 					break;
 				case 'Border':
-					this.monitor.border = value;
+					monitor.border = value;
 					break;
 				case 'ScopeMode':
-					this.monitor.scopeMode = value;
+					monitor.scopeMode = value;
 					break;
 				case 'AudioChannel':
-					this.monitor.audioChannel = value;
+					monitor.audioChannel = value;
 					break;
 				case 'LUT':
-					this.monitor.lut = value;
+					monitor.lut = value;
 					break;
 				case 'MonitorInput':
-					this.monitor.monitorInput = value;
+					monitor.monitorInput = value;
 					break;
 				case 'Identify':
-					this.monitor.identify = (value == 'true');
+					monitor.identify = (value == 'true');
 					break;
 			}
 		}

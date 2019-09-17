@@ -17,7 +17,7 @@ module.exports = {
 		this.setVariable('mon_a_contrast',   this.getMonitor('A').contrast);
 		this.setVariable('mon_a_saturation', this.getMonitor('A').saturation);
 
-		if ( this.config.modelID == 'smViewDuo' || this.config.modelID == 'smScope' ) {
+		if ( this.config.ver == 'smViewDuo' || this.config.ver == 'smScope' ) {
 			variables.push({ label: 'Monitor B Brightness', name: 'mon_b_brightness' });
 			variables.push({ label: 'Monitor B Contrast',   name: 'mon_b_contrast' });
 			variables.push({ label: 'Monitor B Saturation', name: 'mon_b_saturation' });

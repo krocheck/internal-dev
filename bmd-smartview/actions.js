@@ -18,7 +18,8 @@ module.exports = {
 					type:    'dropdown',
 					label:   'Select Monitor',
 					id:      'mon',
-					choices: this.CHOICES_MONITOR
+					choices: this.CHOICES_MONITOR,
+					default: 'MONITOR A:'
 				},
 				{
 					type:    'number',
@@ -39,7 +40,8 @@ module.exports = {
 					type:    'dropdown',
 					label:   'Select Monitor',
 					id:      'mon',
-					choices: this.CHOICES_MONITOR
+					choices: this.CHOICES_MONITOR,
+					default: 'MONITOR A:'
 				},
 				{
 					type:    'number',
@@ -60,7 +62,8 @@ module.exports = {
 					type:    'dropdown',
 					label:   'Select Monitor',
 					id:      'mon',
-					choices: this.CHOICES_MONITOR
+					choices: this.CHOICES_MONITOR,
+					default: 'MONITOR A:'
 				},
 				{
 					type:    'number',
@@ -83,8 +86,8 @@ module.exports = {
 						type:    'dropdown',
 						label:   'Select Monitor',
 						id:      'mon',
-						choices: this.CHOICES_MONITOR
-
+						choices: this.CHOICES_MONITOR,
+						default: 'MONITOR A:'
 					},
 					{
 						type:    'number',
@@ -105,7 +108,8 @@ module.exports = {
 						type:    'dropdown',
 						label:   'Select Monitor',
 						id:      'mon',
-						choices: this.CHOICES_MONITOR
+						choices: this.CHOICES_MONITOR,
+						default: 'MONITOR A:'
 					},
 					{
 						type:    'number',
@@ -126,7 +130,8 @@ module.exports = {
 						type:    'dropdown',
 						label:   'Select Monitor',
 						id:      'mon',
-						choices: this.CHOICES_MONITOR
+						choices: this.CHOICES_MONITOR,
+						default: 'MONITOR A:'
 					},
 					{
 						type:    'number',
@@ -148,7 +153,8 @@ module.exports = {
 						type:    'dropdown',
 						label:   'Select Monitor',
 						id:      'mon',
-						choices: this.CHOICES_MONITOR
+						choices: this.CHOICES_MONITOR,
+						default: 'MONITOR A:'
 					},
 					{
 						type:     'number',
@@ -169,7 +175,8 @@ module.exports = {
 						type:    'dropdown',
 						label:   'Select Monitor',
 						id:      'mon',
-						choices: this.CHOICES_MONITOR
+						choices: this.CHOICES_MONITOR,
+						default: 'MONITOR A:'
 					},
 					{
 						type:    'number',
@@ -190,7 +197,8 @@ module.exports = {
 						type:    'dropdown',
 						label:   'Select Monitor',
 						id:      'mon',
-						choices: this.CHOICES_MONITOR
+						choices: this.CHOICES_MONITOR,
+						default: 'MONITOR A:'
 					},
 					{
 						type:    'number',
@@ -213,7 +221,8 @@ module.exports = {
 					type:    'dropdown',
 					label:   'Select Monitor',
 					id:      'mon',
-					choices: this.CHOICES_MONITOR
+					choices: this.CHOICES_MONITOR,
+					default: 'MONITOR A:'
 				}
 			]
 		};
@@ -225,7 +234,8 @@ module.exports = {
 					type:    'dropdown',
 					label:   'Select Monitor',
 					id:      'mon',
-					choices: this.CHOICES_MONITOR
+					choices: this.CHOICES_MONITOR,
+					default: 'MONITOR A:'
 				},
 				{
 					type:    'dropdown',
@@ -244,7 +254,8 @@ module.exports = {
 						type:    'dropdown',
 						label:   'Select Monitor',
 						id:      'mon',
-						choices: this.CHOICES_MONITOR
+						choices: this.CHOICES_MONITOR,
+						default: 'MONITOR A:'
 					},
 					{
 						type:    'dropdown',
@@ -262,7 +273,8 @@ module.exports = {
 						type:    'dropdown',
 						label:   'Select Monitor',
 						id:      'mon',
-						choices: this.CHOICES_MONITOR
+						choices: this.CHOICES_MONITOR,
+						default: 'MONITOR A:'
 					},
 					{
 						type:    'dropdown',
@@ -282,7 +294,8 @@ module.exports = {
 						type:    'dropdown',
 						label:   'Select Monitor',
 						id:      'mon',
-						choices: this.CHOICES_MONITOR
+						choices: this.CHOICES_MONITOR,
+						default: 'MONITOR A:'
 					},
 					{
 						type:    'dropdown',
@@ -299,7 +312,8 @@ module.exports = {
 						type:    'dropdown',
 						label:   'Select Monitor',
 						id:      'mon',
-						choices: this.CHOICES_MONITOR
+						choices: this.CHOICES_MONITOR,
+						default: 'MONITOR A:'
 					},
 					{
 						type:    'dropdown',
