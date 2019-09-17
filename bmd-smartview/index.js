@@ -404,7 +404,14 @@ class instance extends instance_skel {
 						this.sendNextCommand();
 					}
 					else if (line.match(/ACK/)) {
-						this.socket.emit('receiveline', this.commandQueue.shift());
+						var echo = this.commandQueue.shift());
+						echo = echo.split('\n');
+
+						if (echo.length > 1) {
+							var cmd = echo[0].trim().split(/:/)[0];
+							this.processSmartviewInformation(cmd, echo[1]);
+						}
+
 						this.sendNextCommand();
 					}
 					else {
@@ -451,8 +458,8 @@ class instance extends instance_skel {
 
 		if (key.match(/MONITOR (A|B)/)) {
 			this.updateMonitor(key,data);
-			this.actions();
-			this.initFeedbacks();
+			//this.actions();
+			//this.initFeedbacks();
 			//this.initPresets();
 		}
 		else if (key == 'SMARTVIEW DEVICE') {
