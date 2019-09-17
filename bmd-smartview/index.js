@@ -31,10 +31,12 @@ class instance extends instance_skel {
 	constructor(system, id, config) {
 		super(system, id, config);
 
-		this.stash      = [];
-		this.command    = null;
-		this.deviceName = '';
-		this.monitors   = {};
+		this.stash        = [];
+		this.command      = null;
+		this.commandQueue = [];
+		this.cts          = false;
+		this.deviceName   = '';
+		this.monitors     = {};
 
 		Object.assign(this, {
 			...actions,
@@ -213,7 +215,7 @@ class instance extends instance_skel {
 		if (cmd !== undefined) {
 
 			if (this.socket !== undefined && this.socket.connected) {
-				this.socket.send(cmd);
+				this.queueCommand(cmd);
 			}
 			else {
 				this.debug('Socket not connected :(');
@@ -396,7 +398,18 @@ class instance extends instance_skel {
 				while ( (i = receivebuffer.indexOf('\n', offset)) !== -1) {
 					line = receivebuffer.substr(offset, i - offset);
 					offset = i + 1;
-					this.socket.emit('receiveline', line.toString());
+
+					if (line.match(/Error/)) {
+						this.commandQueue.shift();
+						this.sendNextCommand();
+					}
+					else if (line.match(/ACK/)) {
+						this.socket.emit('receiveline', this.commandQueue.shift());
+						this.sendNextCommand();
+					}
+					else {
+						this.socket.emit('receiveline', line.toString());
+					}
 				}
 
 				receivebuffer = receivebuffer.substr(offset);
@@ -417,8 +430,9 @@ class instance extends instance_skel {
 
 					this.stash = [];
 					this.command = null;
+					this.sendNextCommand();
 				}
-				else {
+				else if (line.length > 0) {
 					this.debug("weird response from smartview", line, line.length);
 				}
 			});
@@ -450,6 +464,24 @@ class instance extends instance_skel {
 		}
 		else {
 			// TODO: find out more about the smart view from stuff that comes in here
+		}
+	}
+
+	queueCommand(cmd) {
+		this.commandQueue.push(cmd);
+
+		if (this.cts === true) {
+			this.sendNextCommand();
+		}
+	}
+
+	sendNextCommand() {
+		if (this.commandQueue.length > 0) {
+			this.socket.send(this.commandQueue[0]);
+			this.cts = false;
+		}
+		else {
+			this.cts = true;
 		}
 	}
 
@@ -565,7 +597,7 @@ class instance extends instance_skel {
 					break;
 				case 'Contrast':
 					monitor.contrast = parseInt(value);
-					this.setVariable('mon_' + monitor.id + 'contrast', monitor.contrast);
+					this.setVariable('mon_' + monitor.id + '_contrast', monitor.contrast);
 					break;
 				case 'Saturation':
 					monitor.saturation = parseInt(value);
