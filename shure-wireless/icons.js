@@ -163,7 +163,7 @@ class instance_icons {
 		var id = bg + '-' + ant + '-' + audio + '-' + rf + '-' + battery + '-' + lock;
 		var out;
 
-		if ( this.savedIcons[id] === 'undefined' ) {
+		//if ( this.savedIcons[id] === 'undefined' ) {
 			var img = new this.Image();
 			img.backgroundColor(bg);
 
@@ -176,12 +176,12 @@ class instance_icons {
 				img.drawPixelBuffer(31, 46, 18, 8, this.LOCK[lock], 'base64');
 			}
 
-			this.savedIcons[id] = img.toBase64();
-			out = this.savedIcons[id];
-		}
-		else {
-			out = this.savedIcons[id];
-		}
+		//	this.savedIcons[id] = img.toBase64();
+			out = img.toBase64();//this.savedIcons[id];
+		//}
+		//else {
+		//	out = this.savedIcons[id];
+		//}
 
 		return out;
 	}
