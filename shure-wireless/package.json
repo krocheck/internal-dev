@@ -20,8 +20,5 @@
 	"bugs": {
 		"url": "https://github.com/bitfocus/companion-module-shure-wireless/issues"
 	},
-	"homepage": "https://github.com/bitfocus/companion-module-shure-wireless#readme",
-	"dependencies": {
-		"merge-images": "1.1.0"
-	}
+	"homepage": "https://github.com/bitfocus/companion-module-shure-wireless#readme"
 }
