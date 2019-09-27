@@ -245,7 +245,7 @@ class instance extends instance_skel {
 		debug = this.debug;
 		log = this.log;
 
-		this.status(this.STATUS_OK);
+		this.self.status(this.STATUS_WARNING, 'Connecting');
 
 		this.initVariables();
 		this.initFeedbacks();

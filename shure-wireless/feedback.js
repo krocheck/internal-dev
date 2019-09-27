@@ -171,7 +171,7 @@ module.exports = {
 				],
 				callback: (feedback, bank) => {
 					return {
-						png64: this.api.getIcon(parseInt(feedback.options.channel))
+						img64: this.api.getIcon(parseInt(feedback.options.channel))
 					};
 				}
 			};
