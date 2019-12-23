@@ -1,6 +1,6 @@
 {
 	"name": "hyperdeck",
-	"version": "1.0.3",
+	"version": "1.1.0",
 	"api_version": "1.0.0",
 	"keywords": [
 		"Recording"
@@ -9,13 +9,19 @@
 	"product": "Hyperdeck",
 	"shortname": "hyperdeck",
 	"description": "Module to control Hyperdeck",
-	"main": "hyperdeck.js",
+	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "Per Roine <per.roine@gmail.com>",
 	"contributors": [
-		"Stephen Harrison <stephen@redleopard.org>"
+		"Stephen Harrison <stephen@redleopard.org>",
+		"Keith Rocheck",
+		"Jeffrey Davidsz",
+		"Balte de Wit <contact@balte.nl>"
 	],
-	"license": "MIT"
+	"license": "MIT",
+	"dependencies": {
+		"hyperdeck-connection": "^0.3.0"
+	}
 }
