@@ -32,7 +32,7 @@ instance.prototype.CONFIG_MODEL = {
 	8:  { id: 8,  label: 'Carbonite Black Solo9',    arch: 'carbonite', inputs: 9,   MEs: 1, keyers: 4, MMEs: 2,  MMEKeyers: 2, MSCs: 1,  XP: 0, CK: 0, MSs: '4|0',  MVs: '1|10', CC: '8|32',  mem: 100,  auxes: '1|16' },
 	9:  { id: 9,  label: 'Carbonite Black Solo13',   arch: 'carbonite', inputs: 13,  MEs: 1, keyers: 4, MMEs: 2,  MMEKeyers: 2, MSCs: 1,  XP: 0, CK: 0, MSs: '4|0',  MVs: '1|10', CC: '8|32',  mem: 100,  auxes: '1|16' },
 	10: { id: 10, label: 'Carbonite Ultra',          arch: 'carbonite', inputs: 24,  MEs: 3, keyers: 4, MMEs: 4,  MMEKeyers: 2, MSCs: 2,  XP: 0, CK: 2, MSs: '4|0',  MVs: '4|16', CC: '8|32',  mem: 100,  auxes: '1|28' },
-	11: { id: 11, label: 'Carbonite Ultra UHD',      arch: 'carbonite', inputs: 18,  MEs: 2, keyers: 2, MMEs: 2,  MMEKeyers: 2, MSCs: 1,  XP: 0, CK: 2, MSs: '2|0',  MVs: '4|16', CC: '8|32',  mem: 100,  auxes: '1|28' },
+	11: { id: 11, label: 'Carbonite Ultra UHD',      arch: 'carbonite', inputs: 18,  MEs: 2, keyers: 4, MMEs: 2,  MMEKeyers: 2, MSCs: 1,  XP: 0, CK: 2, MSs: '2|0',  MVs: '4|16', CC: '8|32',  mem: 100,  auxes: '1|28' },
 	12: { id: 12, label: 'Carbonite Mosaic',         arch: 'carbonite', inputs: 36,  MEs: 0, keyers: 0, MMEs: 10, MMEKeyers: 4, MSCs: 10, XP: 0, CK: 0, MSs: '36|0', MVs: '4|16', CC: '8|32',  mem: 100,  auxes: '1|20' },
 	13: { id: 13, label: 'Carbonite UltraChromeHR',  arch: 'carbonite', inputs: 36,  MEs: 0, keyers: 0, MMEs: 4,  MMEKeyers: 2, MSCs: 0,  XP: 0, CK: 4, MSs: '8|0',  MVs: '2|16', CC: '0|0',   mem: 100,  auxes: '1|20' },
 	14: { id: 14, label: 'Carbonite UltraChromeHR+', arch: 'carbonite', inputs: 36,  MEs: 0, keyers: 0, MMEs: 4,  MMEKeyers: 2, MSCs: 0,  XP: 0, CK: 4, MSs: '8|0',  MVs: '5|16', CC: '0|0',   mem: 100,  auxes: '1|20' },

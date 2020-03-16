@@ -108,32 +108,32 @@ class instance extends instance_skel {
 		];
 
 		this.PRESETS_VALUES = [
-			{ action: 'pSpeedU', release: null,     group: 'Pan/Tilt',    label: 'PAN\\nSPEED\\nUP\\n\\n$(vaddio:pan_speed)',       size: '7' },
-			{ action: 'pSpeedD', release: null,     group: 'Pan/Tilt',    label: 'PAN\\nSPEED\\nDOWN\\n\\n$(vaddio:pan_speed)',     size: '7' },
-			{ action: 'tSpeedU', release: null,     group: 'Pan/Tilt',    label: 'TILT\\nSPEED\\nUP\\n\\n$(vaddio:tilt_speed)',     size: '7' },
-			{ action: 'tSpeedD', release: null,     group: 'Pan/Tilt',    label: 'TILT\\nSPEED\\nDOWN\\n\\n$(vaddio:tilt_speed)',   size: '7' },
-			{ action: 'zoomI',   release: 'zoomS',  group: 'Lens',        label: 'ZOOM IN',                                         size: '18' },
-			{ action: 'zoomO',   release: 'zoomS',  group: 'Lens',        label: 'ZOOM OUT',                                        size: '18' },
-			{ action: 'zSpeedU', release: null,     group: 'Lens',        label: 'ZOOM\\nSPEED\\nUP\\n\\n$(vaddio:zoom_speed)',     size: '7' },
-			{ action: 'zSpeedD', release: null,     group: 'Lens',        label: 'ZOOM\\nSPEED\\nDOWN\\n\\n$(vaddio:zoom_speed)',   size: '7' },
-			{ action: 'focusN',  release: 'focusS', group: 'Lens',        label: 'FOCUS NEAR',                                      size: '18' },
-			{ action: 'focusF',  release: 'focusS', group: 'Lens',        label: 'FOCUS FAR',                                       size: '18' },
-			{ action: 'fSpeedU', release: null,     group: 'Lens',        label: 'FOCUS\\nSPEED\\nUP\\n\\n$(vaddio:focus_speed)',   size: '7' },
-			{ action: 'fSpeedD', release: null,     group: 'Lens',        label: 'FOCUS\\nSPEED\\nDOWN\\n\\n$(vaddio:focus_speed)', size: '7' },
-			{ action: 'gainU',   release: null,     group: 'CCU Control', label: 'GAIN\\nUP\\n\\n$(vaddio:gain)',                   size: '7' },
-			{ action: 'gainD',   release: null,     group: 'CCU Control', label: 'GAIN\\nDOWN\\n\\n$(vaddio:gain)',                 size: '7' },
-			{ action: 'rGainU',  release: null,     group: 'CCU Control', label: 'RED\\nGAIN\\nUP\\n\\n$(vaddio:red_gain)',         size: '7' },
-			{ action: 'rGainD',  release: null,     group: 'CCU Control', label: 'RED\\nGAIN\\nDOWN\\n\\n$(vaddio:red_gain)',       size: '7' },
-			{ action: 'bGainU',  release: null,     group: 'CCU Control', label: 'BLUE\\nGAIN\\nUP\\n\\n$(vaddio:blue_gain)',       size: '7' },
-			{ action: 'bGainD',  release: null,     group: 'CCU Control', label: 'BLUE\\nGAIN\\nDOWN\\n\\n$(vaddio:blue_gain)',     size: '7' },
-			{ action: 'irisU',   release: null,     group: 'CCU Control', label: 'IRIS\\nUP\\n\\n$(vaddio:iris)',                   size: '7' },
-			{ action: 'irisD',   release: null,     group: 'CCU Control', label: 'IRIS\\nDOWN\\n\\n$(vaddio:iris)',                 size: '7' },
-			{ action: 'detailU', release: null,     group: 'CCU Control', label: 'DETAIL\\nUP\\n\\n$(vaddio:detail)',               size: '7' },
-			{ action: 'detailD', release: null,     group: 'CCU Control', label: 'DETAIL\\nDOWN\\n\\n$(vaddio:detail)',             size: '7' },
-			{ action: 'chromaU', release: null,     group: 'CCU Control', label: 'CHROMA\\nUP\\n\\n$(vaddio:chroma)',               size: '7' },
-			{ action: 'chromaD', release: null,     group: 'CCU Control', label: 'CHROMA\\nDOWN\\n\\n$(vaddio:chroma)',             size: '7' },
-			{ action: 'gammaU',  release: null,     group: 'CCU Control', label: 'GAMMA\\nUP\\n\\n$(vaddio:gamma)',                 size: '7' },
-			{ action: 'gammaD',  release: null,     group: 'CCU Control', label: 'GAMMA\\nDOWN\\n\\n$(vaddio:gamma)',               size: '7' }
+			{ action: 'pSpeedU', group: 'Pan/Tilt',    label: 'PAN\\nSPEED\\nUP\\n\\n$(vaddio:pan_speed)',       size: '7'  },
+			{ action: 'pSpeedD', group: 'Pan/Tilt',    label: 'PAN\\nSPEED\\nDOWN\\n\\n$(vaddio:pan_speed)',     size: '7'  },
+			{ action: 'tSpeedU', group: 'Pan/Tilt',    label: 'TILT\\nSPEED\\nUP\\n\\n$(vaddio:tilt_speed)',     size: '7'  },
+			{ action: 'tSpeedD', group: 'Pan/Tilt',    label: 'TILT\\nSPEED\\nDOWN\\n\\n$(vaddio:tilt_speed)',   size: '7'  },
+			{ action: 'zoomI',   group: 'Lens',        label: 'ZOOM IN',                                         size: '18' },
+			{ action: 'zoomO',   group: 'Lens',        label: 'ZOOM OUT',                                        size: '18' },
+			{ action: 'zSpeedU', group: 'Lens',        label: 'ZOOM\\nSPEED\\nUP\\n\\n$(vaddio:zoom_speed)',     size: '7'  },
+			{ action: 'zSpeedD', group: 'Lens',        label: 'ZOOM\\nSPEED\\nDOWN\\n\\n$(vaddio:zoom_speed)',   size: '7'  },
+			{ action: 'focusN',  group: 'Lens',        label: 'FOCUS NEAR',                                      size: '18' },
+			{ action: 'focusF',  group: 'Lens',        label: 'FOCUS FAR',                                       size: '18' },
+			{ action: 'fSpeedU', group: 'Lens',        label: 'FOCUS\\nSPEED\\nUP\\n\\n$(vaddio:focus_speed)',   size: '7'  },
+			{ action: 'fSpeedD', group: 'Lens',        label: 'FOCUS\\nSPEED\\nDOWN\\n\\n$(vaddio:focus_speed)', size: '7'  },
+			{ action: 'gainU',   group: 'CCU Control', label: 'GAIN\\nUP\\n\\n$(vaddio:gain)',                   size: '7'  },
+			{ action: 'gainD',   group: 'CCU Control', label: 'GAIN\\nDOWN\\n\\n$(vaddio:gain)',                 size: '7'  },
+			{ action: 'rGainU',  group: 'CCU Control', label: 'RED\\nGAIN\\nUP\\n\\n$(vaddio:red_gain)',         size: '7'  },
+			{ action: 'rGainD',  group: 'CCU Control', label: 'RED\\nGAIN\\nDOWN\\n\\n$(vaddio:red_gain)',       size: '7'  },
+			{ action: 'bGainU',  group: 'CCU Control', label: 'BLUE\\nGAIN\\nUP\\n\\n$(vaddio:blue_gain)',       size: '7'  },
+			{ action: 'bGainD',  group: 'CCU Control', label: 'BLUE\\nGAIN\\nDOWN\\n\\n$(vaddio:blue_gain)',     size: '7'  },
+			{ action: 'irisU',   group: 'CCU Control', label: 'IRIS\\nUP\\n\\n$(vaddio:iris)',                   size: '7'  },
+			{ action: 'irisD',   group: 'CCU Control', label: 'IRIS\\nDOWN\\n\\n$(vaddio:iris)',                 size: '7'  },
+			{ action: 'detailU', group: 'CCU Control', label: 'DETAIL\\nUP\\n\\n$(vaddio:detail)',               size: '7'  },
+			{ action: 'detailD', group: 'CCU Control', label: 'DETAIL\\nDOWN\\n\\n$(vaddio:detail)',             size: '7'  },
+			{ action: 'chromaU', group: 'CCU Control', label: 'CHROMA\\nUP\\n\\n$(vaddio:chroma)',               size: '7'  },
+			{ action: 'chromaD', group: 'CCU Control', label: 'CHROMA\\nDOWN\\n\\n$(vaddio:chroma)',             size: '7'  },
+			{ action: 'gammaU',  group: 'CCU Control', label: 'GAMMA\\nUP\\n\\n$(vaddio:gamma)',                 size: '7'  },
+			{ action: 'gammaD',  group: 'CCU Control', label: 'GAMMA\\nDOWN\\n\\n$(vaddio:gamma)',               size: '7'  }
 		];
 
 		this.actions(); // export actions
@@ -301,8 +301,8 @@ class instance extends instance_skel {
 			this.monitors[id] = {
 				id:              id,
 				brightness:      255,
-				contrast:        127,
-				saturation:      127,
+				contrast:        128,
+				saturation:      128,
 				identify:        false,
 				border:          'none',
 				scopeMode:       'Picture',
@@ -353,7 +353,7 @@ class instance extends instance_skel {
 		this.initFeedbacks();
 		//this.initPresets();
 
-		this.init_tcp();
+		this.initTCP();
 	}
 
 	/**
@@ -362,7 +362,7 @@ class instance extends instance_skel {
 	 * @access protected
 	 * @since 1.0.0
 	 */
-	init_tcp() {
+	initTCP() {
 		var receivebuffer = '';
 
 		if (this.socket !== undefined) {
@@ -404,12 +404,12 @@ class instance extends instance_skel {
 						this.sendNextCommand();
 					}
 					else if (line.match(/ACK/)) {
-						var echo = this.commandQueue.shift());
+						var echo = this.commandQueue.shift();
 						echo = echo.split('\n');
 
 						if (echo.length > 1) {
-							var cmd = echo[0].trim().split(/:/)[0];
-							this.processSmartviewInformation(cmd, echo[1]);
+							var cmd = echo.shift().trim().split(/:/)[0];
+							this.processSmartviewInformation(cmd, echo);
 						}
 
 						this.sendNextCommand();
@@ -458,8 +458,6 @@ class instance extends instance_skel {
 
 		if (key.match(/MONITOR (A|B)/)) {
 			this.updateMonitor(key,data);
-			//this.actions();
-			//this.initFeedbacks();
 			//this.initPresets();
 		}
 		else if (key == 'SMARTVIEW DEVICE') {
@@ -474,6 +472,13 @@ class instance extends instance_skel {
 		}
 	}
 
+	/**
+	 * INTERNAL: Will add a command to the queue to send and send it if cleared to.
+	 *
+	 * @param {string} cmd - the command
+	 * @access protected
+	 * @since 1.1.0
+	 */
 	queueCommand(cmd) {
 		this.commandQueue.push(cmd);
 
@@ -482,6 +487,12 @@ class instance extends instance_skel {
 		}
 	}
 
+	/**
+	 * INTERNAL: Send the next command in the queue OR clears to send if none.
+	 *
+	 * @access protected
+	 * @since 1.1.0
+	 */
 	sendNextCommand() {
 		if (this.commandQueue.length > 0) {
 			this.socket.send(this.commandQueue[0]);
@@ -536,7 +547,7 @@ class instance extends instance_skel {
 		//this.initPresets();
 
 		if (resetConnection === true || this.socket === undefined) {
-			this.init_tcp();
+			this.initTCP();
 		}
 	}
 

@@ -1,0 +1,32 @@
+{
+	"name": "extron-matrix",
+	"version": "1.0.0",
+	"api_version": "1.0.0",
+	"keywords": [
+		"Matrix"
+	],
+	"manufacturer": "Extron",
+	"product": [
+		"Generic Matrix (limited support)",
+		"DMS Matrix",
+		"DXP Matrix",
+		"FOX Matrix",
+		"XTP/II Matrix"
+	],
+	"shortname": "extron-matrix",
+	"description": "Extron Matrix plugin for Companion",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-extron-matrix.git"
+	},
+	"author": "Keith Rocheck <keith.rocheck@gmail.com>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-extron-matrix/issues"
+	},
+	"homepage": "https://github.com/bitfocus/companion-module-extron-matrix#readme"
+}
