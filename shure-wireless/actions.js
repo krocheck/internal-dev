@@ -21,10 +21,10 @@ module.exports = {
 				},
 				{
 					type: 'textinput',
-					label: 'Name (' + ((this.model.family == 'ulx' || this.model.family == 'qlx') ? '8' : '31') + ' characters max)',
+					label: 'Name (8 characters max)',
 					id: 'name',
 					default: '',
-					regex: ((this.model.family == 'ulx' || this.model.family == 'qlx') ? this.REGEX_CHAR_8 : this.REGEX_CHAR_31)
+					regex: this.REGEX_CHAR_8
 				}
 			]
 		};
@@ -136,7 +136,7 @@ module.exports = {
 			};
 		}
 
-		if (this.model.family == 'ad' || this.model.family == 'mxw') {
+		if (this.model.family == 'ad' || this.model.family == 'mxw' || this.model.family == 'slx') {
 			actions['flash_channel'] = {
 				label: 'Flash lights on receiver channel',
 				tooltip: 'It will automatically turn off after 60 seconds',
