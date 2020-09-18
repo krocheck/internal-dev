@@ -447,16 +447,16 @@ class instance_api {
 			this.instance.checkFeedbacks('channel_muted');
 		}
 		else if (key == 'GROUP_CHANNEL2') {
-			this.instance.setVariable(prefix + 'group_chan2', value.replace('{','').replace('}','').trim());
 			variable = value.replace('{','').replace('}','').trim().split(',');
-			channel.group2   = variable[0];
-			channel.channel2 = variable[1];
+			channel.group2   = (variable[0] == '--' ? variable[0] : parseInt(variable[0]));
+			channel.channel2 = (variable[1] == '--' ? variable[1] : parseInt(variable[1]));
+			this.instance.setVariable(prefix + 'group_chan2', channel.group2 + ',' + channel.channel2);
 		}
 		else if (key.match(/GROUP_CHAN/)) {
-			this.instance.setVariable(prefix + 'group_chan', value.replace('{','').replace('}','').trim());
 			variable = value.replace('{','').replace('}','').trim().split(',');
-			channel.group   = variable[0];
-			channel.channel = variable[1];
+			channel.group   = (variable[0] == '--' ? variable[0] : parseInt(variable[0]));
+			channel.channel = (variable[1] == '--' ? variable[1] : parseInt(variable[1]));
+			this.instance.setVariable(prefix + 'group_chan', channel.group + ',' + channel.channel);
 		}
 		else if (key == 'FREQUENCY') {
 			value = '' + parseInt(value);
