@@ -249,6 +249,7 @@ class instance_api {
 			channel.antennaB  = sample[7].substr(1,1);
 
 			this.instance.setVariable(prefix + 'antenna', channel.antenna);
+			this.instance.setVariable(prefix + 'signal_quality', channel.signalQuality);
 			this.instance.setVariable(prefix + 'rf_level_a', (channel.rfLevelA-120) + ' dBm');
 			this.instance.setVariable(prefix + 'rf_level_b', (channel.rfLevelB-120) + ' dBm');
 			this.instance.setVariable(prefix + 'audio_level', (channel.audioLevel-120) + ' dBFS');
@@ -504,7 +505,7 @@ class instance_api {
 		}
 		else if (key == 'FLASH') {
 			channel.flash = value;
-			this.instance.setVariable(prefix + 'flash_lights', value);
+			this.instance.setVariable(prefix + 'flash', value);
 		}
 		else if (key == 'AUDIO_OUT_LVL_SWITCH') {
 			channel.audioOutLevelSwitch = value;
@@ -685,7 +686,7 @@ class instance_api {
 				variable = 'Unknown';
 			}
 			else {
-				variable = value + ' mW';
+				variable = channel.txPowerLevel + ' mW';
 			}
 			this.instance.setVariable(prefix + 'tx_power_level', variable);
 		}

@@ -55,6 +55,7 @@ module.exports = {
 			}
 
 			if (this.model.family == 'ad') {
+				variables.push({ name: prefix +'signal_quality',   label: 'Channel ' + i + ' Signal Quality' });
 				variables.push({ name: prefix +'rf_level_a',       label: 'Channel ' + i + ' RF Level A' });
 				variables.push({ name: prefix +'rf_level_b',       label: 'Channel ' + i + ' RF Level B' });
 				variables.push({ name: prefix +'rf_level_c',       label: 'Channel ' + i + ' RF Level C' });
@@ -94,6 +95,9 @@ module.exports = {
 				variables.push({ name: prefix +'tx_power_mode',   label: 'Channel ' + i + ' Transmitter Power Mode' });
 				variables.push({ name: prefix +'tx_mute_status',  label: 'Channel ' + i + ' Transmitter Mute Status' });
 				variables.push({ name: prefix +'tx_lock',         label: 'Channel ' + i + ' Transmitter Lock' });
+			}
+
+			if (this.model.family == 'ulx' || this.model.family == 'qlx')
 				variables.push({ name: prefix +'tx_power_lock',   label: 'Channel ' + i + ' Transmitter Power Lock' });
 				variables.push({ name: prefix +'tx_menu_lock',    label: 'Channel ' + i + ' Transmitter Menu Lock' });
 			}
@@ -190,7 +194,7 @@ module.exports = {
 		}
 
 		if (this.model.family != 'qlx') {
-			variables.push({ name: 'flash_lights', label: 'Flash Lights On/Off' });
+			variables.push({ name: 'flash', label: 'Flash Lights On/Off' });
 		}
 
 		if (this.model.family == 'slx') {
