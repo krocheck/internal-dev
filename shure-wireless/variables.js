@@ -72,7 +72,7 @@ module.exports = {
 				variables.push({ name: prefix +'audio_level',     label: 'Channel ' + i + ' Audio Level' });
 			}
 
-			variables.push({ name: prefix +'tx_type',             label: 'Channel ' + i + ' Transmitter Type' });
+			variables.push({ name: prefix +'tx_model',             label: 'Channel ' + i + ' Transmitter Model' });
 
 			if (this.model.family == 'mxw') {
 				variables.push({ name: prefix +'tx_available',    label: 'Channel ' + i + ' Transmitter Available' });
