@@ -213,7 +213,7 @@ class instance extends instance_skel {
 				id: 'meteringInterval',
 				label: 'Metering Interval (in ms)',
 				width: 4,
-				min: 1000,
+				min: 500,
 				max: 99999,
 				default: 5000,
 				required: true

@@ -459,15 +459,15 @@ class instance_api {
 			channel.channel = variable[1];
 		}
 		else if (key == 'FREQUENCY') {
-			channel.frequency = value;
-			point = value.indexOf('.');
-			variable = value.substring(point - 1, point) + '.' + value.substr(point + 1, point + 4) + ' MHz';
+			value = '' + parseInt(value);
+			channel.frequency = value.substring(0, 3) + '.' + value.substring(3, 6);
+			variable = channel.frequency + ' MHz';
 			this.instance.setVariable(prefix + 'frequency', variable);
 		}
 		else if (key == 'FREQUENCY2') {
-			channel.frequency2 = value;
-			point = value.indexOf('.');
-			variable = value.substring(point - 1, point) + '.' + value.substr(point + 1, point + 4) + ' MHz';
+			value = '' + parseInt(value);
+			channel.frequency2 = value.substring(0, 3) + '.' + value.substring(3, 6);
+			variable = channel.frequency2 + ' MHz';
 			this.instance.setVariable(prefix + 'frequency2', variable);
 		}
 		else if (key.match(/ENCRYPTION/)) {
