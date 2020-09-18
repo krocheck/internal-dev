@@ -97,7 +97,7 @@ module.exports = {
 				variables.push({ name: prefix +'tx_lock',         label: 'Channel ' + i + ' Transmitter Lock' });
 			}
 
-			if (this.model.family == 'ulx' || this.model.family == 'qlx')
+			if (this.model.family == 'ulx' || this.model.family == 'qlx') {
 				variables.push({ name: prefix +'tx_power_lock',   label: 'Channel ' + i + ' Transmitter Power Lock' });
 				variables.push({ name: prefix +'tx_menu_lock',    label: 'Channel ' + i + ' Transmitter Menu Lock' });
 			}
