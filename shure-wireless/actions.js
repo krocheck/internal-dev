@@ -51,6 +51,16 @@ module.exports = {
 			]
 		};
 
+		if (this.model.family != 'mxw') {
+			actions['channel_frequency'] = {
+				label: 'Set frequency of channel',
+				options: [
+					this.CHANNELS_FIELD,
+					this.FREQUENCY_FIELD
+				]
+			};
+		}
+
 		if (this.model.family != 'qlx') {
 			actions['flash_lights'] = {
 				label: 'Flash lights on receiver',
@@ -74,6 +84,13 @@ module.exports = {
 				options: [
 					this.SLOTS_FIELD,
 					this.RFOUTPUT_FIELD
+				]
+			};
+			actions['slot_rf_power'] = {
+				label: 'Set slot RF power level (ADX)',
+				options: [
+					this.SLOTS_FIELD,
+					this.RFPOWER_FIELD
 				]
 			};
 		}

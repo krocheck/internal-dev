@@ -550,7 +550,7 @@ class instance_api {
 		}
 		else if (key == 'FLASH') {
 			channel.flash = value;
-			this.instance.setVariable(prefix + 'flash', value);
+			//this.instance.setVariable(prefix + 'flash', value);
 		}
 		else if (key == 'AUDIO_OUT_LVL_SWITCH') {
 			channel.audioOutLevelSwitch = value;
@@ -948,7 +948,7 @@ class instance_api {
 		}
 		else if (key == 'FLASH') {
 			this.receiver.flash = value;
-			this.instance.setVariable('flash', value);
+			//this.instance.setVariable('flash', value);
 		}
 		else if (key == 'QUADVERSITY_MODE') {
 			this.receiver.quadversityMode = value;
@@ -1042,6 +1042,7 @@ class instance_api {
 					variable = value + ' mW';
 				}
 				this.instance.setVariable(prefix + 'tx_power_level', variable);
+				this.instance.checkFeedbacks('slot_rf_power');
 				break;
 			case 'SLOT_RF_POWER_MODE':
 				slot.txPowerMode = value;
@@ -1063,6 +1064,7 @@ class instance_api {
 					variable = value;
 				}
 				this.instance.setVariable(prefix + 'rf_output', variable);
+				this.instance.checkFeedbacks('slot_rf_output');
 				break;
 			case 'SLOT_BATT_BARS':
 				slot.batteryBars = parseInt(value);

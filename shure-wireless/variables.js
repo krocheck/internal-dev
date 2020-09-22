@@ -30,9 +30,9 @@ module.exports = {
 				variables.push({ name: prefix +'encryption_status', label: 'Channel ' + i + ' Encryption Status' });
 			}
 
-			if (this.model.family == 'ad' || this.model.family == 'mxw' || this.model.family == 'slx') {
+			/*if (this.model.family == 'ad' || this.model.family == 'mxw' || this.model.family == 'slx') {
 				variables.push({ name: prefix +'flash', label: 'Channel ' + i + ' Flash' });
-			}
+			}*/
 
 			if (this.model.family == 'ad' || this.model.family == 'ulx') {
 				variables.push({ name: prefix +'interference_status', label: 'Channel ' + i + ' Interference Status' });
@@ -193,9 +193,9 @@ module.exports = {
 			variables.push({ name: 'firmware_version', label: 'Firmware Version' });
 		}
 
-		if (this.model.family != 'qlx') {
+		/*if (this.model.family != 'qlx') {
 			variables.push({ name: 'flash', label: 'Flash Lights On/Off' });
-		}
+		}*/
 
 		if (this.model.family == 'slx') {
 			variables.push({ name: 'lock_status', label: 'Lock Status' });

@@ -125,6 +125,26 @@ module.exports = {
 					}
 				}
 			};
+
+			feedbacks['slot_rf_power'] = {
+				label: 'Slot RF Power',
+				description: 'If the selected slot\'s transmitter power level is set, change the color of the button.',
+				options: [
+					this.CHANNELS_FIELD,
+					this.RFPOWER_FIELD,
+					this.FG_COLOR_FIELD(this.rgb(255,255,255)),
+					this.BG_COLOR_FIELD(this.rgb(100,255,0))
+				],
+				callback: (feedback, bank) => {
+					let slot = feedback.options.slot.split(':');
+					if (this.api.getSlot(parseInt(slot[0]), parseInt(slot[1])).txPowerLevel == parseInt(feedback.options.power)) {
+						return {
+							color: feedback.options.fg,
+							bgcolor: feedback.options.bg
+						};
+					}
+				}
+			};
 		}
 
 		/*if (this.model.family != 'mxw') {

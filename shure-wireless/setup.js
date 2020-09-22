@@ -33,6 +33,13 @@ module.exports = {
 		default: '1',
 		choices: this.CHOICES_CHANNELS
 	},
+	FREQUENCY_FIELD: {
+		type: 'textinput',
+		label: 'Frequency (MHz)',
+		id: 'value',
+		default: '470.000',
+		regex: '/^(4[7-9][0-9]|[5-8][0-9]{2}|9[0-2][0-9]|93[0-7])\\.\\d(00|25|50|75)$/'
+	},
 	GAIN_INC_FIELD: function(family) {
 		return {
 			type: 'number',
@@ -77,6 +84,13 @@ module.exports = {
 		id: 'onoff',
 		default: 'RF_ON',
 		choices: this.CHOICES_RFOUTPUT
+	},
+	RFPOWER_FIELD: {
+		type: 'dropdown',
+		label: 'Power Level',
+		id: 'power',
+		default: '10',
+		choices: this.CHOICES_RFPOWER
 	},
 	SLOTS_FIELD: {
 		type: 'dropdown',
