@@ -5,6 +5,7 @@ var instance_api   = require('./internalAPI');
 //var instance_icons = require('./icons');
 var actions        = require('./actions');
 var feedback       = require('./feedback');
+var setup          = require('./setup');
 var variables      = require('./variables');
 
 var debug;
@@ -39,6 +40,7 @@ class instance extends instance_skel {
 		Object.assign(this, {
 			...actions,
 			...feedback,
+			...setup,
 			...variables
 		});
 
@@ -148,7 +150,7 @@ class instance extends instance_skel {
 				cmd = 'SET ' + options.channel + ' AUDIO_GAIN DEC ' + options.gain;
 				break;
 			case 'flash_lights':
-				cmd = 'SET FLASH ' + options.onoff;
+				cmd = 'SET FLASH ON';
 				break;
 			case 'flash_channel':
 				cmd = 'SET ' + options.channel + ' FLASH ON';
@@ -213,7 +215,7 @@ class instance extends instance_skel {
 				id: 'meteringInterval',
 				label: 'Metering Interval (in ms)',
 				width: 4,
-				min: 500,
+				min: 1000,
 				max: 99999,
 				default: 5000,
 				required: true
@@ -246,7 +248,7 @@ class instance extends instance_skel {
 		debug = this.debug;
 		log = this.log;
 
-		this.status(this.STATUS_OK);
+		this.status(this.STATUS_WARNING, 'Connecting');
 
 		this.initVariables();
 		this.initFeedbacks();
@@ -421,6 +423,9 @@ class instance extends instance_skel {
 				}
 			}
 		}
+
+		this.CHANNELS_FIELD.choices = this.CHOICES_CHANNELS;
+		this.SLOTS_FIELD.choices    = this.CHOICES_SLOTS;
 	}
 
 	/**
