@@ -85,7 +85,7 @@ module.exports = {
 				variables.push({ name: prefix +'tx_offset',       label: 'Channel ' + i + ' Transmitter Offset' });
 			}
 
-			if (this.model.famiy == 'ad') {
+			if (this.model.family == 'ad') {
 				variables.push({ name: prefix +'tx_input_pad',    label: 'Channel ' + i + ' Transmitter Input Pad' });
 				variables.push({ name: prefix +'tx_polarity',     label: 'Channel ' + i + ' Transmitter Polarity' });
 			}
@@ -102,7 +102,7 @@ module.exports = {
 				variables.push({ name: prefix +'tx_power_mode',   label: 'Channel ' + i + ' Transmitter Power Mode' });
 			}
 
-			if (this.model.famiy != 'ad' && this.model.family != 'slx') {
+			if (this.model.family != 'ad' && this.model.family != 'slx') {
 				variables.push({ name: prefix +'tx_power_source', label: 'Channel ' + i + ' Transmitter Power Source' });
 			}
 
