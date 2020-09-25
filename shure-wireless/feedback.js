@@ -212,7 +212,7 @@ module.exports = {
 					var opt = feedback.options;
 					var channel = this.api.getChannel(parseInt(opt.channel));
 					var out = {
-						png64: this.api.getIcon(feedback.options)
+						img64: this.api.getIcon(feedback.options)
 						//text:  ''
 					};
 

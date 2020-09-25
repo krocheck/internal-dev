@@ -134,13 +134,16 @@ class instance_icons {
 	 */
 	drawFromPNGdata(img, icon, xStart, yStart, width, height, halign, valign) {
 
-		if (icon.buffer === null) {
+		if (icon !== undefined && icon.buffer === null) {
 			try {
 				icon.buffer = fs.readFileSync(path + '/lib/module/shure-wireless/' + icon.path);
 			} catch (e) {
 				this.instance.log('debug', "Error opening image file: " + icon.path + '(' + e + ')');
 				return;
 			}
+		}
+		else {
+			this.instance.debug('icon: ' + icon);
 		}
 
 		try {
@@ -174,7 +177,7 @@ class instance_icons {
 			//img.backgroundColor(bg);
 
 			this.drawFromPNGdata(img, this.AD_ANT[ant],            51, 13, 11, 10, 'left', 'top');
-			this.drawFromPNGdata(img, this.AD_AUDIO[audio],        64, 13,  4, 32, 'left', 'top');
+			this.drawFromPNGdata(img, this.AD_AUDIO[audio],        64, 13,  4, 42, 'left', 'top');
 			this.drawFromPNGdata(img, this.AD_RF[rfA],             51, 24,  4, 31, 'left', 'top');
 			this.drawFromPNGdata(img, this.AD_RF[rfB],             57, 24,  4, 31, 'left', 'top');
 			this.drawFromPNGdata(img, this.BATTERY[battery],        3, 46, 25,  9, 'left', 'top');
