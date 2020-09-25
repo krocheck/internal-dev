@@ -25,6 +25,7 @@ This module will connect to the Shure receivers below to provide feedback status
 * If the selected channel\'s transmitter is muted, change the color of the button. *(ULX, QLX, & AD)*
 * If the selected channel gets interference, change the color of the button. *(ULX, QLX, AD, & MXW)*
 * If the selected channel\'s transmitter is powered off, change the color of the button.
+* If the selected channel\'s frequency is set, change the color of the button. *(ULX, QLX, SLX, & AD)*
 * If the selected slot\'s transmitter RF is set, change the color of the button. *(ADX only)*
 * If the selected slot\'s transmitter power level is set, change the color of the button. *(ADX only)*
 

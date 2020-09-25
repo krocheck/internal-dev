@@ -16,7 +16,7 @@ module.exports = {
 			default: defaultColor
 		};
 	},
-	BATTERY_LEVLE_FIELD: {
+	BATTERY_LEVEL_FIELD: {
 		type: 'number',
 		label: 'Battery Bar Level',
 		id: 'barlevel',
@@ -32,6 +32,13 @@ module.exports = {
 		id: 'channel',
 		default: '1',
 		choices: this.CHOICES_CHANNELS
+	},
+	CHANNELS_A_FIELD: {
+		type: 'dropdown',
+		label: 'Channel',
+		id: 'channel',
+		default: '1',
+		choices: this.CHOICES_CHANNELS_A
 	},
 	FREQUENCY_FIELD: {
 		type: 'textinput',
@@ -69,34 +76,55 @@ module.exports = {
 		label: 'Mute/Unmute/Toggle',
 		id: 'choice',
 		default: 'ON',
-		choices: this.CHOICES_MUTE
+		choices: [
+			{id: 'ON',     label: 'Mute'},
+			{id: 'OFF',    label: 'Unmute'},
+			{id: 'TOGGLE', label: 'Toggle Mute/Unmute'}
+		]
 	},
 	NAME_FIELD: {
 		type: 'textinput',
 		label: 'Name (8 characters max)',
 		id: 'name',
 		default: '',
-		regex: this.REGEX_CHAR_8
+		regex: '/^.{1,8}$/'
 	},
 	RFOUTPUT_FIELD: {
 		type: 'dropdown',
 		label: 'On/Off',
 		id: 'onoff',
 		default: 'RF_ON',
-		choices: this.CHOICES_RFOUTPUT
+		choices: [
+			{id: 'RF_ON',   label: 'RF On'},
+			{id: 'RF_MUTE', label: 'RF Mute'}
+		]
 	},
 	RFPOWER_FIELD: {
 		type: 'dropdown',
 		label: 'Power Level',
 		id: 'power',
 		default: '10',
-		choices: this.CHOICES_RFPOWER
+		choices: [
+			{id: '2',  label: '2 mW'},
+			{id: '10', label: '10 mW'},
+			{id: '20', label: '20 mW'},
+			{id: '35', label: '35 mW'},
+			{id: '40', label: '40 mW'},
+			{id: '50', label: '50 mW'}
+		]
 	},
 	SLOTS_FIELD: {
 		type: 'dropdown',
 		label: 'Slot Number',
 		id: 'slot',
-		default: '1:01',
+		default: '1:1',
 		choices: this.CHOICES_SLOTS
+	},
+	SLOTS_A_FIELD: {
+		type: 'dropdown',
+		label: 'Slot Number',
+		id: 'slot',
+		default: '1:1',
+		choices: this.CHOICES_SLOTS_A
 	}
 }

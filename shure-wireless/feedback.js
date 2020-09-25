@@ -17,7 +17,7 @@ module.exports = {
 				this.CHANNELS_FIELD,
 				this.BATTERY_LEVEL_FIELD,
 				this.FG_COLOR_FIELD(this.rgb(255,255,255)),
-				this.BG_COLOR_FIELD(this.rgb(100,255,0))
+				this.BG_COLOR_FIELD(this.rgb(255,0,0))
 			],
 			callback: (feedback, bank) => {
 				if (this.api.getChannel(parseInt(feedback.options.channel)).batteryBars <= feedback.options.barlevel) {
@@ -36,7 +36,7 @@ module.exports = {
 				options: [
 					this.CHANNELS_FIELD,
 					this.FG_COLOR_FIELD(this.rgb(255,255,255)),
-					this.BG_COLOR_FIELD(this.rgb(100,255,0))
+					this.BG_COLOR_FIELD(this.rgb(128,0,0))
 				],
 				callback: (feedback, bank) => {
 					if (this.api.getChannel(parseInt(feedback.options.channel)).audioMute == 'ON') {
@@ -55,7 +55,7 @@ module.exports = {
 					options: [
 						this.CHANNELS_FIELD,
 						this.FG_COLOR_FIELD(this.rgb(255,255,255)),
-						this.BG_COLOR_FIELD(this.rgb(100,255,0))
+						this.BG_COLOR_FIELD(this.rgb(128,0,0))
 					],
 					callback: (feedback, bank) => {
 						if (this.api.getChannel(parseInt(feedback.options.channel)).txMuteStatus == 'ON') {
@@ -74,10 +74,31 @@ module.exports = {
 				options: [
 					this.CHANNELS_FIELD,
 					this.FG_COLOR_FIELD(this.rgb(255,255,255)),
-					this.BG_COLOR_FIELD(this.rgb(100,255,0))
+					this.BG_COLOR_FIELD(this.rgb(255,0,0))
 				],
 				callback: (feedback, bank) => {
 					if (this.api.getChannel(parseInt(feedback.options.channel)).interferenceStatus == 'DETECTED') {
+						return {
+							color: feedback.options.fg,
+							bgcolor: feedback.options.bg
+						};
+					}
+				}
+			};
+		}
+
+		if (this.model.family != 'mxw') {
+			feedbacks['channel_frequency'] = {
+				label: 'Channel Frequency',
+				description: 'If the selected channel\'s frequency is set, change the color of the button.',
+				options: [
+					this.CHANNELS_FIELD,
+					this.FREQUENCY_FIELD,
+					this.FG_COLOR_FIELD(this.rgb(0,0,0)),
+					this.BG_COLOR_FIELD(this.rgb(255,255,0))
+				],
+				callback: (feedback, bank) => {
+					if (this.api.getChannel(parseInt(feedback.options.channel)).frequency == feedback.options.value) {
 						return {
 							color: feedback.options.fg,
 							bgcolor: feedback.options.bg
@@ -93,7 +114,7 @@ module.exports = {
 			options: [
 				this.CHANNELS_FIELD,
 				this.FG_COLOR_FIELD(this.rgb(255,255,255)),
-				this.BG_COLOR_FIELD(this.rgb(100,255,0))
+				this.BG_COLOR_FIELD(this.rgb(0,0,128))
 			],
 			callback: (feedback, bank) => {
 				if ((this.api.getChannel(parseInt(feedback.options.channel)).txType == 'Unknown') || (this.api.getChannel(parseInt(feedback.options.channel)).batteryBars == 255)) {
@@ -110,7 +131,7 @@ module.exports = {
 				label: 'Slot RF Output',
 				description: 'If the selected slot\'s transmitter RF is set, change the color of the button.',
 				options: [
-					this.CHANNELS_FIELD,
+					this.SLOTS_FIELD,
 					this.RFOUTPUT_FIELD,
 					this.FG_COLOR_FIELD(this.rgb(255,255,255)),
 					this.BG_COLOR_FIELD(this.rgb(100,255,0))
@@ -130,7 +151,7 @@ module.exports = {
 				label: 'Slot RF Power',
 				description: 'If the selected slot\'s transmitter power level is set, change the color of the button.',
 				options: [
-					this.CHANNELS_FIELD,
+					this.SLOTS_FIELD,
 					this.RFPOWER_FIELD,
 					this.FG_COLOR_FIELD(this.rgb(255,255,255)),
 					this.BG_COLOR_FIELD(this.rgb(100,255,0))
@@ -147,20 +168,65 @@ module.exports = {
 			};
 		}
 
-		/*if (this.model.family != 'mxw') {
+		if (this.model.family != 'mxw') {
 			feedbacks['sample'] = {
 				label: 'Channel Status Display',
 				description: "Provide a visual display of the channel's status.",
 				options: [
-					this.CHANNELS_FIELD
+					this.CHANNELS_FIELD,
+					{
+						type: 'dropdown',
+						label: 'Label Data',
+						id: 'labels',
+						default: ['name', 'frequency', 'txType', 'txPowerLevel'],
+						multiple: true,
+						maximumSelectionLength: 6,
+						choices: [
+							{id: 'name',           label: 'Channel Name'},
+							{id: 'txDeviceId',     label: 'TX Device ID'},
+							{id: 'frequency',      label: 'Frequency'},
+							{id: 'groupChan',      label: 'Group/Channel'},
+							{id: 'audioGain',      label: 'Audio Gain'},
+							{id: 'txType',         label: 'TX Model'},
+							{id: 'txPowerLevel',   label: 'TX Power Level'},
+							{id: 'batteryRuntime', label: 'Battery Runtime'}
+						]
+					},
+					{
+						type: 'dropdown',
+						label: 'Icons',
+						id: 'icons',
+						default: ['battery', 'locks', 'rf', 'audio'],
+						multiple: true,
+						maximumSelectionLength: 4,
+						choices: [
+							{id: 'battery',    label: 'Battery'},
+							{id: 'locks',      label: 'Locks'},
+							{id: 'rf',         label: 'RF'},
+							{id: 'audio',      label: 'Audio Level'},
+							{id: 'encryption', label: 'Encryption'}
+						]
+					}
 				],
 				callback: (feedback, bank) => {
-					return {
-						png64: this.api.getIcon(parseInt(feedback.options.channel))
+					var opt = feedback.options;
+					var channel = this.api.getChannel(parseInt(opt.channel));
+					var out = {
+						png64: this.api.getIcon(feedback.options)
+						//text:  ''
 					};
+
+					if (typeof opt.labels === 'string') {
+						//selections.push(action.options[option.id].toString())
+					}
+					else if (Array.isArray(opt.labels)) {
+						//selections = action.options[option.id]
+					}
+
+					return out;
 				}
 			};
-		}*/
+		}
 
 		this.setFeedbackDefinitions(feedbacks);
 	}

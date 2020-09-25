@@ -2,7 +2,6 @@ var tcp = require('../../tcp');
 var instance_skel = require('../../instance_skel');
 
 var instance_api   = require('./internalAPI');
-//var instance_icons = require('./icons');
 var actions        = require('./actions');
 var feedback       = require('./feedback');
 var setup          = require('./setup');
@@ -45,7 +44,6 @@ class instance extends instance_skel {
 		});
 
 		this.api   = new instance_api(this);
-		//this.icons = new instance_icons(this);
 
 		this.CONFIG_MODEL = {
 			ulxd4:   {id: 'ulxd4',   family: 'ulx', label: 'ULXD4 Single Receiver', channels: 1, slots: 0},
@@ -60,8 +58,10 @@ class instance extends instance_skel {
 			slxd4d:  {id: 'slxd4d',  family: 'slx', label: 'SLXD4D Dual Receiver',  channels: 2, slots: 0}  
 		};
 
-		this.CHOICES_CHANNELS = [];
-		this.CHOICES_SLOTS    = [];
+		this.CHOICES_CHANNELS   = [];
+		this.CHOICES_CHANNELS_A = [];
+		this.CHOICES_SLOTS      = [];
+		this.CHOICES_SLOTS_A    = [];
 
 		this.CHOICES_MODEL = Object.values(this.CONFIG_MODEL);
 		// Sort alphabetical
@@ -73,31 +73,6 @@ class instance extends instance_skel {
 			return 0;
 		});
 
-		this.CHOICES_MUTE = [
-			{id: 'ON',     label: 'Mute'},
-			{id: 'OFF',    label: 'Unmute'},
-			{id: 'TOGGLE', label: 'Toggle Mute/Unmute'}
-		];
-
-		this.CHOICES_ONOFF = [
-			{id: 'OFF', label: 'Off'},
-			{id: 'ON',  label: 'On'}
-		];
-
-		this.CHOICES_RFOUTPUT = [
-			{id: 'RF_ON',   label: 'RF On'},
-			{id: 'RF_MUTE', label: 'RF Mute'}
-		];
-
-		this.CHOICES_RFPOWER = [
-			{id: '2',  label: '2 mW'},
-			{id: '10', label: '10 mW'},
-			{id: '20', label: '20 mW'},
-			{id: '35', label: '35 mW'},
-			{id: '40', label: '40 mW'},
-			{id: '50', label: '50 mW'}
-		];
-
 		if (this.config.modelID !== undefined){
 			this.model = this.CONFIG_MODEL[this.config.modelID];
 		}
@@ -105,8 +80,6 @@ class instance extends instance_skel {
 			this.config.modelID = 'ulxd4';
 			this.model = this.CONFIG_MODEL['ulxd4'];
 		}
-
-		this.defineConst('REGEX_CHAR_8', '/^.{1,8}$/');
 
 		this.actions(); // export actions
 	}
@@ -132,8 +105,9 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	action(action) {
-		var options = action.options;
-		var cmd;
+		let options = action.options;
+		let cmd;
+		let slot, value;
 
 		switch (action.action) {
 			case 'set_channel_name':
@@ -143,7 +117,7 @@ class instance extends instance_skel {
 				cmd = 'SET ' + options.channel + ' AUDIO_MUTE ' + options.choice;
 				break;
 			case 'channel_setaudiogain':
-				let value = options.gain;
+				value = options.gain;
 				if (this.model.family == 'mxw') {
 					value += 25;
 				}
@@ -168,11 +142,11 @@ class instance extends instance_skel {
 				cmd = 'SET ' + options.channel + ' FLASH ON';
 				break;
 			case 'slot_rf_output':
-				let slot = options.slot.split(':');
+				slot = options.slot.split(':');
 				cmd = 'SET ' + slot[0] + ' SLOT_RF_OUTPUT ' + slot[1] + ' ' + options.onoff;
 				break;
 			case 'slot_rf_power':
-				let slot = options.slot.split(':');
+				slot = options.slot.split(':');
 				cmd = 'SET ' + slot[0] + ' SLOT_RF_POWER ' + slot[1] + ' ' + options.power;
 				break;
 		}
@@ -231,7 +205,7 @@ class instance extends instance_skel {
 				id: 'meteringInterval',
 				label: 'Metering Interval (in ms)',
 				width: 4,
-				min: 1000,
+				min: 500,
 				max: 99999,
 				default: 5000,
 				required: true
@@ -268,7 +242,7 @@ class instance extends instance_skel {
 
 		this.initVariables();
 		this.initFeedbacks();
-		//this.checkFeedbacks('sample');
+		this.checkFeedbacks('sample');
 
 		this.initTCP();
 	}
@@ -402,6 +376,8 @@ class instance extends instance_skel {
 						this.api.parseSLXSample(commandNum, command);
 						break;
 				}
+
+				this.checkFeedbacks('sample');
 			}
 		}
 	}
@@ -414,8 +390,18 @@ class instance extends instance_skel {
 	 */
 	setupChannelChoices() {
 
-		this.CHOICES_CHANNELS = [];
-		this.CHOICES_SLOTS = [];
+		this.CHOICES_CHANNELS   = [];
+		this.CHOICES_CHANNELS_A = [];
+		this.CHOICES_SLOTS      = [];
+		this.CHOICES_SLOTS_A    = [];
+
+		if (this.model.channels > 1) {
+			this.CHOICES_CHANNELS_A.push({ id: '0', label: 'All Channels' });
+		}
+
+		if (this.model.slots > 0) {
+			this.CHOICES_SLOTS_A.push({ id: '0:0', label: 'All Channels & Slots' });
+		}
 
 		for (var i = 1; i <= this.model.channels; i++) {
 			var data = 'Channel ' + i;
@@ -425,8 +411,11 @@ class instance extends instance_skel {
 			}
 
 			this.CHOICES_CHANNELS.push({ id: i, label: data });
+			this.CHOICES_CHANNELS_A.push({ id: i, label: data });
 
 			if (this.model.slots > 0) {
+				this.CHOICES_SLOTS_A.push({ id: `${i}:0`, label: data + ', All Slots' });
+
 				for (var j = 1; j <= this.model.slots; j++) {
 					let id = `${i}:${j}`;
 					data = id;
@@ -436,12 +425,15 @@ class instance extends instance_skel {
 					}
 
 					this.CHOICES_SLOTS.push({ id: id, label: data });
+					this.CHOICES_SLOTS_A.push({ id: id, label: data });
 				}
 			}
 		}
 
-		this.CHANNELS_FIELD.choices = this.CHOICES_CHANNELS;
-		this.SLOTS_FIELD.choices    = this.CHOICES_SLOTS;
+		this.CHANNELS_FIELD.choices   = this.CHOICES_CHANNELS;
+		this.CHANNELS_A_FIELD.choices = this.CHOICES_CHANNELS_A;
+		this.SLOTS_FIELD.choices      = this.CHOICES_SLOTS;
+		this.SLOTS_A_FIELD.choices    = this.CHOICES_SLOTS_A;
 	}
 
 	/**
