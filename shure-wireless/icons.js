@@ -138,7 +138,6 @@ class instance_icons {
 			try {
 				img.drawFromPNGdata(icon, xStart, yStart, width, height, halign, valign);
 			} catch (e) {
-				this.instance.log('debug', "Error drawing image file: " + icon.path + '(' + e + ')');
 				return;
 			}
 		}
@@ -147,24 +146,23 @@ class instance_icons {
 	/**
 	 * Returns the desired channel state object.
 	 *
-	 * @param {String} bg - the background color
 	 * @param {String} ant - the antenna status
 	 * @param {number} audio - the audio status
 	 * @param {number} rfA - the RF A status
 	 * @param {number} rfB - the RF B status
 	 * @param {number|String} battery - the battery status
 	 * @param {String} lock - the lock status
+	 * @param {String} encryption - the encryption status
 	 * @returns {String} base64 encoded PNG
 	 * @access public
 	 * @since 1.0.0
 	 */
-	getADStatus(bg = 0, ant = 'XX', audio = 0, rfA = 0, rfB = 0, battery = 255, lock = 'OFF', encryption = 'OFF') {
+	getADStatus(ant = 'XX', audio = 0, rfA = 0, rfB = 0, battery = 255, lock = 'OFF', encryption = 'OFF') {
 		var id = bg + '-' + ant + '-' + audio + '-' + rfA + '-' + rfB + '-' + battery + '-' + lock + '-' + encryption;
 		var out;
-this.instance.log('debug', id);
+
 		if ( this.savedIcons[id] === undefined ) {
 			var img = new this.Image();
-			//img.backgroundColor(bg);
 
 			this.drawFromPNGdata(img, this.AD_ANT[ant],            51, 13, 11, 10, 'left', 'top');
 			this.drawFromPNGdata(img, this.AD_AUDIO[audio],        64, 13,  4, 42, 'left', 'top');
@@ -190,35 +188,35 @@ this.instance.log('debug', id);
 	/**
 	 * Returns the desired channel state object.
 	 *
-	 * @param {String} bg - the background color
 	 * @param {String} ant - the antenna status
 	 * @param {number} audio - the audio status
 	 * @param {number} rf - the RF status
 	 * @param {number|String} battery - the battery status
 	 * @param {String} lock - the lock status
+	 * @param {String} encryption - the encryption status
 	 * @returns {String} base64 encoded PNG
 	 * @access public
 	 * @since 1.0.0
 	 */
-	getULXStatus(bg, ant = 'XX', audio = 0, rf = 0, battery = 255, lock = 'OFF', encryption = 'OFF') {
+	getULXStatus(ant = 'XX', audio = 0, rf = 0, battery = 255, lock = 'OFF', encryption = 'OFF') {
 		var id = bg + '-' + ant + '-' + audio + '-' + rf + '-' + battery + '-' + lock + '-' + encryption;
 		var out;
 
 		if ( this.savedIcons[id] === undefined ) {
 			var img = new this.Image();
-			//img.backgroundColor(bg);
 
-			img.drawFromPNGdata(this.ULX_ANT[ant],           47, 12, 13,  5, 'left', 'top');
-			img.drawFromPNGdata(this.ULX_AUDIO[audio],       63, 12,  5, 43, 'left', 'top');
-			img.drawFromPNGdata(this.ULX_RF[rf],             50, 19,  6, 37, 'left', 'top');
-			img.drawFromPNGdata(this.BATTERY[battery],        3, 46, 25,  9, 'left', 'top');
-			img.drawFromPNGdata(this.ENCRYPTION[encryption], 52,  2, 16,  6, 'left', 'top');
+			this.drawFromPNGdata(img, this.ULX_ANT[ant],           47, 12, 13,  5, 'left', 'top');
+			this.drawFromPNGdata(img, this.ULX_AUDIO[audio],       63, 12,  5, 43, 'left', 'top');
+			this.drawFromPNGdata(img, this.ULX_RF[rf],             50, 19,  6, 37, 'left', 'top');
+			this.drawFromPNGdata(img, this.BATTERY[battery],        3, 46, 25,  9, 'left', 'top');
+			this.drawFromPNGdata(img, this.ENCRYPTION[encryption], 52,  2, 16,  6, 'left', 'top');
 
 			if ( lock == 'all' || lock == 'power' || lock == 'menu' ) {
-				img.drawFromPNGdata(this.LOCK[lock], 31, 46, 18, 8, 'left', 'top');
+				this.drawFromPNGdata(img, this.LOCK[lock], 31, 46, 18, 8, 'left', 'top');
 			}
 
 			out = img.toBase64();
+			this.savedIcons[id] = out;
 		}
 		else {
 			out = this.savedIcons[id];

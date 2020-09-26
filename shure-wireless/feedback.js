@@ -169,6 +169,51 @@ module.exports = {
 		}
 
 		if (this.model.family != 'mxw') {
+			let labelChoices, labelDefault, iconChoices, iconDefault;
+
+			switch (this.model.family) {
+				case 'qlx':
+				case 'ulx':
+				case 'ad':
+					labelChoices = [
+						{id: 'name',           label: 'Channel Name'},
+						{id: 'txDeviceId',     label: 'TX Device ID'},
+						{id: 'frequency',      label: 'Frequency'},
+						{id: 'groupChan',      label: 'Group/Channel'},
+						{id: 'audioGain',      label: 'Audio Gain'},
+						{id: 'txType',         label: 'TX Model'},
+						{id: 'txPowerLevel',   label: 'TX Power Level'},
+						{id: 'batteryRuntime', label: 'Battery Runtime'}
+					];
+					labelDefault = ['name', 'frequency', 'txType', 'txPowerLevel'];
+					iconChoices = [
+						{id: 'battery',    label: 'Battery'},
+						{id: 'locks',      label: 'Locks'},
+						{id: 'rf',         label: 'RF'},
+						{id: 'audio',      label: 'Audio Level'},
+						{id: 'encryption', label: 'Encryption'}
+					];
+					iconDefault = ['battery', 'locks', 'rf', 'audio'];
+					break;
+				case 'slx':
+					labelChoices = [
+						{id: 'name',           label: 'Channel Name'},
+						{id: 'frequency',      label: 'Frequency'},
+						{id: 'groupChan',      label: 'Group/Channel'},
+						{id: 'audioGain',      label: 'Audio Gain'},
+						{id: 'txType',         label: 'TX Model'},
+						{id: 'batteryRuntime', label: 'Battery Runtime'}
+					];
+					labelDefault = ['name', 'frequency', 'audioGain', 'txType'];
+					iconChoices = [
+						{id: 'battery',    label: 'Battery'},
+						{id: 'rf',         label: 'RF'},
+						{id: 'audio',      label: 'Audio Level'}
+					];
+					iconDefault = ['battery', 'rf', 'audio'];
+					break;
+			}
+
 			feedbacks['sample'] = {
 				label: 'Channel Status Display',
 				description: "Provide a visual display of the channel's status.",
@@ -178,49 +223,63 @@ module.exports = {
 						type: 'dropdown',
 						label: 'Label Data',
 						id: 'labels',
-						default: ['name', 'frequency', 'txType', 'txPowerLevel'],
+						default: labelDefault,
 						multiple: true,
 						maximumSelectionLength: 6,
-						choices: [
-							{id: 'name',           label: 'Channel Name'},
-							{id: 'txDeviceId',     label: 'TX Device ID'},
-							{id: 'frequency',      label: 'Frequency'},
-							{id: 'groupChan',      label: 'Group/Channel'},
-							{id: 'audioGain',      label: 'Audio Gain'},
-							{id: 'txType',         label: 'TX Model'},
-							{id: 'txPowerLevel',   label: 'TX Power Level'},
-							{id: 'batteryRuntime', label: 'Battery Runtime'}
-						]
+						choices: labelChoices
 					},
 					{
 						type: 'dropdown',
 						label: 'Icons',
 						id: 'icons',
-						default: ['battery', 'locks', 'rf', 'audio'],
+						default: iconDefault,
 						multiple: true,
 						maximumSelectionLength: 4,
-						choices: [
-							{id: 'battery',    label: 'Battery'},
-							{id: 'locks',      label: 'Locks'},
-							{id: 'rf',         label: 'RF'},
-							{id: 'audio',      label: 'Audio Level'},
-							{id: 'encryption', label: 'Encryption'}
-						]
+						choices: iconChoices
 					}
 				],
 				callback: (feedback, bank) => {
 					var opt = feedback.options;
 					var channel = this.api.getChannel(parseInt(opt.channel));
 					var out = {
-						img64: this.api.getIcon(feedback.options)
-						//text:  ''
+						img64: this.api.getIcon(feedback.options),
+						text:  ''
 					};
 
+					let addLabelData = function (item, channel, out) {
+						switch (item) {
+							case 'name':
+								out.text += channel.name + '\n';
+								break;
+							case 'txDeviceId':
+								out.text += channel.txDeviceId + '\n';
+								break;
+							case 'frequency':
+								out.text += channel.frequency + '\n';
+								break;
+							case 'groupChan':
+								out.text += channel.groupChan + '\n';
+								break;
+							case 'audioGain':
+								out.text += channel.audioGain + '\n';
+								break;
+							case 'txType':
+								out.text += channel.txType + '\n';
+								break;
+							case 'txPowerLevel':
+								out.text += channel.txPowerLevel + '\n';
+								break;
+							case 'batteryRuntime':
+								out.text += channel.batteryRuntime + '\n';
+								break;
+						}
+					}
+
 					if (typeof opt.labels === 'string') {
-						//selections.push(action.options[option.id].toString())
+						addLabelData(opt.labels, channel, out);
 					}
 					else if (Array.isArray(opt.labels)) {
-						//selections = action.options[option.id]
+						opt.labels.forEach( item => addLabelData(item, channel, out) );
 					}
 
 					return out;

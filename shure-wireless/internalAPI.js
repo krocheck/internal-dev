@@ -162,10 +162,10 @@ class instance_api {
 		switch(this.instance.model.family) {
 			case 'ulx':
 			case 'qlx':
-				icon = this.icons.getULXStatus(0, ch.antenna, ch.audioLED, ch.rfBitmapA, ch.batteryBars, ch.txLock);
+				icon = this.icons.getULXStatus(ch.antenna, ch.audioLED, ch.rfBitmapA, ch.batteryBars, ch.txLock);
 				break;
 			case 'ad':
-				icon = this.icons.getADStatus(0, ch.antenna, ch.audioLED, ch.rfBitmapA, ch.rfBitmapB, ch.batteryBars, ch.txLock);
+				icon = this.icons.getADStatus(ch.antenna, ch.audioLED, ch.rfBitmapA, ch.rfBitmapB, ch.batteryBars, ch.txLock);
 				break;
 		}
 
@@ -597,6 +597,7 @@ class instance_api {
 		else if (key == 'TX_LOCK') {
 			switch(value) {
 				case 'LOCKED':
+					value = 'ALL';
 				case 'ALL':
 					channel.txMenuLock  = 'ON';
 					channel.txPowerLock = 'ON';
