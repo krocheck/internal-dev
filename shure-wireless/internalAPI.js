@@ -137,6 +137,7 @@ class instance_api {
 				batteryRuntime:       65535,     // (ULX|QLX) 0+, 65535=UNKN
 				                                 // ((AD|SLX):TX_BATT_MINS) 0+, 65535=UNKN 65534=calcuating 65533=comm warning
 				                                 // (MXW) 0+, 65535=UNKN 65534=calcuating 65533=charging 65532=wall power
+				batteryRuntime2:      'Unknown', // Text representation of batteryRuntime
 				batteryTempF:         255,       // (ULX|QLX|AD:TX_BATT_TEMP_F) +40 255=UNKN
 				batteryTempC:         255,       // (ULX|QLX|AD:TX_BATT_TEMP_C)  +40 255=UNKN
 				batteryType:          'Unknown', // (ULX|QLX|AD:TX_BATT_TYPE) ALKA - LION - LITH - NIMH - UNKN
@@ -479,13 +480,8 @@ class instance_api {
 			this.instance.setVariable(prefix + 'meter_rate', variable);
 		}
 		else if (key == 'AUDIO_GAIN') {
-			channel.audioGain = parseInt(value);
-			if (model.family == 'mxw') {
-				variable = (channel.audioGain - 25).toString() + ' dB';
-			}
-			else {
-				variable = (channel.audioGain - 18).toString() + ' dB';
-			}
+			channel.audioGain = ( model.family == 'mxw' ? parseInt(value) - 25 : parseInt(value) - 18 );
+			variable = (channel.audioGain > 0 ? '+' : '') + channel.audioGain.toString() + ' dB';
 			this.instance.setVariable(prefix + 'audio_gain', variable);
 		}
 		else if (key == 'AUDIO_MUTE') {
@@ -858,6 +854,7 @@ class instance_api {
 			if (model.family == 'mxw') {
 				this.instance.setVariable(prefix + 'tx_power_source', channel.txPowerSource);
 			}
+			channel.batteryRuntime2 = variable;
 			this.instance.setVariable(prefix + 'battery_runtime', variable);
 		}
 		else if (key.match(/BATT_TEMP_C/)) {

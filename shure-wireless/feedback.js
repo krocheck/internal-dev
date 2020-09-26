@@ -249,28 +249,28 @@ module.exports = {
 					let addLabelData = function (item, channel, out) {
 						switch (item) {
 							case 'name':
-								out.text += channel.name + '\n';
+								out.text += channel.name + '\\n';
 								break;
 							case 'txDeviceId':
-								out.text += channel.txDeviceId + '\n';
+								out.text += channel.txDeviceId + '\\n';
 								break;
 							case 'frequency':
-								out.text += channel.frequency + '\n';
+								out.text += channel.frequency + '\\n';
 								break;
 							case 'groupChan':
-								out.text += channel.groupChan + '\n';
+								out.text += channel.groupChan + '\\n';
 								break;
 							case 'audioGain':
-								out.text += channel.audioGain + '\n';
+								out.text += (channel.audioGain > 0 ? '+' : '') + channel.audioGain.toString() + ' dB'\\n';
 								break;
 							case 'txType':
-								out.text += channel.txType + '\n';
+								out.text += channel.txType + '\\n';
 								break;
 							case 'txPowerLevel':
-								out.text += channel.txPowerLevel + '\n';
+								out.text += (channel.txPowerLevel == 255 ? 'Unknown' : channel.txPowerLevel + ' mW\\n';
 								break;
 							case 'batteryRuntime':
-								out.text += channel.batteryRuntime + '\n';
+								out.text += channel.batteryRuntime2 + '\\n';
 								break;
 						}
 					}

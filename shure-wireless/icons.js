@@ -158,7 +158,7 @@ class instance_icons {
 	 * @since 1.0.0
 	 */
 	getADStatus(ant = 'XX', audio = 0, rfA = 0, rfB = 0, battery = 255, lock = 'OFF', encryption = 'OFF') {
-		var id = bg + '-' + ant + '-' + audio + '-' + rfA + '-' + rfB + '-' + battery + '-' + lock + '-' + encryption;
+		var id = ant + '-' + audio + '-' + rfA + '-' + rfB + '-' + battery + '-' + lock + '-' + encryption;
 		var out;
 
 		if ( this.savedIcons[id] === undefined ) {
@@ -199,7 +199,7 @@ class instance_icons {
 	 * @since 1.0.0
 	 */
 	getULXStatus(ant = 'XX', audio = 0, rf = 0, battery = 255, lock = 'OFF', encryption = 'OFF') {
-		var id = bg + '-' + ant + '-' + audio + '-' + rf + '-' + battery + '-' + lock + '-' + encryption;
+		var id = ant + '-' + audio + '-' + rf + '-' + battery + '-' + lock + '-' + encryption;
 		var out;
 
 		if ( this.savedIcons[id] === undefined ) {
