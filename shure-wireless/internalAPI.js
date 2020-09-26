@@ -151,22 +151,55 @@ class instance_api {
 	/**
 	 * Returns the desired channel status icon.
 	 *
-	 * @param {Object} options - the feedback configuration
+	 * @param {Object} opt - the feedback configuration
 	 * @returns {String} the icon
 	 * @access public
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 */
-	getIcon(options) {
-		var ch = this.getChannel(parseInt(options.channel));
-		var icon;
+	getIcon(opt) {
+		let ch = this.getChannel(parseInt(opt.channel));
+		let icon;
+		let antenna, audioLED, rfBitmapA, rfBitmapB, batteryBars, txLock, encryption
+
+		let setIconData = (item) => {
+			switch (item) {
+				case 'battery':
+					batteryBars = ch.batteryBars;
+					break;
+				case 'locks':
+					txLock = ch.txLock;
+					break;
+				case 'rf':
+					antenna   = ch.antenna;
+					rfBitmapA = ch.rfBitmapA;
+					rfBitmapB = ch.rfBitmapB;
+					break;
+				case 'audio':
+					audioLED = ch.audioLED;
+					break;
+				case 'encryption':
+					encryption = (ch.encryptionStatus == 'ERROR' ? 'ERROR' : this.receiver.encryption);
+					break;
+			}
+		}
+
+		if (typeof opt.icons === 'string') {
+			setIconData(opt.icons);
+		}
+		else if (Array.isArray(opt.icons)) {
+			opt.icons.forEach( item => setIconData(item) );
+		}
 
 		switch(this.instance.model.family) {
 			case 'ulx':
 			case 'qlx':
-				icon = this.icons.getULXStatus(ch.antenna, ch.audioLED, ch.rfBitmapA, ch.batteryBars, ch.txLock);
+				icon = this.icons.getULXStatus(antenna, audioLED, rfBitmapA, batteryBars, opt.barLevel, txLock, encryption);
+				break;
+			case 'slx':
+				icon = this.icons.getSLXStatus(audioLED, rfBitmapA, batteryBars, opt.barLevel);
 				break;
 			case 'ad':
-				icon = this.icons.getADStatus(ch.antenna, ch.audioLED, ch.rfBitmapA, ch.rfBitmapB, ch.batteryBars, ch.txLock);
+				icon = this.icons.getADStatus(antenna, audioLED, rfBitmapA, rfBitmapB, batteryBars, opt.barLevel, txLock, encryption);
 				break;
 		}
 

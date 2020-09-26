@@ -18,7 +18,7 @@ module.exports = {
 	},
 	BATTERY_LEVEL_FIELD: {
 		type: 'number',
-		label: 'Battery Bar Level',
+		label: 'Battery Alert Level',
 		id: 'barlevel',
 		min: 1,
 		max: 5,

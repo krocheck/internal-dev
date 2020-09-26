@@ -174,7 +174,6 @@ module.exports = {
 			switch (this.model.family) {
 				case 'qlx':
 				case 'ulx':
-				case 'ad':
 					labelChoices = [
 						{id: 'name',           label: 'Channel Name'},
 						{id: 'txDeviceId',     label: 'TX Device ID'},
@@ -193,7 +192,7 @@ module.exports = {
 						{id: 'audio',      label: 'Audio Level'},
 						{id: 'encryption', label: 'Encryption'}
 					];
-					iconDefault = ['battery', 'locks', 'rf', 'audio'];
+					iconDefault = ['battery', 'locks', 'rf', 'audio', 'encryption'];
 					break;
 				case 'slx':
 					labelChoices = [
@@ -211,6 +210,28 @@ module.exports = {
 						{id: 'audio',      label: 'Audio Level'}
 					];
 					iconDefault = ['battery', 'rf', 'audio'];
+					break;
+				case 'ad':
+					labelChoices = [
+						{id: 'name',           label: 'Channel Name'},
+						{id: 'txDeviceId',     label: 'TX Device ID'},
+						{id: 'frequency',      label: 'Frequency'},
+						{id: 'groupChan',      label: 'Group/Channel'},
+						{id: 'audioGain',      label: 'Audio Gain'},
+						{id: 'txType',         label: 'TX Model'},
+						{id: 'txPowerLevel',   label: 'TX Power Level'},
+						{id: 'batteryRuntime', label: 'Battery Runtime'}
+					];
+					labelDefault = ['name', 'frequency', 'txType', 'txPowerLevel'];
+					iconChoices = [
+						{id: 'battery',    label: 'Battery'},
+						{id: 'locks',      label: 'Locks'},
+						{id: 'rf',         label: 'RF'},
+						{id: 'audio',      label: 'Audio Level'},
+						{id: 'encryption', label: 'Encryption'},
+						{id: 'quality',    label: 'Quality'}
+					];
+					iconDefault = ['battery', 'locks', 'rf', 'audio', 'encryption', 'quality'];
 					break;
 			}
 
@@ -236,7 +257,8 @@ module.exports = {
 						multiple: true,
 						maximumSelectionLength: 4,
 						choices: iconChoices
-					}
+					},
+					this.BATTERY_LEVEL_FIELD
 				],
 				callback: (feedback, bank) => {
 					var opt = feedback.options;
@@ -261,13 +283,13 @@ module.exports = {
 								out.text += channel.groupChan + '\\n';
 								break;
 							case 'audioGain':
-								out.text += (channel.audioGain > 0 ? '+' : '') + channel.audioGain.toString() + ' dB'\\n';
+								out.text += (channel.audioGain > 0 ? '+' : '') + channel.audioGain.toString() + ' dB\\n';
 								break;
 							case 'txType':
 								out.text += channel.txType + '\\n';
 								break;
 							case 'txPowerLevel':
-								out.text += (channel.txPowerLevel == 255 ? 'Unknown' : channel.txPowerLevel + ' mW\\n';
+								out.text += (channel.txPowerLevel == 255 ? 'Unknown' : channel.txPowerLevel + ' mW\\n');
 								break;
 							case 'batteryRuntime':
 								out.text += channel.batteryRuntime2 + '\\n';
